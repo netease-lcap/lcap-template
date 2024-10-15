@@ -31,6 +31,15 @@ export default {
             Config.destination.call(this, ...args);
         };
 
+        Vue.prototype.$toQueryString = function (params) {
+            const query = Object.entries(params)
+                .filter(([, value]) => value !== undefined && value !== null)
+                .map(([key, value]) => `${key}=${value}`)
+                .join('&');
+        
+            return query.length > 0 ? `?${query}` : '';
+        };
+
         Vue.prototype.$link = async function (url, target = '_self') {
             let realUrl;
             if (typeof url === 'function') {
