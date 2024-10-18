@@ -450,11 +450,38 @@ export const utils = {
         }
       }
     };
+    let newArr = arr;
     if (Array.isArray(arr)) {
       if (typeof callback === "function") {
-        return await sortAsync(arr, sortRule)(callback);
+        newArr = await sortAsync(arr, sortRule)(callback);
       }
     }
+    return newArr;
+  },
+  ListRange(start, end, step) {
+    if (step === 0) {
+      return [];
+    }
+    const result = [];
+    if (step > 0) {
+      for (let i = start; i < end; i += step) {
+        result.push(i);
+      }
+    } else {
+      for (let i = start; i > end; i += step) {
+        result.push(i);
+      }
+    }
+    return result;
+  },
+  ListRepeat(item, length) {
+    if (typeof length !== "number") {
+      return [];
+    }
+    if (length <= 0) {
+      return [];
+    }
+    return Array(length).fill(item);
   },
   ListFind(arr, by) {
     if (Array.isArray(arr)) {
@@ -740,6 +767,7 @@ export const utils = {
     if (Array.isArray(arr)) {
       arr.reverse();
     }
+    return arr;
   },
   ListSort(arr, callback, sort) {
     if (Array.isArray(arr)) {
@@ -772,6 +800,7 @@ export const utils = {
         });
       }
     }
+    return arr;
   },
   ListFindAll(arr, callback) {
     if (Array.isArray(arr)) {
@@ -794,6 +823,7 @@ export const utils = {
         i++;
       }
     }
+    return arr;
   },
   // 随着 PageOf 失效，可删除
   ListSliceToPageOf(arr, page, size) {
