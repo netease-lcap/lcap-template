@@ -1,13 +1,17 @@
 <template>
-    <div>
+    <VErrorBoundaryVue>
         <router-view></router-view>
-    </div>
+    </VErrorBoundaryVue>
 </template>
 
 <script>
 import { localCacheVariableMixin } from '@lcap/core-template';
+import VErrorBoundaryVue from './VErrorBoundary.vue';
 
 export default {
     mixins: [localCacheVariableMixin],
+    components: {
+        VErrorBoundaryVue,
+    },
 };
 </script>
