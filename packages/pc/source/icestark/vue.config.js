@@ -2,16 +2,25 @@ const path = require('path');
 
 module.exports = {
     configureWebpack(config) {
-        config.output.libraryTarget = 'umd';
-        config.output.library = __microAppName__;
-
-        config.resolve.alias['@lcap/pc-ui$'] = path.resolve(__dirname, 'node_modules/@lcap/pc-ui/dist-theme/index.js');
-        config.resolve.alias['@lcap/pc-ui/css$'] = path.resolve(__dirname, 'node_modules/@lcap/pc-ui/dist-theme/index.css');
-        config.resolve.alias['cloud-ui.vusion'] = '@lcap/pc-ui';
-
         if (process.env.NODE_ENV === 'production') {
             config.devtool = false;
         }
+
+        config.output.libraryTarget = 'umd';
+        config.output.library = __microAppName__;
+
+        /// cloud-ui-alias-start
+        config.resolve.alias['@lcap/pc-ui$'] = path.resolve(__dirname, 'node_modules/@lcap/pc-ui/dist-theme/index.js');
+        config.resolve.alias['@lcap/pc-ui/css$'] = path.resolve(__dirname, 'node_modules/@lcap/pc-ui/dist-theme/index.css');
+        config.resolve.alias['cloud-ui.vusion'] = '@lcap/pc-ui';
+        /// cloud-ui-alias-end
+    },
+    chainWebpack(config) {
+        config.optimization.minimizer('terser')
+            .tap((args) => {
+                args[0].terserOptions.compress.drop_console = ['info', 'log', 'warn'];
+                return args;
+            });
     },
     lintOnSave: false,
     runtimeCompiler: true,
