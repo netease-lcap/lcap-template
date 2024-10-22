@@ -56,7 +56,7 @@ function createErrorLayout(error) {
   errorDiv.appendChild(h2);
 
   const close = document.createElement('div');
-  close.textContent = '关闭';
+  close.textContent = 'Close';
   close.style.position = 'fixed';
   close.style.top = '20px';
   close.style.right = '20px';
