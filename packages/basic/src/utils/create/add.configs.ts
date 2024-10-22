@@ -54,6 +54,11 @@ export function shortResponse(response, params, requestInfo) {
     return data;
 }
 
+// 给流程系统接口使用
+export const shortResponseForSystemProcess = (response) => {
+  return response?.data || response?.Data || response;
+}
+
 export const httpError = {
   reject(err, params, requestInfo) {
     const { url, config = {} } = requestInfo;
@@ -114,4 +119,5 @@ export function addConfigs(service) {
   service.postConfig.set("httpCode", httpCode);
   service.postConfig.set("httpError", httpError);
   service.postConfig.set("shortResponse", shortResponse);
+  service.postConfig.set("shortResponseForSystemProcess", shortResponseForSystemProcess);
 }

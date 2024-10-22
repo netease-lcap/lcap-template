@@ -8,7 +8,14 @@ function initProcess() {
    */
   Global.prototype.$process = processService;
   Global.prototype.$processV2 = initSystemProcessV2Service();
-  Global.prototype.$systemProcessV2 = initSystemProcessV2Service();
+  Global.prototype.$systemProcessV2 = initSystemProcessV2Service({
+    config: {
+      priority: {
+        shortResponseForSystemProcess: 99
+      },
+      shortResponseForSystemProcess: true,
+    }
+  });
 }
 
 export {
