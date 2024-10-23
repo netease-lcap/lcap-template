@@ -1,6 +1,6 @@
 {
   "name": "@lcap/pc-template",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "base on vue",
   "scripts": {
     "dev": "webpack-dev-server --config build/webpack.dev.config.js",
