@@ -1,10 +1,6 @@
 <template>
   <div style="height: 100%;">
-    <div v-if="hasError$" />
-
     <slot 
-      v-else
-      :hasError="hasError$"
       :error="err$"
       :info="info$"
       v-bind="params"
@@ -22,7 +18,6 @@ export default {
   },
   data() {
     return {
-      hasError$: false,
       err$: null,
       info$: null,
     };
@@ -34,7 +29,6 @@ export default {
       console.log('err:', err);
       console.log('vm:', vm);
       console.log('info:', info);
-      this.hasError$ = true;
       this.err$ = err;
       this.info$ = info;
       createErrorLayout(err);
@@ -61,7 +55,7 @@ function createErrorLayout(error) {
   close.style.top = '20px';
   close.style.right = '20px';
   close.style.cursor = 'pointer';
-  close.onclick = () => errorDiv.style.display = 'none';
+  close.onclick = () => document.body.removeChild(errorDiv);
   errorDiv.appendChild(close);
 
   // 创建 pre 元素用于显示 error.?message
