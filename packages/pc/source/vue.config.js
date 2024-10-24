@@ -14,15 +14,17 @@ module.exports = {
         /// cloud-ui-alias-end
     },
     chainWebpack(config) {
-        config.optimization.minimizer('terser')
-            .tap((args) => {
-                args[0].terserOptions.compress.drop_console = ['info', 'log', 'warn'];
-                return args;
-            });
+        // 构建产物中删除console相关代码
+        // config.optimization.minimizer('terser')
+        //     .tap((args) => {
+        //         args[0].terserOptions.compress.drop_console = ['info', 'log', 'warn'];
+        //         return args;
+        //     });
     },
     lintOnSave: false,
     runtimeCompiler: true,
     devServer: {
+        compress: true,
         port: 8810,
         proxy: {
             '/assets': {
