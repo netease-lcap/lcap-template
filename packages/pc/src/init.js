@@ -32,6 +32,8 @@ import App from './App.vue';
 
 import '@/assets/css/index.css';
 
+Vue.config.productionTip = false
+
 Vue.prototype.$sleep = function () {
     return new Promise((resolve) => {
         this.$nextTick(resolve);

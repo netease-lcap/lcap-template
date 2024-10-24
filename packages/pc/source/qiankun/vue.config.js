@@ -17,11 +17,12 @@ module.exports = {
         /// cloud-ui-alias-end
     },
     chainWebpack(config) {
-        config.optimization.minimizer('terser')
-            .tap((args) => {
-                args[0].terserOptions.compress.drop_console = ['info', 'log', 'warn'];
-                return args;
-            });
+        // 构建产物中删除console相关代码
+        // config.optimization.minimizer('terser')
+        //     .tap((args) => {
+        //         args[0].terserOptions.compress.drop_console = ['info', 'log', 'warn'];
+        //         return args;
+        //     });
     },
     lintOnSave: false,
     runtimeCompiler: true,
@@ -30,6 +31,7 @@ module.exports = {
         config.module.rule('images').use('url-loader').loader('url-loader').options({}).end();
     },
     devServer: {
+        compress: true,
         headers: {
             'Access-Control-Allow-Origin': '*',
         },
