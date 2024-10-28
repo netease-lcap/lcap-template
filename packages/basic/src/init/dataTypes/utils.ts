@@ -4,6 +4,7 @@ import CryptoJS from "crypto-js";
 import { initService as initConfigurationService } from "../../apis/configuration";
 import { initService as initIoService } from "../../apis/io";
 import { initService as initLowauthService } from "../../apis/lowauth";
+import { initService as initLogService } from '../../apis/log';
 
 import Config from "../../config";
 
@@ -262,6 +263,21 @@ export async function getUserList(query) {
     },
   });
   return res;
+}
+
+/**
+ * 上报日志
+ */
+export async function logReport(data) {
+  try {
+    const res = await initLogService().logReport({
+      body: data,
+    });
+
+    return res;
+  } catch (error) {
+    return error;
+  }
 }
 
 // 下方为H5端的方法
