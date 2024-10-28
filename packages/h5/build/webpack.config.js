@@ -4,7 +4,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const EsbuildPlugin = require('./plugins/esbuild-plugin');
+const EsbuildPlugin = require('esbuild-minify');
 
 const root = path.resolve(__dirname, '..');
 const pkg = require(path.resolve(root, './package.json'));
@@ -49,8 +49,17 @@ module.exports = {
                 loader: 'vue-loader',
             },
             {
-                test: /\.js$/,
-                loader: 'babel-loader',
+                test: /\.(j|t)s$/,
+                loader: 'swc-loader',
+                options: {
+                    jsc: {
+                        parser: {
+                            syntax: 'typescript',
+                            tsx: false,
+                        },
+                        loose: false,
+                    },
+                },
             },
             {
                 test: /\.css$/,
