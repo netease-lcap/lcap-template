@@ -2,7 +2,7 @@
 	"getCustomConfig": {
 		"url": {
 			"method": "get",
-			"path": "/api/system/getCustomConfig/{configKey}"
+			"path": "/api/system/getCustomConfigV2/{configKey}"
 		}
 	},
 	"getCurrentIp": {

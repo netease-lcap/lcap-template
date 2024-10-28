@@ -48,7 +48,7 @@ export const sortAsync = (array = [], sortRule) => async (callback) => {
   });
   const list = await Promise.all(promises);
   let res = list.sort((a, b) => sortRule(a.id, b.id))
-  return res.forEach((item, index) => array[index] = item.current);
+  return res.map((item, index) => array[index] = item.current);
 }
 
 export const getAppTimezone = (inputTz) => {
