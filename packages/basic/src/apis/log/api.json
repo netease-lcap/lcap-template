@@ -1,0 +1,8 @@
+{
+	"logReport": {
+		"url": {
+			"method": "post",
+			"path": "/api/system/logReport"
+		}
+	}
+}
