@@ -272,9 +272,13 @@ export const utils = {
   },
   Set(arr, index, item) {
     if (isArrayInBounds(arr, index)) {
+      // 兼容Vue版本的实现， 不知道为啥要用这个
+      if (Global.set && typeof Global.set === "function") {
+        return Global.set(arr, index, item);
+      }
+
       arr[index] = item;
       return arr;
-      // return Global.prototype.set(arr, index, item);
     }
   },
   Contains(arr, item) {
@@ -636,13 +640,20 @@ export const utils = {
   },
   MapPut(map, key, value) {
     if (isObject(map)) {
-      // Global.prototype.$set(map, key, value);
+      if (Global.prototype.$set && typeof Global.prototype.$set === "function") {
+        Global.prototype.$set(map, key, value);
+        return;
+      }
+
       _set(map, key, value);
     }
   },
   MapRemove(map, key) {
     if (isObject(map)) {
-      // Global.prototype.delete(map, key);
+      if (Global.delete && typeof Global.delete === "function") {
+        Global.delete(map, key);
+        return;
+      }
       delete map[key];
     }
   },

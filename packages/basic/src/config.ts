@@ -7,7 +7,8 @@ type ConfigType = {
   };
   utils: any;
   router: {
-    destination: (url: string, target: string) => void;
+    destination?: (url: string, target: string) => void;
+    createRouter?: (options: any) => any;
   };
   axios: {
     interceptors: Array<any>;
