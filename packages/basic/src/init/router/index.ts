@@ -15,21 +15,30 @@ function initRouter() {
       let realUrl;
       if (typeof url === "function") {
         realUrl = await url();
-      } else if(url?.charAt(0) === "/") {
-        $destination(url,target)
+      } else if (url?.charAt(0) === "/") {
+        Config.router?.destination?.call(this, url, target);
         return;
-      }else{
+      } else {
         realUrl = url;
       }
       downloadClick(realUrl, target);
     };
 
-    Global.prototype.$destination = function (...args) {
-      $destination.call(this, ...args);
-    };
+    function $toQueryString(params) {
+      const query = Object.entries(params)
+          .filter(([, value]) => value !== undefined && value !== null)
+          .map(([key, value]) => `${key}=${value}`)
+          .join('&');
+  
+      return query.length > 0 ? `?${query}` : '';
+    }
+
+    Global.prototype.$destination = $destination;
     Global.prototype.$link = $link;
     Global.prototype.$formatMicroFrontUrl = formatMicroFrontUrl;
     Global.prototype.$formatMicroFrontRouterPath = formatMicroFrontRouterPath;
+
+    Global.prototype.$toQueryString = $toQueryString;
 
     return {
       formatMicroFrontUrl: formatMicroFrontUrl,
