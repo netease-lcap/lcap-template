@@ -4,6 +4,7 @@
   "description": "低代码应用模板",
   "version": "1.6.0",
   "scripts": {
+    "test": "pnpm --filter \"./packages/*\" run test",
     "change:version": "node ./scripts/version",
     "build": "pnpm --filter \"./packages/*\" run build",
     "deploy": "pnpm --filter \"./packages/*\" run deploy"

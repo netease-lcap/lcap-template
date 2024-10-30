@@ -3,33 +3,9 @@
   "version": "1.6.0",
   "description": "",
   "main": "cjs/index.js",
-  "exports": {
-    ".": {
-      "import": "./cjs/index.js",
-      "require": "./cjs/index.js"
-    },
-    "./apis": {
-      "import": "./cjs/apis/index.js",
-      "require": "./cjs/apis/index.js"
-    },
-    "./init": {
-      "import": "./cjs/init/index.js",
-      "require": "./cjs/init/index.js"
-    },
-    "./router": {
-      "import": "./cjs/router/index.js",
-      "require": "./cjs/router/index.js"
-    },
-    "./utils": {
-      "import": "./cjs/utils/index.js",
-      "require": "./cjs/utils/index.js"
-    },
-    "./Formatters": {
-      "import": "./cjs/Formatters/index.js",
-      "require": "./cjs/Formatters/index.js"
-    }
-  },
+  "module": "esm/index.js",
   "scripts": {
+    "build:esm": "tsc -p build/tsconfig.esm.json",
     "build:cjs": "tsc -p build/tsconfig.cjs.json",
     "build:umd": "rollup -c build/rollup.config.mjs",
     "build:bundle": "npm run build:cjs && npm run build:umd",
@@ -37,11 +13,12 @@
     "zip": "npm pack",
     "prepublish": "npm run clean && npm run build:bundle && npm run test",
     "test": "jest --coverage",
-    "build": "npm run build:bundle && npm run zip",
-    "clean": "rm -rf dist cjs",
+    "build": "npm run clean && npm run build:bundle && npm run zip",
+    "clean": "rm -rf dist cjs esm",
     "deploy": "node scripts/deploy.js"
   },
   "files": [
+    "esm",
     "cjs",
     "dist"
   ],

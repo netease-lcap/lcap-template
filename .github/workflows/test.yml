@@ -26,6 +26,6 @@ jobs:
         run: pnpm i
 
       - name: Run unit tests
-        run: cd packages/core && pnpm test
+        run: pnpm run test
         shell: bash
 
