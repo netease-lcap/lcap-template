@@ -30,6 +30,7 @@ dist/
 esm/
 umd/
 cjs/
+typings/
 
 coverage/
 

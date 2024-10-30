@@ -15,7 +15,8 @@ import {
     ServicesPlugin,
     UtilsPlugin,
     ProcessPlugin,
-    initRouter,
+    createRouter,
+
     microFrontend,
     filterRoutes,
     parsePath,
@@ -144,7 +145,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
         return baseResourcePaths.includes(completePath) || completeRedirectPath;
     });
 
-    const router = initRouter(baseRoutes);
+    const router = createRouter(baseRoutes);
     const fnName = 'beforeRouter';
     if (fnName && metaData.frontendEvents[fnName]) {
         evalWrap.bind(window)(metaData, fnName);
