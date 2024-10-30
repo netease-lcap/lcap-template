@@ -1,5 +1,6 @@
 import { encodeUrl, downloadClick } from '@lcap/core-template';
 
+
 export function destination(url, target = '_self') {
     if (target === '_self') {
         // 修复访问路径为默认首页 / 时跳转可能失效的问题

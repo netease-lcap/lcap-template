@@ -4,12 +4,13 @@ import CryptoJS from "crypto-js";
 import { initService as initConfigurationService } from "../../apis/configuration";
 import { initService as initIoService } from "../../apis/io";
 import { initService as initLowauthService } from "../../apis/lowauth";
+import { initService as initLogService } from '../../apis/log';
 
 import Config from "../../config";
 
-import authService from "../auth/authService";
+import { authService } from "../auth";
 
-import { navigateToUserInfoPage } from "./wx";
+import { navigateToUserInfoPage, navigateToUserPhonePage, navigateScanCodePage, navigateLocationPage } from "./wx";
 
 window.CryptoJS = CryptoJS;
 
@@ -264,6 +265,34 @@ export async function getUserList(query) {
   return res;
 }
 
+/**
+ * 上报日志
+ */
+export async function logReport(data) {
+  try {
+    const res = await initLogService().logReport({
+      body: data,
+    });
+
+    return res;
+  } catch (error) {
+    return error;
+  }
+}
+
+// 国际化
+export function setI18nLocale(newLocale) {
+  // 修改local中的存储的语言标识
+  localStorage.i18nLocale = newLocale;
+  // 重新加载页面
+  window.location.reload();
+}
+
+export function getI18nList() {
+  // 在ide中拼接好
+  return window.$global.i18nInfo.I18nList || [];
+}
+
 // 下方为H5端的方法
 export function getIsMiniApp() {
   return window.__wxjs_environment === "miniprogram";
@@ -281,18 +310,34 @@ export function getWeChatNickName() {
   return localStorage.getItem("_wx_nickname");
 }
 
+export function getWeChatPhone() {
+  return localStorage.getItem('_wx_phone');
+}
+
+export function getWeChatScanCode() {
+  const data = localStorage.getItem('_wx_scan_code');
+  localStorage.setItem('_wx_scan_code', '');
+  return data;
+}
+
+export function getWeChatLocation() {
+  const data = localStorage.getItem('_wx_location');
+  localStorage.setItem('_wx_location', '');
+  return data;
+}
+
 export function navigateToUserInfo() {
   return navigateToUserInfoPage();
 }
 
-export function setI18nLocale(newLocale) {
-  // 修改local中的存储的语言标识
-  localStorage.i18nLocale = newLocale;
-  // 重新加载页面
-  window.location.reload();
+export function navigateToUserPhone() {
+  return navigateToUserPhonePage();
 }
 
-export function getI18nList() {
-  // 在ide中拼接好
-  return window.$global.i18nInfo.I18nList || [];
+export function navigateToScanCode() {
+  return navigateScanCodePage();
+}
+
+export function navigateToLocation() {
+  return navigateLocationPage();
 }

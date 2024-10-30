@@ -6,12 +6,7 @@ export * from './apis'
 
 export * from './init'
 
-import {
-  findNoAuthView,
-  filterAuthResources,
-  microFrontend,
-  userInfoGuard,
-} from './router'
+export * from './router'
 
 import Global, { global } from './global'
 
@@ -19,10 +14,6 @@ export {
   Config,
   setConfig,
 
-  findNoAuthView,
-  filterAuthResources,
-  microFrontend,
-  userInfoGuard,
   Global,
   global,
 };
