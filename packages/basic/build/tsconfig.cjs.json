@@ -4,5 +4,6 @@
     "module": "CommonJS",
     "declaration": true,
     "outDir": "../cjs"
-  }
+  },
+  "include": ["../src"]
 }

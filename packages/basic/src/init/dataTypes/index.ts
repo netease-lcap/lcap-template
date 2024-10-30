@@ -208,3 +208,5 @@ export {
 };
 
 export * as Tools from './tools';
+
+export * from './wx';

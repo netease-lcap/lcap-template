@@ -1,13 +1,13 @@
 import Vue from 'vue';
 import { setConfig } from '@lcap/core-template';
 
-import { getFrontendVariables, setGlobal } from './plugins/dataTypes';
+import { utils } from './plugins/dataTypes';
 import { destination } from './plugins/router';
 import { createRouter } from './router';
 
 // 设置core config
 setConfig({
-    Toast: {
+    toast: {
         show:
             Vue.prototype?.$toast?.show ||
             (() => {
@@ -19,11 +19,13 @@ setConfig({
                 console.warn('请在Vue.prototype上挂载$toast.error方法');
             }),
     },
-    setGlobal,
-    getFrontendVariables,
-    destination,
-    createRouter,
-    utils: {},
+    router: {
+        destination,
+        createRouter,
+    },
+    utils: {
+        ...utils,
+    },
     configureRequest(options, axios) {
         axios.interceptors.response.use(
             function onSuccess(response) {

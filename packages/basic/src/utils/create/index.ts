@@ -24,21 +24,30 @@ const formatContentType = function (contentType, data) {
   return map[contentType] ? map[contentType](data) : data;
 };
 
-const parseCookie = (str) =>
-  str
+const parseCookie = (str) => {
+  if (typeof str !== "string") {
+    return {};
+  }
+
+  return str
     .split(";")
     .map((v) => v.split("="))
     .reduce((acc, v) => {
-      const getValue = s =>{
+      const getValue = (s) =>{
         try {
-          return decodeURIComponent(s.trim())
+          return decodeURIComponent(s?.trim())
         } catch (error) {
-          return s.trim()
+          return s?.trim()
         }
       }
-      acc[getValue(v[0])] = getValue(v[1]);
+      // 有key才保留
+      if (getValue(v[0])) {
+        acc[getValue(v[0])] = getValue(v[1]);
+      }
+
       return acc;
     }, {});
+}
 
 const foramtCookie = (cookieStr) => {
   const result = {};
@@ -164,9 +173,11 @@ export function genBaseOptions(requestInfo) {
     url: path,
     data,
     headers,
-    withCredentials: !baseURL,
+    withCredentials: config.withCredentials ?? !baseURL,
     xsrfCookieName: "csrfToken",
     xsrfHeaderName: "x-csrf-token",
+    onUploadProgress: typeof config.onUploadProgress === 'function' ? config.onUploadProgress : () => {},
+    onDownloadProgress: typeof config.onDownloadProgress === 'function' ? config.onDownloadProgress : () => {},
   }
 }
 
@@ -197,6 +208,11 @@ const requester = function (requestInfo) {
   const options = genBaseOptions(requestInfo);
   if (typeof window.axiosOptionsSetup === 'function') {
     window.axiosOptionsSetup(options);
+  }
+
+  // 自定义请求信息
+  if (typeof Config.configureRequest === "function") {
+    Config.configureRequest(options, axios);
   }
 
   const req = axios(options);
@@ -265,8 +281,6 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
     const fixServiceConfig = serviceConfig || {};
     fixServiceConfig.config = fixServiceConfig.config || {};
     Object.assign(fixServiceConfig.config, {
-        // httpCode: true,
-        // httpError: true,
         shortResponse: true,
         concept: 'Logic',
     });
@@ -338,7 +352,8 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
                   if (!config.noErrorTip) {
                       // instance.show('系统错误，请查看日志！');
                       Config.toast.error('系统错误，请查看日志！');
-                      return;
+                      // 得抛错，否则会走成功回调，然后shortResponse会报错
+                      throw err;
                   }
               }
               if (window.LcapMicro?.loginFn) {
@@ -392,10 +407,6 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
         },
     };
     serviceConfig.config.lcapLocation = true;
-    // shortResponse 不能加，因为复用了同一个service
-    // service.postConfig.set('shortResponse', function (response, params, requestInfo) {
-    //   return response.data?.Data !== undefined ? response.data?.Data : response.data;
-    // });
     
     let logicsInstance=  service.generator(newApiSchemaMap, dynamicServices, serviceConfig);
     let mockInstance ={}
