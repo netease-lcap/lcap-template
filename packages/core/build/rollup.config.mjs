@@ -31,6 +31,11 @@ export default {
     commonjs(),
     nodePolyfills(),
   ],
-  external: ['vue'],
+  external: [
+    'vue',
+    'vue-router',
+    'lodash/isEmpty',
+    'date-fns'
+  ],
   treeshake: false
 };

@@ -1,4 +1,4 @@
-import { storage } from '@lcap/basic-template/cjs/utils';
+import { storage } from '@lcap/basic-template';
 import isEmpty from 'lodash/isEmpty';
 
 const ACTION_LOCAL_CACHE_VARIABLE_TYPE = {
