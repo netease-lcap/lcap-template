@@ -23,14 +23,14 @@
 	"GetUser": {
 		"url": {
 			"method": "get",
-			"path": "/api/user/system/getUser",
+			"path": "/api/system/user/getUser",
 			"query": {}
 		}
 	},
 	"GetUserResources": {
 		"url": {
 			"method": "get",
-			"path": "/api/user/system/getUserResources",
+			"path": "/api/system/user/getUserResources",
 			"query": {}
 		}
 	},

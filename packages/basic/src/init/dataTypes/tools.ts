@@ -1,4 +1,4 @@
-import { formatISO } from "date-fns";
+import { format } from "date-fns";
 import momentTZ from "moment-timezone";
 import moment from "moment";
 
@@ -910,15 +910,11 @@ export const fromString = (variable, typeKey) => {
   const isPrimitive = isDefPrimitive(typeKey);
   const { typeName } = typeDefinition || {};
   // 日期
-  if (typeName === "DateTime" && isValidDate(variable, DateTimeReg)) {
+  if (typeName === "DateTime") {
     const date = safeNewDate(variable);
-    const outputDate = formatISO(date, {
-      format: "extended",
-      // @ts-ignore 忽略吧，我也不知道为什么要传这个
-      fractionDigits: 3,
-    });
+    const outputDate = format(date, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
     return outputDate;
-  } else if (typeName === "Date" && isValidDate(variable, DateReg)) {
+  } else if (typeName === "Date") {
     return moment(safeNewDate(variable)).format('YYYY-MM-DD');
   } else if (typeName === "Time" && TimeReg.test(variable)) {
     // ???

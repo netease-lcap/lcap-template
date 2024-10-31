@@ -7,7 +7,6 @@ import {
   subDays,
   addMonths,
   format,
-  formatRFC3339,
   isValid,
   differenceInYears,
   differenceInQuarters,
@@ -66,12 +65,12 @@ import {
   mapAsync,
   filterAsync,
   findIndexAsync,
-  sortAsync,
   safeNewDate,
-  getAppTimezone, 
+  getAppTimezone,
   isValidTimezoneIANAString,
   naslDateToLocalDate,
   convertJSDateInTargetTimeZone,
+  sortRule
 } from "./helper";
 
 let enumsMap = {};
@@ -190,13 +189,13 @@ export const utils = {
       // v3.3 老应用升级的场景，UTC 零时区，零时区展示上用 'Z'，后向兼容
       // v3.4 新应用，使用默认时区时选项，tz 为空
       if (!tz) {
-        const d = momentTZ.tz(v, "UTC").format("YYYY-MM-DDTHH:mm:ss.SSS") + "Z";
+        const d = momentTZ.tz(v, "UTC").format("YYYY-MM-DDTHH:mm:ss.SSSZ");
         return JSON.stringify(d);
       }
       // 新应用，设置为零时区，零时区展示上用 'Z'，后向兼容.
       if (tz === "UTC") {
         // TODO: 想用 "+00:00" 展示零时区
-        const d = momentTZ.tz(v, "UTC").format("YYYY-MM-DDTHH:mm:ss.SSS") + "Z";
+        const d = momentTZ.tz(v, "UTC").format("YYYY-MM-DDTHH:mm:ss.SSSZ");
         return JSON.stringify(d);
       }
       // 新应用，设置为其他时区
@@ -273,9 +272,13 @@ export const utils = {
   },
   Set(arr, index, item) {
     if (isArrayInBounds(arr, index)) {
+      // 兼容Vue版本的实现， 不知道为啥要用这个
+      if (Global.set && typeof Global.set === "function") {
+        return Global.set(arr, index, item);
+      }
+
       arr[index] = item;
       return arr;
-      // return Global.prototype.set(arr, index, item);
     }
   },
   Contains(arr, item) {
@@ -426,36 +429,30 @@ export const utils = {
           nullRemoved[0]
         );
   },
-  async ListSortAsync(arr, callback, sort) {
-    const sortRule = (valueA, valueB) => {
-      if (
-        Number.isNaN(valueA) ||
-        Number.isNaN(valueB) ||
-        typeof valueA === "undefined" ||
-        typeof valueB === "undefined" ||
-        valueA === null ||
-        valueB === null
-      ) {
-        return 1;
-      } else {
-        if (valueA >= valueB) {
-          if (sort) {
-            return 1;
-          }
-          return -1;
-        } else {
-          if (sort) {
-            return -1;
-          }
-          return 1;
-        }
+  ListRange(start, end, step) {
+    if (step === 0) {
+      return [];
+    }
+    const result = [];
+    if (step > 0) {
+      for (let i = start; i < end; i += step) {
+        result.push(i);
       }
-    };
-    if (Array.isArray(arr)) {
-      if (typeof callback === "function") {
-        return await sortAsync(arr, sortRule)(callback);
+    } else {
+      for (let i = start; i > end; i += step) {
+        result.push(i);
       }
     }
+    return result;
+  },
+  ListRepeat(item, length) {
+    if (typeof length !== "number") {
+      return [];
+    }
+    if (length <= 0) {
+      return [];
+    }
+    return Array(length).fill(item);
   },
   ListFind(arr, by) {
     if (Array.isArray(arr)) {
@@ -610,13 +607,20 @@ export const utils = {
   },
   MapPut(map, key, value) {
     if (isObject(map)) {
-      // Global.prototype.$set(map, key, value);
+      if (Global.prototype.$set && typeof Global.prototype.$set === "function") {
+        Global.prototype.$set(map, key, value);
+        return;
+      }
+
       _set(map, key, value);
     }
   },
   MapRemove(map, key) {
     if (isObject(map)) {
-      // Global.prototype.delete(map, key);
+      if (Global.delete && typeof Global.delete === "function") {
+        Global.delete(map, key);
+        return;
+      }
       delete map[key];
     }
   },
@@ -741,38 +745,61 @@ export const utils = {
     if (Array.isArray(arr)) {
       arr.reverse();
     }
+    return arr;
   },
-  ListSort(arr, callback, sort) {
-    if (Array.isArray(arr)) {
-      if (typeof callback === "function") {
-        arr.sort((a, b) => {
-          const valueA = callback(a);
-          const valueB = callback(b);
-          if (
-            Number.isNaN(valueA) ||
-            Number.isNaN(valueB) ||
-            typeof valueA === "undefined" ||
-            typeof valueB === "undefined" ||
-            valueA === null ||
-            valueB === null
-          ) {
-            return 1;
-          } else {
-            if (valueA >= valueB) {
-              if (sort) {
-                return 1;
-              }
-              return -1;
-            } else {
-              if (sort) {
-                return -1;
-              }
-              return 1;
-            }
+  ListSort(arr, ...callbacks) {
+    if (!Array.isArray(arr) || !Array.isArray(callbacks)) return arr;
+    return arr.sort((a, b) => {
+      if (typeof a === "object" && typeof b === "object") {
+        for (let cb of callbacks) {
+          const { by: valueA, asc } = cb(a);
+          const { by: valueB } = cb(b);
+          if (valueA !== valueB) {
+            return sortRule(valueA, valueB, asc);
           }
-        });
+        }
+        return 0;
+      } else {
+        const cb = callbacks[callbacks.length - 1];
+        const { by: valueA, asc } = cb(a);
+        const { by: valueB } = cb(b);
+        if (valueA !== valueB) {
+          return sortRule(valueA, valueB, asc);
+        }
+        return 0;
       }
-    }
+    });
+  },
+  async ListSortAsync(arr, ...callbacks) {
+    if (!Array.isArray(arr) || !Array.isArray(callbacks)) return arr;
+
+    const list = await Promise.all(
+      arr.map(async (item) => {
+        const criteria = await Promise.all(callbacks.map((cb) => cb(item)));
+        return { item, criteria };
+      })
+    );
+
+    list.sort((a, b) => {
+      if (typeof a?.item === "object" && typeof b?.item === "object") {
+        for (let i = 0; i < callbacks.length; i++) {
+          const { by: byA, asc: ascA } = a.criteria[i];
+          const { by: byB } = b.criteria[i];
+          if (byA !== byB) {
+            return sortRule(byA, byB, ascA);
+          }
+        }
+        return 0;
+      } else {
+        const index = callbacks.length - 1;
+        const { by: byA, asc: ascA } = a.criteria[index];
+        const { by: byB } = b.criteria[index];
+        if (byA !== byB) {
+          return sortRule(byA, byB, ascA);
+        }
+      }
+    });
+    return list.map(({ item }) => item);
   },
   ListFindAll(arr, callback) {
     if (Array.isArray(arr)) {
@@ -795,6 +822,7 @@ export const utils = {
         i++;
       }
     }
+    return arr;
   },
   // 随着 PageOf 失效，可删除
   ListSliceToPageOf(arr, page, size) {
@@ -968,15 +996,13 @@ export const utils = {
             // 构造 date 所在月的第一天
             const startOfMonth = new Date(moment(date).startOf('month').format('YYYY-MM-DD hh:mm:ss'));
             // 获取该天是周几
-            const wod = startOfMonth.getDay(); // 假设返回 1- 7，确认下
-            console.log(wod)
+            let wod = startOfMonth.getDay(); // 以为返回 1-7，实际返回 0-6；0 是星期天
+            wod = wod === 0 ? 7 : wod;
 
             const daysOfFirstWeek = 7 - wod + 1;
             if (date.getDate() <= daysOfFirstWeek) {
               return 1;
             } else {
-              console.log((date.getDate() - daysOfFirstWeek)/7)
-              console.log( Math.ceil((date.getDate() - daysOfFirstWeek) / 7))
               return Math.ceil((date.getDate() - daysOfFirstWeek) / 7) + 1;
             }
           }
@@ -1029,7 +1055,7 @@ export const utils = {
         break;
     }
     if (typeof dateString === "object" || this.isInputValidNaslDateTime(dateString)) {
-      return format(addDate, "yyyy-MM-dd HH:mm:ss");
+      return format(addDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
     } else {
       return format(addDate, "yyyy-MM-dd");
     }
@@ -1097,7 +1123,7 @@ export const utils = {
     );
     if (typeof startdatetr === "object" || startdatetr.includes("T")) {
       return filtereddate.map((date) =>
-        moment(date).format("YYYY-MM-DD HH:mm:ss")
+        moment(date).format("YYYY-MM-DDTHH:mm:ss.SSSZ")
       );
     } else {
       return filtereddate.map((date) => moment(date).format("YYYY-MM-DD"));
@@ -1232,7 +1258,7 @@ export const utils = {
   Convert(value, tyAnn) {
     if (tyAnn && tyAnn.typeKind === "primitive") {
       if (tyAnn.typeName === "DateTime")
-        return formatRFC3339(safeNewDate(value));
+        return format(safeNewDate(value), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
       else if (tyAnn.typeName === "Date")
         return format(safeNewDate(value), "yyyy-MM-dd");
       else if (tyAnn.typeName === "Time") {

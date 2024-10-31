@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import Formatter from './Formatter';
 
 /**
@@ -40,6 +41,10 @@ export class DateFormatter extends Formatter {
 
     format(value, pattern) {
         pattern = pattern || this.pattern;
+
+        if (pattern === `yyyy-MM-dd'T'HH:mm:ss.SSSxxx`) {
+            return format(value, pattern);
+        }
 
         if (value && !isNaN(value))
             value = +value;

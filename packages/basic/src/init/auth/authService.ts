@@ -18,9 +18,6 @@ export const getBaseHeaders = () => {
     return headers;
 };
 
-let userInfoPromise = null;
-let userResourcesPromise = null;
-
 // FIXME 替换成真实类型
 export type NASLUserInfo = { 
   UserName: string;
@@ -56,45 +53,55 @@ const Service: IService = {
     window.authService = authService;
   },
   getUserInfo() {
-    if (!userInfoPromise) {
-      if (window.appInfo.hasUserCenter) {
-        userInfoPromise = lowauthService.GetUser({
-          headers: getBaseHeaders(),
-          config: {
-            noErrorTip: true,
-          },
-        });
-      } else {
-        userInfoPromise = authService.GetUser({
-          headers: getBaseHeaders(),
-          config: {
-            noErrorTip: true,
-          },
-        });
-      }
-      userInfoPromise = userInfoPromise
-        .then((result) => {
-          const userInfo = result?.Data;
-          if (!userInfo?.UserId && userInfo?.userId) {
-            userInfo.UserId = userInfo.userId;
-            userInfo.UserName = userInfo.userName;
-          }
+    let userInfoPromise = null;
 
-          const $global = Global.prototype.$global || {};
-          const frontendVariables = $global.frontendVariables || {};
-          frontendVariables.userInfo = userInfo;
-          $global.userInfo = userInfo;
-
-          return userInfo;
-        })
-        .catch((e) => {
-          userInfoPromise = null;
-          throw e;
-        });
+    if (window.appInfo.hasUserCenter) {
+      userInfoPromise = lowauthService.GetUser({
+        headers: getBaseHeaders(),
+        config: {
+          noErrorTip: true,
+        },
+      });
+    } else {
+      userInfoPromise = authService.GetUser({
+        headers: getBaseHeaders(),
+        config: {
+          noErrorTip: true,
+        },
+      });
     }
+    userInfoPromise = userInfoPromise
+      .then((result) => {
+        // 兼容新的返回格式
+        let userInfo;
+        if (result?.data?.Data) {
+          userInfo = result.data.Data;
+        } else {
+          userInfo = result?.Data;
+        }
+
+        if (!userInfo?.UserId && userInfo?.userId) {
+          userInfo.UserId = userInfo.userId;
+          userInfo.UserName = userInfo.userName;
+        }
+
+        const $global = Global.prototype.$global || {};
+        const frontendVariables = $global.frontendVariables || {};
+        frontendVariables.userInfo = userInfo;
+        $global.userInfo = userInfo;
+
+        return userInfo;
+      })
+      .catch((e) => {
+        userInfoPromise = null;
+        throw e;
+      });
+    
     return userInfoPromise;
   },
   getUserResources(DomainName) {
+    let userResourcesPromise = null;
+
     if (window.appInfo.hasAuth) {
       userResourcesPromise = lowauthService
         .GetUserResources({
@@ -106,11 +113,14 @@ const Service: IService = {
           },
         })
         .then((result) => {
+          // 兼容新的返回格式
+          const data = result?.data || result;
+
           let resources = [];
           // 初始化权限项
           _map = new Map();
-          if (Array.isArray(result)) {
-            resources = result.filter(
+          if (Array.isArray(data)) {
+            resources = data.filter(
               (resource) => resource?.resourceType === "ui"
             );
             resources.forEach((resource) =>
@@ -194,7 +204,7 @@ const Service: IService = {
     const sleep = (t) => new Promise((r) => setTimeout(r, t));
 
     if (window.appInfo.hasUserCenter) {
-      const logoutUrl = await this.getKeycloakLogoutUrl();
+      const logoutUrl = await Service.getKeycloakLogoutUrl();
       localStorage.setItem("logoutUrl", logoutUrl);
       if (logoutUrl) {
         window.location.href = logoutUrl;
@@ -211,7 +221,7 @@ const Service: IService = {
           });
       }
     } else {
-      const logoutUrl = await this.getKeycloakLogoutUrl();
+      const logoutUrl = await Service.getKeycloakLogoutUrl();
       localStorage.setItem("logoutUrl", logoutUrl);
       if (logoutUrl) {
         window.location.href = logoutUrl;
@@ -258,7 +268,7 @@ const Service: IService = {
    * 初始化权限服务
    */
   init(domainName) {
-    return this.getUserInfo().then(() => this.getUserResources(domainName));
+    return Service.getUserInfo().then(() => Service.getUserResources(domainName));
   },
   /**
    * 是否有权限

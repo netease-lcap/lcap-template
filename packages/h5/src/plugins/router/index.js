@@ -1,5 +1,4 @@
-import { encodeUrl, downloadClick } from '@lcap/core-template';
-import { navigateTo,isMiniApp } from '../common/wx';
+import { encodeUrl, downloadClick, navigateTo, isMiniApp } from '@lcap/core-template';
 
 export function destination(url, target = '_self') {
     if (!url) {

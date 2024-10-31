@@ -14,7 +14,9 @@ import {
     RouterPlugin,
     ServicesPlugin,
     UtilsPlugin,
-    initRouter,
+    ProcessPlugin,
+    createRouter,
+
     microFrontend,
     filterRoutes,
     parsePath,
@@ -30,6 +32,8 @@ import VueI18n from 'vue-i18n';
 import App from './App.vue';
 
 import '@/assets/css/index.css';
+
+Vue.config.productionTip = false
 
 Vue.prototype.$sleep = function () {
     return new Promise((resolve) => {
@@ -103,6 +107,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
     Vue.use(AuthPlugin);
     Vue.use(UtilsPlugin, metaData);
     Vue.use(DataTypesPlugin, { ...metaData, i18nInfo: appConfig.i18nInfo });
+    Vue.use(ProcessPlugin);
 
     // 已经获取过权限接口
     Vue.prototype.hasLoadedAuth = false;
@@ -140,7 +145,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
         return baseResourcePaths.includes(completePath) || completeRedirectPath;
     });
 
-    const router = initRouter(baseRoutes);
+    const router = createRouter(baseRoutes);
     const fnName = 'beforeRouter';
     if (fnName && metaData.frontendEvents[fnName]) {
         evalWrap.bind(window)(metaData, fnName);

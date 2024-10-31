@@ -14,12 +14,14 @@ import {
     RouterPlugin,
     ServicesPlugin,
     UtilsPlugin,
+    ProcessPlugin,
+    createRouter,
+
     filterRoutes,
     parsePath,
     getBasePath,
     filterAuthResources,
     findNoAuthView,
-    initRouter,
     createService,
 } from '@lcap/core-template';
 
@@ -96,6 +98,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
     Vue.use(AuthPlugin, appConfig);
     Vue.use(UtilsPlugin, metaData);
     Vue.use(DataTypesPlugin, { ...metaData, i18nInfo: appConfig.i18nInfo });
+    Vue.use(ProcessPlugin);
 
     // 已经获取过权限接口
     Vue.prototype.hasLoadedAuth = false;
@@ -131,7 +134,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
         return baseResourcePaths.includes(completePath) || completeRedirectPath;
     });
 
-    const router = initRouter(baseRoutes);
+    const router = createRouter(baseRoutes);
     const fnName = 'beforeRouter';
     if (fnName && metaData.frontendEvents[fnName]) {
         evalWrap.bind(window)(metaData, fnName);

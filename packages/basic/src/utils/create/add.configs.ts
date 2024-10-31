@@ -31,10 +31,32 @@ export function httpCode(response, params, requestInfo) {
 }
 
 export function shortResponse(response, params, requestInfo) {
+    // 原logic接口返回不变
     if (requestInfo.config?.concept === 'Logic') {
-        return response.data?.Data !== undefined ? response.data?.Data : response.data;
+      return response.data?.Data !== undefined ? response.data?.Data : response.data;
     }
-    return response.data;
+    
+    const data = response?.data;
+
+    // 兼容新Code、Data、Message
+    if (data?.Code !== undefined) {
+        data.code = data.Code;
+    }
+    if (data?.Data !== undefined) {
+        data.data = data.Data;
+    }
+    if (data?.Message !== undefined) {
+        data.message = data.Message;
+        data.msg = data.Message;
+    }
+
+
+    return data;
+}
+
+// 给流程系统接口使用
+export const shortResponseForSystemProcess = (response) => {
+  return response?.data || response?.Data || response;
 }
 
 export const httpError = {
@@ -97,4 +119,5 @@ export function addConfigs(service) {
   service.postConfig.set("httpCode", httpCode);
   service.postConfig.set("httpError", httpError);
   service.postConfig.set("shortResponse", shortResponse);
+  service.postConfig.set("shortResponseForSystemProcess", shortResponseForSystemProcess);
 }

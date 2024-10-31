@@ -2,8 +2,9 @@
   "name": "root",
   "private": true,
   "description": "低代码应用模板",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "scripts": {
+    "test": "pnpm --filter \"./packages/*\" run test",
     "change:version": "node ./scripts/version",
     "build": "pnpm --filter \"./packages/*\" --filter \"./mini-folder/*\" run build",
     "deploy": "pnpm --filter \"./packages/*\" --filter \"./mini-folder/*\" run deploy"
