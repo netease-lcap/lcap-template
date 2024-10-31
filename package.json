@@ -6,8 +6,8 @@
   "scripts": {
     "test": "pnpm --filter \"./packages/*\" run test",
     "change:version": "node ./scripts/version",
-    "build": "pnpm --filter \"./packages/*\" run build",
-    "deploy": "pnpm --filter \"./packages/*\" run deploy"
+    "build": "pnpm --filter \"./packages/*\" --filter \"./mini-folder/*\" run build",
+    "deploy": "pnpm --filter \"./packages/*\" --filter \"./mini-folder/*\" run deploy"
   },
   "keywords": [],
   "author": "",
