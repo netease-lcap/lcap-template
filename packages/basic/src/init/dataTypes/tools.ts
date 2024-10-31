@@ -141,7 +141,8 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
         if (Object.prototype.toString.call(parsedValue) === "[object String]" && !defaultCode?.executeCode) {
           parsedValue = `\`${parsedValue.replace(/['"`\\]/g, (m) => `\\${m}`)}\``;
         }
-        const needGenInitFromSchema = typeAnnotation && !["primitive", "union"].includes(typeAnnotation.typeKind);
+        const needGenInitFromSchema =
+          typeAnnotation && !["primitive"].includes(typeAnnotation.typeKind);
         const sortedTypeKey = genSortedTypeKey(typeAnnotation);
         code += `this.${propertyName} = `;
         if (needGenInitFromSchema) {
@@ -200,11 +201,9 @@ export function isInstanceOf(variable, typeKey) {
   const { concept, typeKind, typeNamespace, typeName, typeArguments } = typeDefinition || {};
   const isPrimitive = isDefPrimitive(typeKey);
   if (typeKind === "union") {
-    let matchedIndex = -1;
-    if (Array.isArray(typeArguments)) {
-      matchedIndex = typeArguments.findIndex((typeArg) => isInstanceOf(variable, genSortedTypeKey(typeArg)));
-    }
-    return matchedIndex !== -1;
+    return !!typeArguments?.some((typeArg) =>
+      isInstanceOf(variable, genSortedTypeKey(typeArg))
+    );
   } else if (concept === "Enum") {
     // 枚举
     const { enumItems } = typeDefinition;
@@ -355,6 +354,122 @@ const isTypeMatch = (typeKey, value) => {
   return isMatch;
 };
 
+function exactMatchShapeAgainstDef(value, def: any): boolean {
+  function isMatchForPrimitive(value, ty) {
+    const valueTypeStr = Object.prototype.toString.call(value);
+    // 检查enum类型
+    if (ty.typeKind === "primitive" && ty.concept === "Enum") {
+      return valueTypeStr === "[object String]";
+    }
+    if (ty.typeKind !== "primitive") {
+      return false;
+    }
+    const typeKey = `${ty.typeNamespace}.${ty.typeName}`;
+    return (
+      (ty === "nasl.core.Boolean" && valueTypeStr === "[object Boolean]") ||
+      (isDefNumber(typeKey) && valueTypeStr === "[object Number]") ||
+      (isDefString(typeKey) && valueTypeStr === "[object String]")
+    );
+  }
+  if (!def) {
+    return false;
+  }
+  if (value === null) {
+    return true;
+  }
+  if (def.typeKind === "primitive") {
+    return isMatchForPrimitive(value, def);
+  } else if (def.typeKind === "union") {
+    for (const ty of def.typeArguments) {
+      if (exactMatchShapeAgainstDef(value, ty)) {
+        return true;
+      }
+    }
+    return false;
+  } else if (def.typeKind === "generic") {
+    const typeKey = `${def.typeNamespace}.${def.typeName}`;
+    return isInstanceOf(value, typeKey);
+  } else if (def.properties) {
+    const properties = def.properties;
+    if (properties) {
+      return properties.every((prop) => {
+        const propValue = value[prop.name];
+        if (propValue === undefined) {
+          return false;
+        }
+        return exactMatchShapeAgainstDef(propValue, prop.typeAnnotation);
+      });
+    }
+    return false;
+  }
+  return false;
+}
+
+function inferTypeConstructorAgainstTypeKey(value, typeKey) {
+  const def = typeDefinitionMap[typeKey];
+  if (!def) {
+    return undefined;
+  }
+  if (def.typeKind === "primitive" && def.concept !== "Enum") {
+    // 视作没有Constructor
+    return undefined;
+  }
+  if (def.typeKind === "union") {
+    // Union的所有分支对应的类型构造器，从左到右匹配：
+    // 1. 对当前类型构造器，看它有无定义tag字段：有tag字段且值和value对应字段相同，直接输出当前类型构造器；否则，跳过。
+    // 2. 先判断结构是否一致（复合类型递归看properties属性；Primitive类型直接判断即可）。结构相同的时候，当前类型构造器作为候选；否则，跳过。
+    // 输出：第一个候选，或者无匹配
+    let candidate = undefined;
+    for (const ty of def.typeArguments) {
+      const curTypeKey = `${ty.typeNamespace}.${ty.typeName}`;
+      const curDef = typeDefinitionMap[curTypeKey];
+      if (
+        ty.typeKind === "primitive" &&
+        exactMatchShapeAgainstDef(value, curDef)
+      ) {
+        // 匹配上了Primitve类型
+        return typeMap[curTypeKey];
+      } else if (ty.typeKind === "union") {
+        // 不可以出现嵌套union类型
+        return undefined;
+      } else if (ty.typeKind === "reference") {
+        const properties = typeDefinitionMap[curTypeKey]?.properties;
+        if (properties) {
+          // 如果存在字段定义，那么尝试获取第一个tag字段
+          const tagProperty = properties
+            .flatMap((prop) => {
+              const defaultValue = prop.defaultValue;
+              const hardcodedPropertyName = "errorType";
+              if (
+                prop.name === hardcodedPropertyName &&
+                defaultValue?.expression?.concept === "StringLiteral"
+              ) {
+                return [
+                  // 注意：允许tagValue为undefined
+                  { name: prop.name, tagValue: defaultValue.expression.value },
+                ];
+              }
+              return [];
+            })
+            .at(0);
+          if (tagProperty) {
+            if (
+              tagProperty.tagValue === value?.[tagProperty.name] &&
+              exactMatchShapeAgainstDef(value, curDef)
+            ) {
+              return typeMap[curTypeKey];
+            }
+          } else if (exactMatchShapeAgainstDef(value, curDef)) {
+            candidate = typeMap[curTypeKey];
+          }
+        }
+      }
+    }
+    return candidate;
+  }
+  return typeMap[typeKey];
+}
+
 /**
  * 初始化变量
  * 基础类型不再进初始化方法
@@ -428,9 +543,15 @@ export const genInitData = (typeKey, defaultValue, parentLevel?) => {
       }
       return parsedValue;
     } else if (typeKey) {
-      const TypeConstructor = typeMap[typeKey];
-      if (TypeConstructor && !["primitive", "union"].includes(typeKind) && concept !== "Enum") {
-        if (concept === "Structure" && Object.prototype.toString.call(parsedValue) === "[object Object]") {
+      const TypeConstructor = inferTypeConstructorAgainstTypeKey(
+        parsedValue,
+        typeKey
+      );
+      if (TypeConstructor) {
+        if (
+          concept === "Structure" &&
+          Object.prototype.toString.call(parsedValue) === "[object Object]"
+        ) {
           parsedValue = jsonNameReflection(properties, parsedValue);
         }
         const instance = new TypeConstructor({
@@ -441,9 +562,7 @@ export const genInitData = (typeKey, defaultValue, parentLevel?) => {
       }
     }
   }
-  if (parsedValue !== undefined) {
-    return parsedValue;
-  }
+  return parsedValue;
 };
 
 /**
