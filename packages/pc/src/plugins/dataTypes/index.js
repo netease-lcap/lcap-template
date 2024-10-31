@@ -24,7 +24,7 @@ export const utils = {
         window.$global.i18nInfo.locale = newLocale;
         window.$global.i18nInfo.currentLocale = newLocale;
         // 修改当前语言名称
-        window.$global.i18nInfo.localeName = this.getI18nList().find((item) => item.id === newLocale)?.name;
+        window.$global.i18nInfo.localeName = window.$global.getI18nList().find((item) => item.id === newLocale)?.name;
         // 调用UI库更新当前语言
         //appVM.$i18n.locale = newLocale;
         // 调用UI库更新当前语言

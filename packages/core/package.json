@@ -8,9 +8,10 @@
     "clean": "rm -rf dist esm typings",
     "build:types": "tsc -p build/tsconfig.type.json",
     "build:rollup": "rollup -c build/rollup.config.mjs",
-    "build:bundle": "npm run build:rollup && npm run build:types",
+    "build": "npm run build:rollup && npm run build:types",
     "zip": "npm pack",
-    "build": "npm run clean && npm run build:bundle && npm run zip",
+    "prebuild": "npm run clean",
+    "postbuild": "npm run zip",
     "deploy": "node scripts/deploy.js"
   },
   "keywords": [],
