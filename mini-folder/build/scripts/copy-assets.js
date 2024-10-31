@@ -5,8 +5,10 @@ const { miniRootDir, projects } = require('../config');
 module.exports = function ({ root }) {
   for (const project of projects) {
     const projectRoot = path.resolve(miniRootDir, project.name);
-    const version = require(`${projectRoot}/package.json`).version;
-    const package = `${project.name}-mini@${version}`;
+    const packageJson = require(`${projectRoot}/package.json`);
+    const version = packageJson.version;
+    const name = packageJson.name;
+    const package = `${name}@${version}`;
 
     const targetDir = path.resolve(root, package);
     fs.mkdirSync(targetDir);

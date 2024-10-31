@@ -7,8 +7,9 @@ async function main() {
   for (const project of projects) {
     console.log(`Deploying ${project.name}...`)
     const root = `${miniRootDir}/.temp/${project.name}`
-    const name = project.packageName;
-    const version = require(`${miniRootDir}/${project.name}/package.json`).version
+    const packageJson = require(`${projectRoot}/package.json`);
+    const version = packageJson.version;
+    const name = `@lcap/${packageJson.name}`;
     
     const platform = argv.platform
     const username = argv.username
