@@ -65,12 +65,12 @@ import {
   mapAsync,
   filterAsync,
   findIndexAsync,
-  sortAsync,
   safeNewDate,
   getAppTimezone,
   isValidTimezoneIANAString,
   naslDateToLocalDate,
   convertJSDateInTargetTimeZone,
+  sortRule
 } from "./helper";
 
 let enumsMap = {};
@@ -429,39 +429,6 @@ export const utils = {
           nullRemoved[0]
         );
   },
-  async ListSortAsync(arr, callback, sort) {
-    const sortRule = (valueA, valueB) => {
-      if (
-        Number.isNaN(valueA) ||
-        Number.isNaN(valueB) ||
-        typeof valueA === "undefined" ||
-        typeof valueB === "undefined" ||
-        valueA === null ||
-        valueB === null
-      ) {
-        return 1;
-      } else {
-        if (valueA >= valueB) {
-          if (sort) {
-            return 1;
-          }
-          return -1;
-        } else {
-          if (sort) {
-            return -1;
-          }
-          return 1;
-        }
-      }
-    };
-    let newArr = arr;
-    if (Array.isArray(arr)) {
-      if (typeof callback === "function") {
-        newArr = await sortAsync(arr, sortRule)(callback);
-      }
-    }
-    return newArr;
-  },
   ListRange(start, end, step) {
     if (step === 0) {
       return [];
@@ -780,38 +747,59 @@ export const utils = {
     }
     return arr;
   },
-  ListSort(arr, callback, sort) {
-    if (Array.isArray(arr)) {
-      if (typeof callback === "function") {
-        arr.sort((a, b) => {
-          const valueA = callback(a);
-          const valueB = callback(b);
-          if (
-            Number.isNaN(valueA) ||
-            Number.isNaN(valueB) ||
-            typeof valueA === "undefined" ||
-            typeof valueB === "undefined" ||
-            valueA === null ||
-            valueB === null
-          ) {
-            return 1;
-          } else {
-            if (valueA >= valueB) {
-              if (sort) {
-                return 1;
-              }
-              return -1;
-            } else {
-              if (sort) {
-                return -1;
-              }
-              return 1;
-            }
+  ListSort(arr, ...callbacks) {
+    if (!Array.isArray(arr) || !Array.isArray(callbacks)) return arr;
+    return arr.sort((a, b) => {
+      if (typeof a === "object" && typeof b === "object") {
+        for (let cb of callbacks) {
+          const { by: valueA, asc } = cb(a);
+          const { by: valueB } = cb(b);
+          if (valueA !== valueB) {
+            return sortRule(valueA, valueB, asc);
           }
-        });
+        }
+        return 0;
+      } else {
+        const cb = callbacks[callbacks.length - 1];
+        const { by: valueA, asc } = cb(a);
+        const { by: valueB } = cb(b);
+        if (valueA !== valueB) {
+          return sortRule(valueA, valueB, asc);
+        }
+        return 0;
       }
-    }
-    return arr;
+    });
+  },
+  async ListSortAsync(arr, ...callbacks) {
+    if (!Array.isArray(arr) || !Array.isArray(callbacks)) return arr;
+
+    const list = await Promise.all(
+      arr.map(async (item) => {
+        const criteria = await Promise.all(callbacks.map((cb) => cb(item)));
+        return { item, criteria };
+      })
+    );
+
+    list.sort((a, b) => {
+      if (typeof a?.item === "object" && typeof b?.item === "object") {
+        for (let i = 0; i < callbacks.length; i++) {
+          const { by: byA, asc: ascA } = a.criteria[i];
+          const { by: byB } = b.criteria[i];
+          if (byA !== byB) {
+            return sortRule(byA, byB, ascA);
+          }
+        }
+        return 0;
+      } else {
+        const index = callbacks.length - 1;
+        const { by: byA, asc: ascA } = a.criteria[index];
+        const { by: byB } = b.criteria[index];
+        if (byA !== byB) {
+          return sortRule(byA, byB, ascA);
+        }
+      }
+    });
+    return list.map(({ item }) => item);
   },
   ListFindAll(arr, callback) {
     if (Array.isArray(arr)) {

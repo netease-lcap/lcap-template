@@ -1,70 +1,379 @@
-import isEqual from 'lodash/isEqual';
-import fc from 'fast-check';
-
 import { utils as u } from '@/init/utils';
 
+const ascCallback = [
+  (item) => {
+    return { by: item, asc: true };
+  },
+];
 
+const descCallback = [
+  (item) => {
+    return { by: item, asc: false };
+  },
+];
 
-describe('List sort functions', () => {
-    test('List sort integers', () => {
-        // 测试点 1，升序
-        {
-            const ansAsc = [-100,-100,0,0,0,100,100]
-            const testArr1 = [-100, 0, 100, 0, 0, 100, -100]
-            const testArr1SortedAsc = u.ListSort(testArr1, item => item, true)
-            expect(JSON.stringify(ansAsc)).toEqual(JSON.stringify(testArr1))
-            expect(testArr1SortedAsc).toBeUndefined
-        }
+const multiCallback = [...ascCallback, ...descCallback];
 
-        // 测试点 2，降序
-        {
-            const ansDes = [100,100,0,0,0,-100,-100]
-            const testArr2 = [-100, 0, 100, 0, 0, 100, -100]
-            const testArr2SortedDes = u.ListSort(testArr2, item => item, false)
-            expect(JSON.stringify(ansDes)).toEqual(JSON.stringify(testArr2))
-            expect(testArr2SortedDes).toBeUndefined
-        }
-    });
+describe("ListSort functions", () => {
+  const testNumberArr = [-1, -1, 0, -5, 2, 3];
+  const ascNumberArr = [-5, -1, -1, 0, 2, 3];
+  const descNumberArr = [3, 2, 0, -1, -1, -5];
+  test("List sort integers", () => {
+    // 测试点 1，升序
+    {
+      const sortedArr = u.ListSort(testNumberArr, ...ascCallback);
+      expect(JSON.stringify(ascNumberArr)).toEqual(JSON.stringify(sortedArr));
+    }
+    // 测试点 2，降序
+    {
+      const sortedArr = u.ListSort(testNumberArr, ...descCallback);
+      expect(JSON.stringify(descNumberArr)).toEqual(JSON.stringify(sortedArr));
+    }
+    // 测试点 3，先升序，再降序
+    {
+      const sortedArr = u.ListSort(testNumberArr, ...multiCallback);
+      expect(JSON.stringify(descNumberArr)).toEqual(JSON.stringify(sortedArr));
+    }
+  });
 
-    test('List sort integers', () => {
-    // 测试点 3，升序
-        const obj1 = {name : "Zhang San", gender: "M"}
-        const obj2 = {name : "Li Si", gender: "M"}
-        const obj3 = {name : "Wang Wu", gender: "F"}
+  const testStringArr = ["a", "aaa", "aaaa", "aaaaaa", "aaaaaaaaa", "aaaaaaaaaaaa"];
+  const ascStringArr = ["a", "aaa", "aaaa", "aaaaaa", "aaaaaaaaa", "aaaaaaaaaaaa"];
+  const descStringArr = ["aaaaaaaaaaaa", "aaaaaaaaa", "aaaaaa", "aaaa", "aaa", "a"];
+  test("List sort strings", () => {
+    // 测试点 1，升序
+    {
+      const sortedArr = u.ListSort(testStringArr, ...ascCallback);
+      expect(JSON.stringify(ascStringArr)).toEqual(JSON.stringify(sortedArr));
+    }
+    // 测试点 2，降序
+    {
+      const sortedArr = u.ListSort(testStringArr, ...descCallback);
+      expect(JSON.stringify(descStringArr)).toEqual(JSON.stringify(sortedArr));
+    }
+    // 测试点 3，先升序，再降序
+    {
+      const sortedArr = u.ListSort(testStringArr, ...multiCallback);
+      expect(JSON.stringify(descStringArr)).toEqual(JSON.stringify(sortedArr));
+    }
+  });
 
-        // name 升序
-        const ansAsc = [obj2, obj3, obj1]
-        const testArr1 = [obj1, obj2, obj3]
-        u.ListSort(testArr1, item => item.name, true)
-        expect(JSON.stringify(ansAsc)).toEqual(JSON.stringify(testArr1))
-    });
+  const testPropertyArr = [
+    {
+      name: "a",
+      boolean: true,
+      number: 1,
+      decimal: 1.1,
+      date: "2024-01-01",
+      time: "00:00:00",
+      dateTime: "2024-01-01 00:00:00",
+      nullProperty: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+    {
+      name: "aaa",
+      boolean: true,
+      number: 3,
+      decimal: 1.3,
+      date: "2024-01-03",
+      time: "00:03:00",
+      dateTime: "2024-01-03 00:00:00",
+      nullProperty: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+    {
+      name: "aa",
+      boolean: false,
+      number: 2,
+      decimal: 1.2,
+      date: "2024-01-02",
+      time: "00:02:00",
+      dateTime: "2024-01-02 00:00:00",
+      nullProperty: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+    {
+      name: "aaaaaaa",
+      boolean: false,
+      number: 6,
+      decimal: 1.6,
+      date: "2024-01-06",
+      time: "00:06:00",
+      dateTime: "2024-01-06 00:00:00",
+      nullProperty: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+    {
+      name: "aaaa",
+      boolean: false,
+      number: 4,
+      decimal: 1.4,
+      date: "2024-01-04",
+      time: "00:04:00",
+      dateTime: "2024-01-04 00:00:00",
+      nullProperty: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+    {
+      name: "aaaaa",
+      boolean: true,
+      number: 5,
+      decimal: 1.5,
+      date: "2024-01-05",
+      time: "00:05:00",
+      dateTime: "2024-01-05 00:00:00",
+      nullProperty: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+  ];
+
+  const ascPropertyArr =
+    '[{"name":"a","boolean":true,"number":1,"decimal":1.1,"date":"2024-01-01","time":"00:00:00","dateTime":"2024-01-01 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aa","boolean":false,"number":2,"decimal":1.2,"date":"2024-01-02","time":"00:02:00","dateTime":"2024-01-02 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aaa","boolean":true,"number":3,"decimal":1.3,"date":"2024-01-03","time":"00:03:00","dateTime":"2024-01-03 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aaaa","boolean":false,"number":4,"decimal":1.4,"date":"2024-01-04","time":"00:04:00","dateTime":"2024-01-04 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aaaaa","boolean":true,"number":5,"decimal":1.5,"date":"2024-01-05","time":"00:05:00","dateTime":"2024-01-05 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aaaaaaa","boolean":false,"number":6,"decimal":1.6,"date":"2024-01-06","time":"00:06:00","dateTime":"2024-01-06 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}}]';
+
+  const descPropertyArr =
+    '[{"name":"aaaaaaa","boolean":false,"number":6,"decimal":1.6,"date":"2024-01-06","time":"00:06:00","dateTime":"2024-01-06 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aaaaa","boolean":true,"number":5,"decimal":1.5,"date":"2024-01-05","time":"00:05:00","dateTime":"2024-01-05 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aaaa","boolean":false,"number":4,"decimal":1.4,"date":"2024-01-04","time":"00:04:00","dateTime":"2024-01-04 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aaa","boolean":true,"number":3,"decimal":1.3,"date":"2024-01-03","time":"00:03:00","dateTime":"2024-01-03 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aa","boolean":false,"number":2,"decimal":1.2,"date":"2024-01-02","time":"00:02:00","dateTime":"2024-01-02 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"a","boolean":true,"number":1,"decimal":1.1,"date":"2024-01-01","time":"00:00:00","dateTime":"2024-01-01 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}}]';
+
+  // 对象内单属性排序
+  test.each([
+    ["name", "asc", ascPropertyArr],
+    ["name", "desc", descPropertyArr],
+    ["number", "asc", ascPropertyArr],
+    ["number", "desc", descPropertyArr],
+    ["decimal", "asc", ascPropertyArr],
+    ["decimal", "desc", descPropertyArr],
+    ["date", "asc", ascPropertyArr],
+    ["date", "desc", descPropertyArr],
+    ["time", "asc", ascPropertyArr],
+    ["time", "desc", descPropertyArr],
+    ["dateTime", "asc", ascPropertyArr],
+    ["dateTime", "desc", descPropertyArr],
+    [
+      "boolean",
+      "asc",
+      '[{"name":"aaaaaaa","boolean":false,"number":6,"decimal":1.6,"date":"2024-01-06","time":"00:06:00","dateTime":"2024-01-06 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aaaa","boolean":false,"number":4,"decimal":1.4,"date":"2024-01-04","time":"00:04:00","dateTime":"2024-01-04 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aa","boolean":false,"number":2,"decimal":1.2,"date":"2024-01-02","time":"00:02:00","dateTime":"2024-01-02 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aaaaa","boolean":true,"number":5,"decimal":1.5,"date":"2024-01-05","time":"00:05:00","dateTime":"2024-01-05 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aaa","boolean":true,"number":3,"decimal":1.3,"date":"2024-01-03","time":"00:03:00","dateTime":"2024-01-03 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"a","boolean":true,"number":1,"decimal":1.1,"date":"2024-01-01","time":"00:00:00","dateTime":"2024-01-01 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}}]',
+    ],
+    [
+      "boolean",
+      "desc",
+      '[{"name":"aaaaa","boolean":true,"number":5,"decimal":1.5,"date":"2024-01-05","time":"00:05:00","dateTime":"2024-01-05 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aaa","boolean":true,"number":3,"decimal":1.3,"date":"2024-01-03","time":"00:03:00","dateTime":"2024-01-03 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"a","boolean":true,"number":1,"decimal":1.1,"date":"2024-01-01","time":"00:00:00","dateTime":"2024-01-01 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aaaaaaa","boolean":false,"number":6,"decimal":1.6,"date":"2024-01-06","time":"00:06:00","dateTime":"2024-01-06 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aaaa","boolean":false,"number":4,"decimal":1.4,"date":"2024-01-04","time":"00:04:00","dateTime":"2024-01-04 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}},{"name":"aa","boolean":false,"number":2,"decimal":1.2,"date":"2024-01-02","time":"00:02:00","dateTime":"2024-01-02 00:00:00","nullProperty":null,"property9":null,"property10":[],"property11":{}}]',
+    ],
+  ])("List sort single Property with %s in %s order", (property, order, expectedArr) => {
+    const callback = [
+      (item) => {
+        return { by: item?.[property], asc: order === "asc" };
+      },
+    ];
+    const sortedArr = u.ListSort(testPropertyArr, ...callback);
+    expect(expectedArr).toEqual(JSON.stringify(sortedArr));
+  });
+
+  // 对象内多属性排序
+  const testMultiProperty = [
+    {
+      property1: "B",
+      property2: true,
+      property3: 2,
+      property4: 2.2,
+      property5: "2024-02-02",
+      property6: "00:00:00",
+      property7: "2024-01-01 00:00:00",
+      property8: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+    {
+      property1: "A",
+      property2: true,
+      property3: 1,
+      property4: 1.1,
+      property5: "2024-01-03",
+      property6: "00:03:00",
+      property7: "2024-01-03 00:00:00",
+      property8: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+    {
+      property1: "B",
+      property2: false,
+      property3: 2,
+      property4: 2.1,
+      property5: "2024-01-02",
+      property6: "00:02:00",
+      property7: "2024-01-02 00:00:00",
+      property8: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+    {
+      property1: "F",
+      property2: false,
+      property3: 2,
+      property4: 2.3,
+      property5: "2024-01-06",
+      property6: "00:06:00",
+      property7: "2024-01-06 00:00:00",
+      property8: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+    {
+      property1: "D",
+      property2: false,
+      property3: 2,
+      property4: 2.2,
+      property5: "2024-02-01",
+      property6: "00:04:00",
+      property7: "2024-01-04 00:00:00",
+      property8: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+    {
+      property1: "E",
+      property2: true,
+      property3: 5,
+      property4: 1.5,
+      property5: "2024-01-05",
+      property6: "00:05:00",
+      property7: "2024-01-05 00:00:00",
+      property8: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+    {
+      property1: "D",
+      property2: false,
+      property3: 2,
+      property4: 2.2,
+      property5: "2024-01-01",
+      property6: "00:04:00",
+      property7: "2024-01-04 00:00:00",
+      property8: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+    {
+      property1: "D",
+      property2: false,
+      property3: 2,
+      property4: 2.2,
+      property5: "2024-04-01",
+      property6: "00:04:00",
+      property7: "2024-01-04 00:00:00",
+      property8: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+    {
+      property1: "D",
+      property2: false,
+      property3: 2,
+      property4: 2.2,
+      property5: "2024-04-01",
+      property6: "00:04:00",
+      property7: "2024-01-04 00:00:00",
+      property8: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+    {
+      property1: "D",
+      property2: false,
+      property3: 2,
+      property4: 2.2,
+      property5: "2024-04-01",
+      property6: "00:04:00",
+      property7: "2024-01-04 00:00:00",
+      property8: null,
+      property9: null,
+      property10: [],
+      property11: {},
+    },
+  ];
+  const ascStructureListMultiExpect1 =
+    '[{"property1":"A","property2":true,"property3":1,"property4":1.1,"property5":"2024-01-03","property6":"00:03:00","property7":"2024-01-03 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"B","property2":false,"property3":2,"property4":2.1,"property5":"2024-01-02","property6":"00:02:00","property7":"2024-01-02 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"D","property2":false,"property3":2,"property4":2.2,"property5":"2024-01-01","property6":"00:04:00","property7":"2024-01-04 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"D","property2":false,"property3":2,"property4":2.2,"property5":"2024-02-01","property6":"00:04:00","property7":"2024-01-04 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"B","property2":true,"property3":2,"property4":2.2,"property5":"2024-02-02","property6":"00:00:00","property7":"2024-01-01 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"D","property2":false,"property3":2,"property4":2.2,"property5":"2024-04-01","property6":"00:04:00","property7":"2024-01-04 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"D","property2":false,"property3":2,"property4":2.2,"property5":"2024-04-01","property6":"00:04:00","property7":"2024-01-04 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"D","property2":false,"property3":2,"property4":2.2,"property5":"2024-04-01","property6":"00:04:00","property7":"2024-01-04 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"F","property2":false,"property3":2,"property4":2.3,"property5":"2024-01-06","property6":"00:06:00","property7":"2024-01-06 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"E","property2":true,"property3":5,"property4":1.5,"property5":"2024-01-05","property6":"00:05:00","property7":"2024-01-05 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}}]';
+  const ascStructureListMultiExpect2 =
+    '[{"property1":"A","property2":true,"property3":1,"property4":1.1,"property5":"2024-01-03","property6":"00:03:00","property7":"2024-01-03 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"F","property2":false,"property3":2,"property4":2.3,"property5":"2024-01-06","property6":"00:06:00","property7":"2024-01-06 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"D","property2":false,"property3":2,"property4":2.2,"property5":"2024-01-01","property6":"00:04:00","property7":"2024-01-04 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"D","property2":false,"property3":2,"property4":2.2,"property5":"2024-02-01","property6":"00:04:00","property7":"2024-01-04 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"B","property2":true,"property3":2,"property4":2.2,"property5":"2024-02-02","property6":"00:00:00","property7":"2024-01-01 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"D","property2":false,"property3":2,"property4":2.2,"property5":"2024-04-01","property6":"00:04:00","property7":"2024-01-04 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"D","property2":false,"property3":2,"property4":2.2,"property5":"2024-04-01","property6":"00:04:00","property7":"2024-01-04 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"D","property2":false,"property3":2,"property4":2.2,"property5":"2024-04-01","property6":"00:04:00","property7":"2024-01-04 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"B","property2":false,"property3":2,"property4":2.1,"property5":"2024-01-02","property6":"00:02:00","property7":"2024-01-02 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}},{"property1":"E","property2":true,"property3":5,"property4":1.5,"property5":"2024-01-05","property6":"00:05:00","property7":"2024-01-05 00:00:00","property8":null,"property9":null,"property10":[],"property11":{}}]';
+
+  // 整数、小数、日期参与排序
+  test.each([
+    ["property3", "asc", "property4", "asc", "property5", "asc", ascStructureListMultiExpect1],
+    ["property3", "asc", "property4", "desc", "property5", "asc", ascStructureListMultiExpect2],
+  ])(
+    "List sort multiple Properties with %s in %s order, %s in %s order, %s in %s order",
+    (property1, order1, property2, order2, property3, order3, expectedArr) => {
+      const callback = [
+        (item) => {
+          return { by: item?.[property1], asc: order1 === "asc" };
+        },
+        (item) => {
+          return { by: item?.[property2], asc: order2 === "asc" };
+        },
+        (item) => {
+          return { by: item?.[property3], asc: order3 === "asc" };
+        },
+      ];
+      const sortedArr = u.ListSort(testMultiProperty, ...callback);
+      expect(expectedArr).toEqual(JSON.stringify(sortedArr));
+    }
+  );
 });
 
-describe('ListSort property-based check', () => {
-    it('List sort 幂等性', () => {
-        fc.assert(
-            fc.property(fc.array(fc.integer()), (arr) => {
-                const arrCopy = JSON.parse(JSON.stringify(arr));
-                return isEqual(u.ListSort(arr), u.ListSort(u.ListSort(arrCopy)));
-            }),
-        );
-    });
+describe("ListSortAsync functions", () => {
+  const testNumberArr = [-1, -1, 0, -5, 2, 3];
+  const ascNumberArr = [-5, -1, -1, 0, 2, 3];
+  const descNumberArr = [3, 2, 0, -1, -1, -5];
 
-    it('ListSort 升序最小值等于 0 号元素', () => {
-        fc.assert(
-            fc.property(fc.array(fc.integer(), { minLength: 1 }), (arr) => {
-                u.ListSort(arr, item => item, true);
-                return u.ListMin(arr) === arr[0];
-            }),
-        );
-    });
+  const ascCallback = [
+    async (item) => {
+      return { by: item, asc: true };
+    },
+  ];
 
-    it('ListSort 降序最大值等于 0 号元素', () => {
-      fc.assert(
-          fc.property(fc.array(fc.integer(), { minLength: 1 }), (arr) => {
-              u.ListSort(arr, item => item, false);
-              return u.ListMax(arr) === arr[0];
-          }),
-      );
+  const descCallback = [
+    async (item) => {
+      return { by: item, asc: false };
+    },
+  ];
+
+  const multiCallback = [...ascCallback, ...descCallback];
+
+  test("List sort integers", async () => {
+    // 测试点 1，升序
+    {
+      const sortedArr = await u.ListSortAsync(testNumberArr, ...ascCallback);
+      expect(JSON.stringify(ascNumberArr)).toEqual(JSON.stringify(sortedArr));
+    }
+    // 测试点 2，降序
+    {
+      const sortedArr = await u.ListSortAsync(testNumberArr, ...descCallback);
+      expect(JSON.stringify(descNumberArr)).toEqual(JSON.stringify(sortedArr));
+    }
+    // 测试点 3，先升序，再降序
+    {
+      const sortedArr = await u.ListSortAsync(testNumberArr, ...multiCallback);
+      expect(JSON.stringify(descNumberArr)).toEqual(JSON.stringify(sortedArr));
+    }
   });
 });
