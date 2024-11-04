@@ -799,7 +799,9 @@ export const utils = {
         }
       }
     });
-    return list.map(({ item }) => item);
+    const result = list.map(({ item }) => item);
+    arr.splice(0, arr.length, ...result);
+    return result;
   },
   ListFindAll(arr, callback) {
     if (Array.isArray(arr)) {
