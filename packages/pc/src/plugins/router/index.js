@@ -24,6 +24,10 @@ export function destination(url, target = '_self') {
     }
 }
 
-export function back(delta = 1) {
-    this.$router.go(-delta);
+export function back() {
+    this.$router.go(-1);
+}
+
+export function go(delta) {
+    this.$router.go(delta);
 }

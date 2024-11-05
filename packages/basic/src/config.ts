@@ -8,7 +8,8 @@ type ConfigType = {
   utils: any;
   router: {
     destination?: (url: string, target: string) => void;
-    back?: (delta?: number) => void;
+    back?: () => void;
+    go?: (delta?: number) => void;
     createRouter?: (options: any) => any;
   };
   axios: {

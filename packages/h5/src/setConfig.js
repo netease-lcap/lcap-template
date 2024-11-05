@@ -2,7 +2,7 @@ import Vue from 'vue';
 import { setConfig } from '@lcap/core-template';
 
 import { utils } from './plugins/dataTypes';
-import { destination, back } from './plugins/router';
+import { destination, back, go } from './plugins/router';
 import { createRouter } from './router';
 
 // 设置core config
@@ -22,6 +22,7 @@ setConfig({
     router: {
         destination,
         back,
+        go,
         createRouter,
     },
     utils: {

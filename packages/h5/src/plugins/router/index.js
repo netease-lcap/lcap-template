@@ -26,11 +26,29 @@ export function destination(url, target = '_self') {
     }
 }
 
-export function back(delta = 1) {
+export function back() {
     if (isMiniApp) {
-        navigateBack({ delta });
+        navigateBack({ delta: 1 });
         return;
     }
 
-    this.$router.go(-delta);
+    this.$router.go(-1);
+}
+
+export function go(delta) {
+    // delta保留整数
+    delta = parseInt(delta);
+
+    // 小程序不支持go方法
+    if (isMiniApp) {
+        if (delta < 0) {
+            navigateBack({ delta: Math.abs(delta) });
+        } else {
+            console.warn('go: 小程序中不支持前进方法');
+        }
+
+        return;
+    }
+
+    this.$router.go(delta);
 }

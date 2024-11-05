@@ -2,7 +2,7 @@ import Vue from 'vue';
 import { setConfig } from '@lcap/core-template';
 
 import { utils } from './plugins/dataTypes/index';
-import { destination, back } from './plugins/router';
+import { destination, back, go } from './plugins/router';
 import { createRouter } from './router';
 
 setConfig({
@@ -21,6 +21,7 @@ setConfig({
     router: {
         destination,
         back,
+        go,
         createRouter
     },
     utils: {
