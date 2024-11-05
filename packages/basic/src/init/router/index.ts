@@ -11,6 +11,10 @@ function initRouter() {
       Config.router?.destination?.call(this, ...args);
     };
 
+    function $back(...args) {
+      Config.router?.back?.call(this, ...args);
+    }
+
     async function $link (url, target = "_self") {
       let realUrl;
       if (typeof url === "function") {
@@ -34,6 +38,7 @@ function initRouter() {
     }
 
     Global.prototype.$destination = $destination;
+    Global.prototype.$back = $back;
     Global.prototype.$link = $link;
     Global.prototype.$formatMicroFrontUrl = formatMicroFrontUrl;
     Global.prototype.$formatMicroFrontRouterPath = formatMicroFrontRouterPath;
@@ -45,6 +50,7 @@ function initRouter() {
       formatMicroFrontRouterPath: formatMicroFrontRouterPath,
       link: $link,
       destination: $destination,
+      back: $back,
     };
 }
 

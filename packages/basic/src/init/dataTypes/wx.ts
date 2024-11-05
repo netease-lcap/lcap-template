@@ -18,6 +18,14 @@ export const navigateTo = ({ url }) => {
     window.wx.miniProgram.navigateTo({ url: miniUrl });
 };
 
+export const navigateBack = ({
+  delta = 1
+}) => {
+  if (!isMiniApp) return;
+  
+  window.wx.miniProgram.navigateBack({ delta });
+}
+
 /* 跳转到头像昵称页面*/
 export const navigateToUserInfoPage = () => {
     if (!isMiniApp)

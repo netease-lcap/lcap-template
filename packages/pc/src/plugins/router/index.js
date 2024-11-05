@@ -23,3 +23,7 @@ export function destination(url, target = '_self') {
         downloadClick(url, target);
     }
 }
+
+export function back(delta = 1) {
+    this.$router.go(-delta);
+}

@@ -1,4 +1,4 @@
-import { encodeUrl, downloadClick, navigateTo, isMiniApp } from '@lcap/core-template';
+import { encodeUrl, downloadClick, navigateTo, navigateBack, isMiniApp } from '@lcap/core-template';
 
 export function destination(url, target = '_self') {
     if (!url) {
@@ -24,4 +24,13 @@ export function destination(url, target = '_self') {
     } else {
         downloadClick(url, target);
     }
+}
+
+export function back(delta = 1) {
+    if (isMiniApp) {
+        navigateBack({ delta });
+        return;
+    }
+
+    this.$router.go(-delta);
 }
