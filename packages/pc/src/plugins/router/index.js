@@ -1,7 +1,7 @@
 import { encodeUrl, downloadClick } from '@lcap/core-template';
 
 
-export function destination(url, target = '_self') {
+export function destination(url, target = '_self', replace = false) {
     if (target === '_self') {
         // 修复访问路径为默认首页 / 时跳转可能失效的问题
         if (url.startsWith('http')) {
@@ -14,10 +14,21 @@ export function destination(url, target = '_self') {
                 if (document.getElementById(hash)) {
                     document.getElementById(hash).scrollIntoView();
                 }
-                this.$router.push(url);
+
+                if (replace) {
+                    this.$router.replace(url);
+                } else {
+                    this.$router.push(url);
+                }
+
+                return;
             }
 
-            this.$router.push(url);
+            if (replace) {
+                this.$router.replace(url);
+            } else {
+                this.$router.push(url);
+            }
         }
     } else {
         downloadClick(url, target);

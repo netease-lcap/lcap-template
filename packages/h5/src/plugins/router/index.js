@@ -1,6 +1,6 @@
-import { encodeUrl, downloadClick, navigateTo, navigateBack, isMiniApp } from '@lcap/core-template';
+import { encodeUrl, downloadClick, navigateTo, navigateBack, redirectTo, isMiniApp } from '@lcap/core-template';
 
-export function destination(url, target = '_self') {
+export function destination(url, target = '_self', replace = false) {
     if (!url) {
         return
     }
@@ -10,7 +10,11 @@ export function destination(url, target = '_self') {
         if (target === '_self' && url?.startsWith('http')) {
             location.href = encodeUrl(url)
         } else {
-            navigateTo({ url });
+            if (replace) {
+                redirectTo({ url });
+            } else {
+                navigateTo({ url });
+            }
         }
         return;
     }
@@ -19,7 +23,11 @@ export function destination(url, target = '_self') {
         if (url?.startsWith('http')) {
             location.href = encodeUrl(url)
         } else {
-            this.$router.push(url);
+            if (replace) {
+                this.$router.replace(url);
+            } else {
+                this.$router.push(url);
+            }
         }
     } else {
         downloadClick(url, target);
