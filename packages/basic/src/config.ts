@@ -26,12 +26,19 @@ const Config: ConfigType = {
   },
   utils: {},
   router: {
+    // 默认实现
     destination: (url: string, target: string) => {
       if (target === "_self") {
         location.href = encodeUrl(url);
       } else {
         window.open(encodeUrl(url), target);
       }
+    },
+    back: () => {
+      window.history.back();
+    },
+    go: (delta = 0) => {
+      window.history.go(delta);
     },
   },
   axios: {

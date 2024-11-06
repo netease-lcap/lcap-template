@@ -1,6 +1,5 @@
 import { encodeUrl, downloadClick } from '@lcap/core-template';
 
-
 export function destination(url, target = '_self', replace = false) {
     if (target === '_self') {
         // 修复访问路径为默认首页 / 时跳转可能失效的问题
@@ -16,18 +15,18 @@ export function destination(url, target = '_self', replace = false) {
                 }
 
                 if (replace) {
-                    this.$router.replace(url);
+                    window.VueRouterInstance?.replace(url);
                 } else {
-                    this.$router.push(url);
+                    window.VueRouterInstance?.push(url);
                 }
 
                 return;
             }
 
             if (replace) {
-                this.$router.replace(url);
+                window.VueRouterInstance?.replace(url);
             } else {
-                this.$router.push(url);
+                window.VueRouterInstance?.push(url);
             }
         }
     } else {
@@ -36,9 +35,9 @@ export function destination(url, target = '_self', replace = false) {
 }
 
 export function back() {
-    this.$router.go(-1);
+    window.VueRouterInstance?.back();
 }
 
 export function go(delta) {
-    this.$router.go(delta);
+    window.VueRouterInstance?.go(delta);
 }

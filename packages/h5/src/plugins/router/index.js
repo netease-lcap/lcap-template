@@ -24,9 +24,9 @@ export function destination(url, target = '_self', replace = false) {
             location.href = encodeUrl(url)
         } else {
             if (replace) {
-                this.$router.replace(url);
+                window.VueRouterInstance?.replace(url);
             } else {
-                this.$router.push(url);
+                window.VueRouterInstance?.push(url);
             }
         }
     } else {
@@ -40,12 +40,12 @@ export function back() {
         return;
     }
 
-    this.$router.go(-1);
+    window.VueRouterInstance?.back();
 }
 
 export function go(delta) {
     // delta保留整数
-    delta = parseInt(delta);
+    delta = parseInt(delta, 10);
 
     // 小程序不支持go方法
     if (isMiniApp) {
@@ -58,5 +58,5 @@ export function go(delta) {
         return;
     }
 
-    this.$router.go(delta);
+    window.VueRouterInstance?.go(delta);
 }
