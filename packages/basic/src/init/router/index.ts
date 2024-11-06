@@ -42,9 +42,10 @@ function initRouter() {
     }
 
     Global.prototype.$destination = $destination;
-    Global.prototype.$back = $back;
-    Global.prototype.$go = $go;
     Global.prototype.$link = $link;
+    Global.prototype.back = $back;
+    Global.prototype.go = $go;
+
     Global.prototype.$formatMicroFrontUrl = formatMicroFrontUrl;
     Global.prototype.$formatMicroFrontRouterPath = formatMicroFrontRouterPath;
 
