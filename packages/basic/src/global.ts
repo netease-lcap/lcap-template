@@ -1,7 +1,7 @@
-import _set from 'lodash/set';
+import _set from "lodash/set";
 
 // 用来mock Vue的构造函数
-const GlobalFn = window.Vue || function MockVue() {}
+const GlobalFn = window.Vue || function MockVue() {};
 
 export default GlobalFn;
 

@@ -1,7 +1,7 @@
 import errHandles from "./errHandles";
 
 export const isPromise = function (func) {
-    return func && typeof func.then === 'function';
+  return func && typeof func.then === "function";
 };
 
 export function httpCode(response, params, requestInfo) {
@@ -31,33 +31,32 @@ export function httpCode(response, params, requestInfo) {
 }
 
 export function shortResponse(response, params, requestInfo) {
-    // 原logic接口返回不变
-    if (requestInfo.config?.concept === 'Logic') {
-      return response.data?.Data !== undefined ? response.data?.Data : response.data;
-    }
-    
-    const data = response?.data;
+  // 原logic接口返回不变
+  if (requestInfo.config?.concept === "Logic") {
+    return response.data?.Data !== undefined ? response.data?.Data : response.data;
+  }
 
-    // 兼容新Code、Data、Message
-    if (data?.Code !== undefined) {
-        data.code = data.Code;
-    }
-    if (data?.Data !== undefined) {
-        data.data = data.Data;
-    }
-    if (data?.Message !== undefined) {
-        data.message = data.Message;
-        data.msg = data.Message;
-    }
+  const data = response?.data;
 
+  // 兼容新Code、Data、Message
+  if (data?.Code !== undefined) {
+    data.code = data.Code;
+  }
+  if (data?.Data !== undefined) {
+    data.data = data.Data;
+  }
+  if (data?.Message !== undefined) {
+    data.message = data.Message;
+    data.msg = data.Message;
+  }
 
-    return data;
+  return data;
 }
 
 // 给流程系统接口使用
 export const shortResponseForSystemProcess = (response) => {
   return response?.data || response?.Data || response;
-}
+};
 
 export const httpError = {
   reject(err, params, requestInfo) {
@@ -72,13 +71,10 @@ export const httpError = {
       handle = errHandles.remoteError;
     } else if (err.code === undefined) {
       if (err.response) {
-        const code =
-          err.response.data &&
-          (err.response.data.code || err.response.data.Code);
+        const code = err.response.data && (err.response.data.code || err.response.data.Code);
         if (typeof code === "number") {
           const status = err.response.status;
-          handle =
-            errHandles[code] || errHandles[status] || errHandles.remoteError;
+          handle = errHandles[code] || errHandles[status] || errHandles.remoteError;
         } else {
           handle = errHandles.remoteError;
         }
@@ -99,7 +95,7 @@ export const httpError = {
         body,
         headers,
       },
-      (err.response && err.response.data) || err
+      (err.response && err.response.data) || err,
     );
 
     if (isPromise(handleOut)) return handleOut;

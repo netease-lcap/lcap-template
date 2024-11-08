@@ -3,9 +3,11 @@ import authService from "../auth/authService";
 
 let user;
 export default {
-  async getTasks(param: {
-    query?: any
-  } = {}) {
+  async getTasks(
+    param: {
+      query?: any;
+    } = {},
+  ) {
     const userInfo = await authService.getUserInfo();
     user = userInfo?.UserName;
     const { query } = param;
@@ -17,9 +19,11 @@ export default {
     });
     return res;
   },
-  async claimTask(param: {
-    path?: any
-  } = {}) {
+  async claimTask(
+    param: {
+      path?: any;
+    } = {},
+  ) {
     const { path = {} } = param;
     const res = await initProcessService().claimTask({
       path: { ...path },
@@ -29,9 +33,11 @@ export default {
     });
     return res;
   },
-  async getDestinationUrl(param: {
-    path?: any
-  } = {}) {
+  async getDestinationUrl(
+    param: {
+      path?: any;
+    } = {},
+  ) {
     const {
       path: { id },
     } = param;

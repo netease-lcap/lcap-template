@@ -1,22 +1,21 @@
-import { fetchEventSource, EventSourceMessage } from '@microsoft/fetch-event-source';
-import { genBaseOptions } from './index';
+import { fetchEventSource, EventSourceMessage } from "@microsoft/fetch-event-source";
+import { genBaseOptions } from "./index";
 
 const MAX_RETRY_TIME = 0;
-const EventStreamContentType = 'text/event-stream';
+const EventStreamContentType = "text/event-stream";
 
 export const sseRequester = function (requestInfo) {
   const { url, config = {} } = requestInfo;
 
-  const controller = new AbortController(); 
-  
+  const controller = new AbortController();
+
   const { body } = url;
   const { onMessage, onClose, onError, ...rest } = body;
   body.onMessage = undefined;
   body.onClose = undefined;
   body.onError = undefined;
-  
+
   const options = genBaseOptions(requestInfo);
-  
 
   function close() {
     controller.abort();
@@ -25,7 +24,7 @@ export const sseRequester = function (requestInfo) {
   function formatMessage(m: EventSourceMessage) {
     return onMessage?.(m.data, m.event);
   }
-  
+
   let leftRetries = Math.max((body?.retryTimes ?? MAX_RETRY_TIME) - 1, 0);
   fetchEventSource(url.path, {
     ...options,
@@ -35,19 +34,19 @@ export const sseRequester = function (requestInfo) {
     onmessage: formatMessage,
     onclose: onClose,
     onopen: async (response) => {
-        if (leftRetries < 0) {
-          close();
-        }
-        const contentType = response.headers.get('content-type');
-        if (contentType !== EventStreamContentType) {
-            throw new Error(`Expected content-type to be ${EventStreamContentType}, Actual: ${contentType}`);
-        }
+      if (leftRetries < 0) {
+        close();
+      }
+      const contentType = response.headers.get("content-type");
+      if (contentType !== EventStreamContentType) {
+        throw new Error(`Expected content-type to be ${EventStreamContentType}, Actual: ${contentType}`);
+      }
     },
     onerror: (e) => {
-      leftRetries --;
+      leftRetries--;
       onError?.(e);
     },
-  }).catch(e => {
+  }).catch((e) => {
     // catch err
     console.error(e);
   });
@@ -55,6 +54,6 @@ export const sseRequester = function (requestInfo) {
   return Promise.resolve({
     data: {
       __close: close,
-    }
+    },
   });
 };

@@ -3,12 +3,7 @@ import { processPorts } from "../process";
 import Config from "../../config";
 import Global from "../../global";
 
-import {
-  initApplicationConstructor,
-  genInitData,
-  isInstanceOf,
-  genSortedTypeKey,
-} from "./tools";
+import { initApplicationConstructor, genInitData, isInstanceOf, genSortedTypeKey } from "./tools";
 import * as Utils from "./utils";
 
 function initDataTypes(options) {
@@ -16,8 +11,7 @@ function initDataTypes(options) {
   const i18nInfo = options.i18nInfo || {};
   initApplicationConstructor(dataTypesMap, genInitFromSchema);
 
-  const { frontendVariables, localCacheVariableSet } =
-    getFrontendVariables(options);
+  const { frontendVariables, localCacheVariableSet } = getFrontendVariables(options);
 
   const $global = {
     // 用户信息
@@ -58,7 +52,7 @@ function initDataTypes(options) {
 
   return {
     $global,
-  }
+  };
 }
 
 function genInitFromSchema(typeKey, defaultValue?, level?) {
@@ -70,19 +64,13 @@ function getFrontendVariables(options) {
   const localCacheVariableSet = new Set();
   if (Array.isArray(options && options.frontendVariables)) {
     options.frontendVariables.forEach((frontendVariable) => {
-      const { name, typeAnnotation, defaultValueFn, defaultCode, localCache } =
-        frontendVariable;
+      const { name, typeAnnotation, defaultValueFn, defaultCode, localCache } = frontendVariable;
       localCache && localCacheVariableSet.add(name); // 本地存储的全局变量集合
       let defaultValue = defaultCode?.code;
-      if (
-        Object.prototype.toString.call(defaultValueFn) === "[object Function]"
-      ) {
+      if (Object.prototype.toString.call(defaultValueFn) === "[object Function]") {
         defaultValue = defaultValueFn(Global);
       }
-      frontendVariables[name] = genInitFromSchema(
-        genSortedTypeKey(typeAnnotation),
-        defaultValue
-      );
+      frontendVariables[name] = genInitFromSchema(genSortedTypeKey(typeAnnotation), defaultValue);
     });
   }
   return {
@@ -197,7 +185,7 @@ function parseRequestDataType(root, _prop) {
   }
 }
 
-export { 
+export {
   initDataTypes,
   genInitFromSchema,
   getFrontendVariables,
@@ -207,6 +195,6 @@ export {
   Utils,
 };
 
-export * as Tools from './tools';
+export * as Tools from "./tools";
 
-export * from './wx';
+export * from "./wx";

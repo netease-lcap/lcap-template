@@ -14,13 +14,18 @@ function dependencies(el, binding, vnode) {
   }
 
   const vueIns = vnode.componentInstance;
-  const action = binding.modifiers['reload'] ? 'reload' : '';
-  if (!action || !vueIns || typeof vueIns[action] !== 'function') {
+  const action = binding.modifiers["reload"] ? "reload" : "";
+  if (!action || !vueIns || typeof vueIns[action] !== "function") {
     return;
   }
 
   const { value, oldValue } = binding;
-  if (!Array.isArray(value) || value.length === 0 || !Array.isArray(oldValue) || isShalldowEqualArray(value, oldValue)) {
+  if (
+    !Array.isArray(value) ||
+    value.length === 0 ||
+    !Array.isArray(oldValue) ||
+    isShalldowEqualArray(value, oldValue)
+  ) {
     return;
   }
 
@@ -28,6 +33,6 @@ function dependencies(el, binding, vnode) {
 }
 
 export default {
-  name: 'dependencies',
+  name: "dependencies",
   update: dependencies,
 };

@@ -1,4 +1,4 @@
-import { initSystemProcessV2Service } from '../../apis';
+import { initSystemProcessV2Service } from "../../apis";
 import Global from "../../global";
 import processService from "./processService";
 
@@ -11,16 +11,13 @@ function initProcess() {
   Global.prototype.$systemProcessV2 = initSystemProcessV2Service({
     config: {
       priority: {
-        shortResponseForSystemProcess: 99
+        shortResponseForSystemProcess: 99,
       },
       shortResponseForSystemProcess: true,
-    }
+    },
   });
 }
 
-export {
-  initProcess,
-  processService
-}
+export { initProcess, processService };
 
-export { processPorts } from './processPorts';
+export { processPorts } from "./processPorts";

@@ -1,10 +1,10 @@
-import { storage } from '@lcap/basic-template';
-import isEmpty from 'lodash/isEmpty';
+import { storage } from "@lcap/basic-template";
+import isEmpty from "lodash/isEmpty";
 
 const ACTION_LOCAL_CACHE_VARIABLE_TYPE = {
-  GET: 'get',
-  UPDATE: 'update',
-  UNDEFINED: 'undefined',
+  GET: "get",
+  UPDATE: "update",
+  UNDEFINED: "undefined",
 };
 
 // 定义一个名为 visibilityMixin 的全局混入对象
@@ -15,20 +15,24 @@ export const localCacheVariableMixin = {
   mounted() {
     const localCacheVariableSet = this.$localCacheVariableSet;
     if (localCacheVariableSet) {
-        for (const localCacheVariableKey of localCacheVariableSet) {
-            try {
-                this.$watch(`$global.frontendVariables.${localCacheVariableKey}`, function(newValue) {
-                    storage.set(localCacheVariableKey, newValue, true);
-                }, { deep: true });
-            } catch (error) {
-                console.warn('error: ', error);
-            }
+      for (const localCacheVariableKey of localCacheVariableSet) {
+        try {
+          this.$watch(
+            `$global.frontendVariables.${localCacheVariableKey}`,
+            function (newValue) {
+              storage.set(localCacheVariableKey, newValue, true);
+            },
+            { deep: true },
+          );
+        } catch (error) {
+          console.warn("error: ", error);
         }
+      }
     }
   },
   methods: {
     handleVisibilityChange() {
-      if (document.hidden && typeof this.actionLocalCacheVariable === 'function') {
+      if (document.hidden && typeof this.actionLocalCacheVariable === "function") {
         this.actionLocalCacheVariable(ACTION_LOCAL_CACHE_VARIABLE_TYPE.UPDATE);
       }
     },
@@ -43,7 +47,12 @@ export const localCacheVariableMixin = {
             {
               const localCacheValue = storage.get(localCacheVariableKey, true);
               // 若存在 localCacheValue 则同步到 frontendVariables
-              if (localCacheValue || typeof localCacheValue === 'boolean' || typeof localCacheValue === 'number' || localCacheValue === '') {
+              if (
+                localCacheValue ||
+                typeof localCacheValue === "boolean" ||
+                typeof localCacheValue === "number" ||
+                localCacheValue === ""
+              ) {
                 frontendVariables[localCacheVariableKey] = localCacheValue;
               }
             }
@@ -55,7 +64,13 @@ export const localCacheVariableMixin = {
               const currentValue = frontendVariables[localCacheVariableKey];
 
               // 只同步写入非空值 避免 local 过多冗余数据
-              if (isEmpty(currentValue) && typeof currentValue !== 'boolean' && typeof currentValue !== 'number' && typeof currentValue !== 'object' && currentValue !== '') {
+              if (
+                isEmpty(currentValue) &&
+                typeof currentValue !== "boolean" &&
+                typeof currentValue !== "number" &&
+                typeof currentValue !== "object" &&
+                currentValue !== ""
+              ) {
                 storage.remove(localCacheVariableKey);
               } else {
                 storage.set(localCacheVariableKey, currentValue, true);
@@ -65,11 +80,10 @@ export const localCacheVariableMixin = {
             break;
 
           default:
-            console.warn('actionLocalCacheVariable: type is undefined', type);
+            console.warn("actionLocalCacheVariable: type is undefined", type);
             break;
         }
       }
     },
-
   },
 };
