@@ -15,10 +15,7 @@ export function findNoAuthView(routes) {
 
 const ROOT_PATH = "/";
 
-const getParentPath = (path) =>
-  path === ROOT_PATH
-    ? null
-    : path.substring(0, path.lastIndexOf("/")) || ROOT_PATH;
+const getParentPath = (path) => (path === ROOT_PATH ? null : path.substring(0, path.lastIndexOf("/")) || ROOT_PATH);
 
 /**
  * 过滤无权限页面（X2.22_0629调整），如子页面绑定了角色父页面未绑定，则子页面无法访问。
@@ -35,27 +32,23 @@ export function filterAuthResources(resources) {
       map.set(item.resourceValue, 1);
       return map;
     },
-    new Map([
-      [ROOT_PATH, 1],
-      ...bases,
-    ])
+    new Map([[ROOT_PATH, 1], ...bases]),
   ); // 需注意，路由起始都具备basePath（PC&H5都有不固定起始路由）
 
   const isValidPath = (path) => {
     let parentPath = getParentPath(path);
-    while (parentPath && validPaths.has(parentPath))
-      parentPath = getParentPath(parentPath);
+    while (parentPath && validPaths.has(parentPath)) parentPath = getParentPath(parentPath);
     return !parentPath;
   };
   return resources.filter((item) => isValidPath(item.resourceValue));
 }
 
 function generatePaths(str) {
-  let parts = str.split('/');
+  let parts = str.split("/");
   let paths = [];
 
   for (let i = 0; i < parts.length; i++) {
-    let path = parts.slice(0, i + 1).join('/');
+    let path = parts.slice(0, i + 1).join("/");
     path && paths.push([path, 1]);
   }
 

@@ -16,7 +16,7 @@ type ConfigType = {
     interceptors: Array<any>;
   };
   configureRequest?: (options: any, axios: any) => void;
-}
+};
 
 // 差异性配置，由H5、PC端启动时 传入覆盖
 const Config: ConfigType = {
@@ -42,8 +42,8 @@ const Config: ConfigType = {
     },
   },
   axios: {
-    interceptors: []
-  }
+    interceptors: [],
+  },
 };
 
 export function setConfig(newConfig) {

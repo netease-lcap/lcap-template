@@ -4,7 +4,7 @@ import CryptoJS from "crypto-js";
 import { initService as initConfigurationService } from "../../apis/configuration";
 import { initService as initIoService } from "../../apis/io";
 import { initService as initLowauthService } from "../../apis/lowauth";
-import { initService as initLogService } from '../../apis/log';
+import { initService as initLogService } from "../../apis/log";
 
 import Config from "../../config";
 
@@ -155,10 +155,7 @@ export function getDistance(s1, s2) {
   const dLon = deg2rad(lng2t - lng1t);
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(lat1t)) *
-      Math.cos(deg2rad(lat2t)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+    Math.cos(deg2rad(lat1t)) * Math.cos(deg2rad(lat2t)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const d = R * c; // Distance in km
   return d * 1000;
@@ -252,9 +249,7 @@ export async function downloadFiles(urls, fileName) {
 export async function getUserList(query) {
   const appEnv = window.appInfo.env;
   const cookies = document.cookie.split("; ");
-  const token = cookies
-    .find((cookie) => cookie.split("=")[0] === "authorization")
-    ?.split("=")[1];
+  const token = cookies.find((cookie) => cookie.split("=")[0] === "authorization")?.split("=")[1];
   const res = await initLowauthService().getUserList({
     body: {
       appEnv,
@@ -320,18 +315,18 @@ export function getWeChatNickName() {
 }
 
 export function getWeChatPhone() {
-  return localStorage.getItem('_wx_phone');
+  return localStorage.getItem("_wx_phone");
 }
 
 export function getWeChatScanCode() {
-  const data = localStorage.getItem('_wx_scan_code');
-  localStorage.setItem('_wx_scan_code', '');
+  const data = localStorage.getItem("_wx_scan_code");
+  localStorage.setItem("_wx_scan_code", "");
   return data;
 }
 
 export function getWeChatLocation() {
-  const data = localStorage.getItem('_wx_location');
-  localStorage.setItem('_wx_location', '');
+  const data = localStorage.getItem("_wx_location");
+  localStorage.setItem("_wx_location", "");
   return data;
 }
 

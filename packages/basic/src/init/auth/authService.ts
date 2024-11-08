@@ -1,25 +1,25 @@
 import qs from "qs";
 
-import { initAuthService, initLowauthService } from '../../apis';
-import { getBasePath, cookie  } from '../../utils';
-import Global from '../../global';
+import { initAuthService, initLowauthService } from "../../apis";
+import { getBasePath, cookie } from "../../utils";
+import Global from "../../global";
 
 export const getBaseHeaders = () => {
-    type Headers = {
-        Env: string;
-        Authorization?: string;
-    }
-    const headers: Headers = {
-        Env: window.appInfo && window.appInfo.env,
-    };
-    if (cookie.get('authorization')) {
-        headers.Authorization = cookie.get('authorization');
-    }
-    return headers;
+  type Headers = {
+    Env: string;
+    Authorization?: string;
+  };
+  const headers: Headers = {
+    Env: window.appInfo && window.appInfo.env,
+  };
+  if (cookie.get("authorization")) {
+    headers.Authorization = cookie.get("authorization");
+  }
+  return headers;
 };
 
 // FIXME 替换成真实类型
-export type NASLUserInfo = { 
+export type NASLUserInfo = {
   UserName: string;
   UserId: string;
 };
@@ -96,7 +96,7 @@ const Service: IService = {
         userInfoPromise = null;
         throw e;
       });
-    
+
     return userInfoPromise;
   },
   getUserResources(DomainName) {
@@ -106,8 +106,7 @@ const Service: IService = {
       userResourcesPromise = lowauthService
         .GetUserResources({
           headers: getBaseHeaders(),
-          query: {
-          },
+          query: {},
           config: {
             noErrorTip: true,
           },
@@ -120,12 +119,8 @@ const Service: IService = {
           // 初始化权限项
           _map = new Map();
           if (Array.isArray(data)) {
-            resources = data.filter(
-              (resource) => resource?.resourceType === "ui"
-            );
-            resources.forEach((resource) =>
-              _map.set(resource.resourceValue, resource)
-            );
+            resources = data.filter((resource) => resource?.resourceType === "ui");
+            resources.forEach((resource) => _map.set(resource.resourceValue, resource));
           }
           return resources;
         });
@@ -143,25 +138,20 @@ const Service: IService = {
         })
         .then((res) => {
           _map = new Map();
-          const resources = res.Data.items.reduce(
-            (acc, { ResourceType, ResourceValue, ...item }) => {
-              if (ResourceType === "ui") {
-                acc.push({
-                  ...item,
-                  ResourceType,
-                  ResourceValue,
-                  resourceType: ResourceType,
-                  resourceValue: ResourceValue,
-                }); // 兼容大小写写法，留存大写，避免影响其他隐藏逻辑
-              }
-              return acc;
-            },
-            []
-          );
+          const resources = res.Data.items.reduce((acc, { ResourceType, ResourceValue, ...item }) => {
+            if (ResourceType === "ui") {
+              acc.push({
+                ...item,
+                ResourceType,
+                ResourceValue,
+                resourceType: ResourceType,
+                resourceValue: ResourceValue,
+              }); // 兼容大小写写法，留存大写，避免影响其他隐藏逻辑
+            }
+            return acc;
+          }, []);
           // 初始化权限项
-          resources.forEach((resource) =>
-            _map.set(resource?.ResourceValue, resource)
-          );
+          resources.forEach((resource) => _map.set(resource?.ResourceValue, resource));
           return resources;
         });
     }
@@ -190,9 +180,7 @@ const Service: IService = {
           TenantName: window.appInfo.tenant,
         },
       });
-      const KeycloakConfig = res?.Data.find(
-        (item) => item.LoginType === "Keycloak"
-      );
+      const KeycloakConfig = res?.Data.find((item) => item.LoginType === "Keycloak");
       if (KeycloakConfig) {
         logoutUrl = `${KeycloakConfig?.extendProperties?.logoutUrl}?redirect_uri=${window.location.protocol}//${window.location.host}${basePath}/login`;
       }

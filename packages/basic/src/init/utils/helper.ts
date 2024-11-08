@@ -68,9 +68,9 @@ export const sortRule = (valueA, valueB, sort) => {
 
 export const getAppTimezone = (inputTz) => {
   const _appTimeZone = window?.appInfo?.appTimeZone;
-  const tz = inputTz === 'global' ? _appTimeZone : inputTz;
+  const tz = inputTz === "global" ? _appTimeZone : inputTz;
 
-  if (tz && tz !== 'user') {
+  if (tz && tz !== "user") {
     // 指定的固定的时区
     return tz;
   } else {
@@ -82,8 +82,7 @@ export const getAppTimezone = (inputTz) => {
 const validIANATimezoneCache = {};
 // 判断是否是有效的时区字符
 export function isValidTimezoneIANAString(timezoneString) {
-  if (validIANATimezoneCache[timezoneString])
-    return true;
+  if (validIANATimezoneCache[timezoneString]) return true;
   try {
     new Intl.DateTimeFormat(undefined, { timeZone: timezoneString });
     validIANATimezoneCache[timezoneString] = true;
@@ -95,31 +94,31 @@ export function isValidTimezoneIANAString(timezoneString) {
 
 export function naslDateToLocalDate(date) {
   const localTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const localDate = momentTZ.tz(date, 'YYYY-MM-DD', localTZ);
-  return safeNewDate(localDate.format('YYYY-MM-DD HH:mm:ss'));
+  const localDate = momentTZ.tz(date, "YYYY-MM-DD", localTZ);
+  return safeNewDate(localDate.format("YYYY-MM-DD HH:mm:ss"));
 }
 
 export function convertJSDateInTargetTimeZone(date, tz) {
-  return safeNewDate(momentTZ.tz(safeNewDate(date), getAppTimezone(tz)).format('YYYY-MM-DD HH:mm:ss'));
+  return safeNewDate(momentTZ.tz(safeNewDate(date), getAppTimezone(tz)).format("YYYY-MM-DD HH:mm:ss"));
 }
 
 export const safeNewDate = (dateStr) => {
   // 如果输入是字符串形式的时间戳，则先转换为时间戳
-  if (typeof dateStr === 'string' && /^\d+$/.test(dateStr)) {
+  if (typeof dateStr === "string" && /^\d+$/.test(dateStr)) {
     const date = new Date(parseInt(dateStr, 10));
     if (!isNaN(date.getTime())) {
       return date;
     }
   }
-  
+
   try {
-      const res = new Date(dateStr.replaceAll('-', '/'));
-      if (['Invalid Date', 'Invalid time value', 'invalid date'].includes(res.toString())) {
-          return new Date(dateStr);
-      } else {
-          return res;
-      }
-  } catch (err) {
+    const res = new Date(dateStr.replaceAll("-", "/"));
+    if (["Invalid Date", "Invalid time value", "invalid date"].includes(res.toString())) {
       return new Date(dateStr);
+    } else {
+      return res;
+    }
+  } catch (err) {
+    return new Date(dateStr);
   }
 };

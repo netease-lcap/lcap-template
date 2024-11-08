@@ -1,5 +1,5 @@
 import cloneDeep from "lodash/cloneDeep";
-import _set from 'lodash/set';
+import _set from "lodash/set";
 import isEqual from "lodash/isEqual";
 import isObject from "lodash/isObject";
 import {
@@ -70,11 +70,11 @@ import {
   isValidTimezoneIANAString,
   naslDateToLocalDate,
   convertJSDateInTargetTimeZone,
-  sortRule
+  sortRule,
 } from "./helper";
 
 let enumsMap = {};
-let dataTypesMap = {}
+let dataTypesMap = {};
 
 function toValue(date, typeKey) {
   if (!date) return date;
@@ -134,18 +134,18 @@ export const utils = {
     if (typeKey) {
       const { typeName, typeNamespace } = typeDefinitionMap[typeKey] || {};
       let isToNumber = false;
-      if (typeName === 'Long' && typeNamespace === 'nasl.core') {
-          isToNumber = true
+      if (typeName === "Long" && typeNamespace === "nasl.core") {
+        isToNumber = true;
       }
       return {
         text: toString(typeKey, value),
         value: isToNumber ? +value : value,
-      }
+      };
     }
     return {
       text: "",
-      value: ""
-    }
+      value: "",
+    };
   },
   ToEnumItem(value, enumTypeAnnotation) {
     const { typeName, typeNamespace } = enumTypeAnnotation || {};
@@ -167,12 +167,16 @@ export const utils = {
     let tempName = tempEnums?.name;
     let enumName = typeName;
     if (typeName && typeNamespace?.startsWith("extensions")) {
-        enumName = typeNamespace + "." + enumName;
-        tempName = enumName;
+      enumName = typeNamespace + "." + enumName;
+      tempName = enumName;
     }
     let isToNumber = false;
-    if (enumName === tempName && tempEnums.valueType?.typeName === 'Long' && tempEnums.valueType?.typeNamespace === 'nasl.core') {
-        isToNumber = true
+    if (
+      enumName === tempName &&
+      tempEnums.valueType?.typeName === "Long" &&
+      tempEnums.valueType?.typeNamespace === "nasl.core"
+    ) {
+      isToNumber = true;
     }
     if (!Array.isArray(tempEnums.enumItems)) return [];
     else {
@@ -200,9 +204,7 @@ export const utils = {
       }
       // 新应用，设置为其他时区
       if (tz) {
-        const d = momentTZ
-          .tz(v, getAppTimezone(tz))
-          .format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+        const d = momentTZ.tz(v, getAppTimezone(tz)).format("YYYY-MM-DDTHH:mm:ss.SSSZ");
         return JSON.stringify(d);
       }
     } else if (typeof v === "string" && /^\d{2}:\d{2}:\d{2}$/.test(v)) {
@@ -247,11 +249,7 @@ export const utils = {
     if (isObject(str1)) {
       return Object.keys(str1).length;
     }
-    if (
-      typeof str1 !== "undefined" &&
-      str1 !== null &&
-      typeof str1.length !== "undefined"
-    ) {
+    if (typeof str1 !== "undefined" && str1 !== null && typeof str1.length !== "undefined") {
       return str1.length;
     }
     return null;
@@ -353,10 +351,7 @@ export const utils = {
     if (!Array.isArray(arr)) {
       return null;
     }
-    const nullRemoved = utils.ListFilter(
-      arr,
-      (elem) => elem !== null && elem !== undefined
-    );
+    const nullRemoved = utils.ListFilter(arr, (elem) => elem !== null && elem !== undefined);
     return nullRemoved.length === 0
       ? null
       : nullRemoved
@@ -364,7 +359,7 @@ export const utils = {
             (prev, cur) =>
               // decimal 可解决 0.1 + 0.2 的精度问题，下同
               new Decimal(cur + "").plus(prev),
-            new Decimal("0")
+            new Decimal("0"),
           )
           .toNumber();
   },
@@ -372,62 +367,35 @@ export const utils = {
     if (!Array.isArray(arr)) {
       return null;
     }
-    const nullRemoved = utils.ListFilter(
-      arr,
-      (elem) => elem !== null && elem !== undefined
-    );
+    const nullRemoved = utils.ListFilter(arr, (elem) => elem !== null && elem !== undefined);
     return nullRemoved.length === 0
       ? null
-      : nullRemoved
-          .reduce(
-            (prev, cur) => new Decimal(cur + "").mul(prev),
-            new Decimal("1")
-          )
-          .toNumber();
+      : nullRemoved.reduce((prev, cur) => new Decimal(cur + "").mul(prev), new Decimal("1")).toNumber();
   },
   ListAverage: (arr) => {
     if (!Array.isArray(arr)) {
       return null;
     }
-    const nullRemoved = utils.ListFilter(
-      arr,
-      (elem) => elem !== null && elem !== undefined
-    );
-    return nullRemoved.length === 0
-      ? null
-      : new Decimal(utils.ListSum(nullRemoved))
-          .div(nullRemoved.length)
-          .toNumber();
+    const nullRemoved = utils.ListFilter(arr, (elem) => elem !== null && elem !== undefined);
+    return nullRemoved.length === 0 ? null : new Decimal(utils.ListSum(nullRemoved)).div(nullRemoved.length).toNumber();
   },
   ListMax: (arr) => {
     if (!Array.isArray(arr)) {
       return null;
     }
-    const nullRemoved = utils.ListFilter(
-      arr,
-      (elem) => elem !== null && elem !== undefined
-    );
+    const nullRemoved = utils.ListFilter(arr, (elem) => elem !== null && elem !== undefined);
     return nullRemoved.length === 0
       ? null
-      : nullRemoved.reduce(
-          (prev, cur) => (prev >= cur ? prev : cur),
-          nullRemoved[0]
-        );
+      : nullRemoved.reduce((prev, cur) => (prev >= cur ? prev : cur), nullRemoved[0]);
   },
   ListMin: (arr) => {
     if (!Array.isArray(arr)) {
       return null;
     }
-    const nullRemoved = utils.ListFilter(
-      arr,
-      (elem) => elem !== null && elem !== undefined
-    );
+    const nullRemoved = utils.ListFilter(arr, (elem) => elem !== null && elem !== undefined);
     return nullRemoved.length === 0
       ? null
-      : nullRemoved.reduce(
-          (prev, cur) => (prev <= cur ? prev : cur),
-          nullRemoved[0]
-        );
+      : nullRemoved.reduce((prev, cur) => (prev <= cur ? prev : cur), nullRemoved[0]);
   },
   ListRange(start, end, step) {
     if (step === 0) {
@@ -599,7 +567,7 @@ export const utils = {
   MapGet(map, key) {
     if (isObject(map)) {
       if (!map.hasOwnProperty(key)) {
-        return null
+        return null;
       }
       const value = map[key];
       return typeof value === "undefined" ? null : value;
@@ -678,11 +646,7 @@ export const utils = {
     return res;
   },
   MapTransform(map, toKey, toValue) {
-    if (
-      !isObject(map) ||
-      typeof toKey !== "function" ||
-      typeof toValue !== "function"
-    ) {
+    if (!isObject(map) || typeof toKey !== "function" || typeof toValue !== "function") {
       return null;
     }
     const res = {};
@@ -692,11 +656,7 @@ export const utils = {
     return res;
   },
   async MapTransformAsync(map, toKey, toValue) {
-    if (
-      !isObject(map) ||
-      typeof toKey !== "function" ||
-      typeof toValue !== "function"
-    ) {
+    if (!isObject(map) || typeof toKey !== "function" || typeof toValue !== "function") {
       return null;
     }
     const res = {};
@@ -706,11 +666,7 @@ export const utils = {
     return res;
   },
   ListToMap(arr, toKey, toValue) {
-    if (
-      !Array.isArray(arr) ||
-      typeof toKey !== "function" ||
-      typeof toValue !== "function"
-    ) {
+    if (!Array.isArray(arr) || typeof toKey !== "function" || typeof toValue !== "function") {
       return null;
     }
     const res = {};
@@ -724,11 +680,7 @@ export const utils = {
     return res;
   },
   async ListToMapAsync(arr, toKey, toValue) {
-    if (
-      !Array.isArray(arr) ||
-      typeof toKey !== "function" ||
-      typeof toValue !== "function"
-    ) {
+    if (!Array.isArray(arr) || typeof toKey !== "function" || typeof toValue !== "function") {
       return null;
     }
     const res = {};
@@ -777,7 +729,7 @@ export const utils = {
       arr.map(async (item) => {
         const criteria = await Promise.all(callbacks.map((cb) => cb(item)));
         return { item, criteria };
-      })
+      }),
     );
 
     list.sort((a, b) => {
@@ -877,23 +829,14 @@ export const utils = {
     return new Date();
   },
   AddDays(date = new Date(), amount = 1, converter = "json") {
-    return toValue(
-      addDays(safeNewDate(date), amount),
-      converter
-    );
+    return toValue(addDays(safeNewDate(date), amount), converter);
   },
   AddMonths(date = new Date(), amount = 1, converter = "json") {
     /** 传入的值为标准的时间格式 */
-    return toValue(
-      addMonths(safeNewDate(date), amount),
-      converter
-    );
+    return toValue(addMonths(safeNewDate(date), amount), converter);
   },
   SubDays(date = new Date(), amount = 1, converter = "json") {
-    return toValue(
-      subDays(safeNewDate(date), amount),
-      converter
-    );
+    return toValue(subDays(safeNewDate(date), amount), converter);
   },
   // 兼容性策略：老应用升级到 3.10，保持老行为不变
   GetDateCountOld(dateStr, metric, tz) {
@@ -923,9 +866,7 @@ export const utils = {
       case "day":
         switch (metric2) {
           case "week":
-            return (
-              differenceInDays(date, startOfWeek(date, { weekStartsOn: 1 })) + 1
-            );
+            return differenceInDays(date, startOfWeek(date, { weekStartsOn: 1 })) + 1;
           case "month":
             return getDate(date);
           case "quarter":
@@ -982,9 +923,7 @@ export const utils = {
       case "day":
         switch (metric2) {
           case "week":
-            return (
-              differenceInDays(date, startOfWeek(date, { weekStartsOn: 1 })) + 1
-            );
+            return differenceInDays(date, startOfWeek(date, { weekStartsOn: 1 })) + 1;
           case "month":
             return getDate(date);
           case "quarter":
@@ -996,7 +935,7 @@ export const utils = {
         switch (metric2) {
           case "month": {
             // 构造 date 所在月的第一天
-            const startOfMonth = new Date(moment(date).startOf('month').format('YYYY-MM-DD hh:mm:ss'));
+            const startOfMonth = new Date(moment(date).startOf("month").format("YYYY-MM-DD hh:mm:ss"));
             // 获取该天是周几
             let wod = startOfMonth.getDay(); // 以为返回 1-7，实际返回 0-6；0 是星期天
             wod = wod === 0 ? 7 : wod;
@@ -1063,19 +1002,17 @@ export const utils = {
     }
   },
   isInputValidNaslDateTime(inp) {
-    return inp instanceof Date
-        || (typeof inp === 'string' && /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/.test(inp))
-        || (typeof inp === 'string' && /^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})/.test(inp));
-},
+    return (
+      inp instanceof Date ||
+      (typeof inp === "string" && /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/.test(inp)) ||
+      (typeof inp === "string" && /^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})/.test(inp))
+    );
+  },
   GetSpecificDaysOfWeek(startdatetr, enddatetr, arr, tz) {
-    if (!startdatetr)
-      toastAndThrow(`内置函数GetSpecificDaysOfWeek入参错误：startDate不能为空`);
-    if (!enddatetr)
-      toastAndThrow(`内置函数GetSpecificDaysOfWeek入参错误：endDate不能为空`);
+    if (!startdatetr) toastAndThrow(`内置函数GetSpecificDaysOfWeek入参错误：startDate不能为空`);
+    if (!enddatetr) toastAndThrow(`内置函数GetSpecificDaysOfWeek入参错误：endDate不能为空`);
     if (!Array.isArray(arr)) {
-      toastAndThrow(
-        `内置函数GetSpecificDaysOfWeek入参错误：参数“指定”非合法数组`
-      );
+      toastAndThrow(`内置函数GetSpecificDaysOfWeek入参错误：参数“指定”非合法数组`);
     }
 
     let startDate;
@@ -1083,20 +1020,11 @@ export const utils = {
     if (this.isInputValidNaslDateTime(startdatetr) && !tz) {
       // v3.3 老应用升级的场景，使用全局配置（全局配置一般默认是‘用户时区’）
       // v3.4 新应用，使用默认时区时选项，tz 为空
-      startDate = convertJSDateInTargetTimeZone(
-        startdatetr,
-        getAppTimezone("global")
-      );
-      endDate = convertJSDateInTargetTimeZone(
-        enddatetr,
-        getAppTimezone("global")
-      );
+      startDate = convertJSDateInTargetTimeZone(startdatetr, getAppTimezone("global"));
+      endDate = convertJSDateInTargetTimeZone(enddatetr, getAppTimezone("global"));
     } else if (this.isInputValidNaslDateTime(startdatetr) && tz) {
       // v3.4 新应用，指定了默认值之外的时区选项，必然有时区参数 tz
-      startDate = convertJSDateInTargetTimeZone(
-        startdatetr,
-        getAppTimezone(tz)
-      );
+      startDate = convertJSDateInTargetTimeZone(startdatetr, getAppTimezone(tz));
       endDate = convertJSDateInTargetTimeZone(enddatetr, getAppTimezone(tz));
     } else {
       // 针对 nasl.Date 类型
@@ -1108,25 +1036,13 @@ export const utils = {
       return [];
     }
 
-    const fns = [
-      isMonday,
-      isTuesday,
-      isWednesday,
-      isThursday,
-      isFriday,
-      isSaturday,
-      isSunday,
-    ];
+    const fns = [isMonday, isTuesday, isWednesday, isThursday, isFriday, isSaturday, isSunday];
     const dateInRange = eachDayOfInterval({ start: startDate, end: endDate });
     arr = arr.map((item) => Number(item));
     const isDays = fns.filter((_, index) => arr.includes(index + 1));
-    const filtereddate = dateInRange.filter((day) =>
-      isDays.some((fn) => fn(day))
-    );
+    const filtereddate = dateInRange.filter((day) => isDays.some((fn) => fn(day)));
     if (typeof startdatetr === "object" || startdatetr.includes("T")) {
-      return filtereddate.map((date) =>
-        moment(date).format("YYYY-MM-DDTHH:mm:ss.SSSZ")
-      );
+      return filtereddate.map((date) => moment(date).format("YYYY-MM-DDTHH:mm:ss.SSSZ"));
     } else {
       return filtereddate.map((date) => moment(date).format("YYYY-MM-DD"));
     }
@@ -1156,12 +1072,12 @@ export const utils = {
 
     // 根据需要格式化时、分、秒
     let formattedTime = formatter
-      .replace('HH', hours.toString().padStart(2, '0'))
-      .replace('H', hours.toString())
-      .replace('mm', minutes.toString().padStart(2, '0'))
-      .replace('m', minutes.toString())
-      .replace('ss', seconds.toString().padStart(2, '0'))
-      .replace('s', seconds.toString());
+      .replace("HH", hours.toString().padStart(2, "0"))
+      .replace("H", hours.toString())
+      .replace("mm", minutes.toString().padStart(2, "0"))
+      .replace("m", minutes.toString())
+      .replace("ss", seconds.toString().padStart(2, "0"))
+      .replace("s", seconds.toString());
     return formattedTime;
   },
   FormatDateTime(value, formatter, tz) {
@@ -1183,7 +1099,7 @@ export const utils = {
   /**
    * 将内容置空，array 置为 []; object 沿用 ClearObject 逻辑; 其他置为 undefined
    */
-  Clear(obj,mode,objType) {
+  Clear(obj, mode, objType) {
     function clearDeep(obj, seen = new Map()) {
       if (seen.has(obj)) {
         return seen.get(obj);
@@ -1193,9 +1109,14 @@ export const utils = {
 
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
-          if (typeof obj[key] === 'object' && obj[key] !== null) {
+          if (typeof obj[key] === "object" && obj[key] !== null) {
             obj[key] = clearDeep(obj[key], seen);
-          } else if (Array.isArray(obj[key]) || typeof obj[key] === 'number' || typeof obj[key] === 'string' || typeof obj[key] === 'boolean') {
+          } else if (
+            Array.isArray(obj[key]) ||
+            typeof obj[key] === "number" ||
+            typeof obj[key] === "string" ||
+            typeof obj[key] === "boolean"
+          ) {
             obj[key] = null;
           }
         }
@@ -1203,18 +1124,18 @@ export const utils = {
 
       return obj;
     }
-    let isMap =  objType && ['nasl.collection.Map','nasl.collection.List'].find(t=>objType?.includes(t))
-    if(mode && mode === 'deep' && !isMap){
-      return clearDeep(obj)
+    let isMap = objType && ["nasl.collection.Map", "nasl.collection.List"].find((t) => objType?.includes(t));
+    if (mode && mode === "deep" && !isMap) {
+      return clearDeep(obj);
     }
     if (Array.isArray(obj)) {
       obj.splice(0, obj.length);
     } else if (isObject(obj)) {
       for (const key in obj) {
-        if (obj.hasOwnProperty(key)){
-          if(isMap){
-            delete obj[key]
-          }else{
+        if (obj.hasOwnProperty(key)) {
+          if (isMap) {
+            delete obj[key];
+          } else {
             obj[key] = null;
           }
         }
@@ -1259,30 +1180,20 @@ export const utils = {
   },
   Convert(value, tyAnn) {
     if (tyAnn && tyAnn.typeKind === "primitive") {
-      if (tyAnn.typeName === "DateTime")
-        return format(safeNewDate(value), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
-      else if (tyAnn.typeName === "Date")
-        return format(safeNewDate(value), "yyyy-MM-dd");
+      if (tyAnn.typeName === "DateTime") return format(safeNewDate(value), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+      else if (tyAnn.typeName === "Date") return format(safeNewDate(value), "yyyy-MM-dd");
       else if (tyAnn.typeName === "Time") {
         if (/^\d{2}:\d{2}:\d{2}$/.test(value))
           // 纯时间 12:30:00
           return format(safeNewDate("2022/01/01 " + value), "HH:mm:ss");
         else return format(safeNewDate(value), "HH:mm:ss");
       } else if (tyAnn.typeName === "String") return String(value);
-      else if (
-        tyAnn.typeName === "Double" ||
-        tyAnn.typeName === "Decimal"
-      )
+      else if (tyAnn.typeName === "Double" || tyAnn.typeName === "Decimal")
         // 小数
         return parseFloat(String(+value));
-      else if (
-        tyAnn.typeName === "Integer" ||
-        tyAnn.typeName === "Long"
-      )
+      else if (tyAnn.typeName === "Integer" || tyAnn.typeName === "Long")
         // 日期时间格式特殊处理; 整数： format 'int' ; 长整数: format: 'long'
-        return /^\d{4}-\d{2}-\d{2}(.*)+/.test(value)
-          ? safeNewDate(value).getTime()
-          : Math.round(+value);
+        return /^\d{4}-\d{2}-\d{2}(.*)+/.test(value) ? safeNewDate(value).getTime() : Math.round(+value);
       else if (tyAnn.typeName === "Boolean")
         // 布尔值
         return !!value;
@@ -1319,7 +1230,7 @@ export const utils = {
     if (digits !== undefined) {
       value = new Decimal(value).toFixed(parseInt(digits));
       if (omit) {
-        value = parseFloat(value) + ''; // 转字符串
+        value = parseFloat(value) + ""; // 转字符串
       }
     }
     if (showGroup) {
@@ -1395,21 +1306,15 @@ export const utils = {
    * @param {calcType} 计算类型：年(y)、季度(q)、月(M)、星期(w)、天数(d)、小时数(h)、分钟数(m)、秒数(s)
    */
   DateDiff(dateTime1, dateTime2, calcType, isAbs = true) {
-    if (!dateTime1)
-      toastAndThrow(`内置函数DateDiff入参错误：dateTime1不能为空`);
-    if (!dateTime2)
-      toastAndThrow(`内置函数DateDiff入参错误：dateTime2不能为空`);
+    if (!dateTime1) toastAndThrow(`内置函数DateDiff入参错误：dateTime1不能为空`);
+    if (!dateTime2) toastAndThrow(`内置函数DateDiff入参错误：dateTime2不能为空`);
     // Time
     const timeReg = /^(20|21|22|23|[0-1]\d):[0-5]\d:[0-5]\d$/;
     if (timeReg.test(dateTime1) && timeReg.test(dateTime2)) {
       dateTime1 = `1970/01/01 ${dateTime1}`;
       dateTime2 = `1970/01/01 ${dateTime2}`;
     }
-    if (
-      !isValid(safeNewDate(dateTime1)) ||
-      !isValid(safeNewDate(dateTime2))
-    )
-      return;
+    if (!isValid(safeNewDate(dateTime1)) || !isValid(safeNewDate(dateTime2))) return;
     const map = {
       y: differenceInYears,
       q: differenceInQuarters,
@@ -1422,10 +1327,7 @@ export const utils = {
     };
     if (!map[calcType]) return;
     const method = map[calcType];
-    const diffRes = method(
-      safeNewDate(dateTime2),
-      safeNewDate(dateTime1)
-    );
+    const diffRes = method(safeNewDate(dateTime2), safeNewDate(dateTime1));
     return isAbs ? Math.abs(diffRes) : diffRes;
   },
   // 时区转换
@@ -1434,14 +1336,10 @@ export const utils = {
       toastAndThrow(`内置函数ConvertTimezone入参错误：指定日期为空`);
     }
     if (!isValid(safeNewDate(dateTime))) {
-      toastAndThrow(
-        `内置函数ConvertTimezone入参错误：指定日期不是合法日期类型`
-      );
+      toastAndThrow(`内置函数ConvertTimezone入参错误：指定日期不是合法日期类型`);
     }
     if (!isValidTimezoneIANAString(tz)) {
-      toastAndThrow(
-        `内置函数ConvertTimezone入参错误：传入时区${tz}不是合法时区字符`
-      );
+      toastAndThrow(`内置函数ConvertTimezone入参错误：传入时区${tz}不是合法时区字符`);
     }
 
     const result = formatInTimeZone(dateTime, tz, "yyyy-MM-dd'T'HH:mm:ssxxx");
@@ -1497,10 +1395,7 @@ export const utils = {
       return str;
     }
     replace = replace.replace(/\$/g, "$$$$");
-    return str.replace(
-      new RegExp(search.replace(/([/,!\\^${}[\]().*+?|<>\-&])/g, "\\$&"), "g"),
-      replace
-    );
+    return str.replace(new RegExp(search.replace(/([/,!\\^${}[\]().*+?|<>\-&])/g, "\\$&"), "g"), replace);
   },
   /**
    *
@@ -1581,18 +1476,10 @@ export const utils = {
     const hasValue = (value, typeKey) => {
       const typeDefinition = typeDefinitionMap[typeKey] || {};
 
-      if (
-        ["nasl.core.Null"].includes(typeKey) ||
-        value === undefined ||
-        value === null
-      ) {
+      if (["nasl.core.Null"].includes(typeKey) || value === undefined || value === null) {
         return false;
       }
-      if (
-        ["nasl.core.Boolean"].includes(typeKey) ||
-        value === true ||
-        value === false
-      ) {
+      if (["nasl.core.Boolean"].includes(typeKey) || value === true || value === false) {
         return true;
       }
       if (["nasl.core.DateTime"].includes(typeKey)) {
@@ -1602,7 +1489,7 @@ export const utils = {
         return String(value).trim() !== "";
       }
       if (isDefNumber(typeKey)) {
-        if ([''].includes(value)) {
+        if ([""].includes(value)) {
           return false;
         }
         return !isNaN(Number(value));
@@ -1652,10 +1539,12 @@ export const utils = {
   },
 };
 
-function initUtils(options: {
-  enumsMap?: Record<string, any>;
-  dataTypesMap?: Record<string, any>;
-} = {}) {
+function initUtils(
+  options: {
+    enumsMap?: Record<string, any>;
+    dataTypesMap?: Record<string, any>;
+  } = {},
+) {
   enumsMap = options.enumsMap;
   dataTypesMap = options.dataTypesMap;
 
@@ -1664,11 +1553,9 @@ function initUtils(options: {
 
   return {
     utils: utils,
-  }
+  };
 }
 
-export {
-  initUtils,
-}
+export { initUtils };
 
-export * from './helper';
+export * from "./helper";

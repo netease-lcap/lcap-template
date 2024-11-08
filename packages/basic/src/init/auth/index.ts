@@ -1,12 +1,14 @@
 import authService from "./authService";
-import type { NASLUserInfo } from './authService';
+import type { NASLUserInfo } from "./authService";
 import Global from "../../global";
 
-function initAuth(options: {
-  allowList?: string[];
-  router?: any;
-  base?: string;
-} = {}) {
+function initAuth(
+  options: {
+    allowList?: string[];
+    router?: any;
+    base?: string;
+  } = {},
+) {
   authService.start();
   options.allowList = options.allowList || [];
   const router = options.router;
@@ -34,14 +36,9 @@ function initAuth(options: {
 
   return {
     auth: authService,
-  }
+  };
 }
 
-export { 
-  initAuth,
-  authService,
-};
+export { initAuth, authService };
 
-export type {
-  NASLUserInfo
-}
+export type { NASLUserInfo };
