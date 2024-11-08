@@ -146,6 +146,8 @@ const init = (appConfig, platformConfig, routes, metaData) => {
     });
 
     const router = createRouter(baseRoutes);
+    // FIXME: 来点骚操作
+    window.VueRouterInstance = router;
     const fnName = 'beforeRouter';
     if (fnName && metaData.frontendEvents[fnName]) {
         evalWrap.bind(window)(metaData, fnName);

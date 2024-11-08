@@ -18,6 +18,23 @@ export const navigateTo = ({ url }) => {
     window.wx.miniProgram.navigateTo({ url: miniUrl });
 };
 
+export const navigateBack = ({
+  delta = 1
+}) => {
+  if (!isMiniApp) return;
+  
+  window.wx.miniProgram.navigateBack({ delta });
+}
+
+export const redirectTo = ({ url }) => {
+    if (!isMiniApp)
+        return;
+    const origin = location.origin;
+    const detailUrl = encodeURIComponent(`${origin}${url}`);
+    const miniUrl = `/pages/index/index?detailUrl=${detailUrl}`;
+    window.wx.miniProgram.redirectTo({ url: miniUrl });
+};
+
 /* 跳转到头像昵称页面*/
 export const navigateToUserInfoPage = () => {
     if (!isMiniApp)

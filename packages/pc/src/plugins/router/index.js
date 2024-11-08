@@ -1,7 +1,6 @@
 import { encodeUrl, downloadClick } from '@lcap/core-template';
 
-
-export function destination(url, target = '_self') {
+export function destination(url, target = '_self', replace = false) {
     if (target === '_self') {
         // 修复访问路径为默认首页 / 时跳转可能失效的问题
         if (url.startsWith('http')) {
@@ -14,12 +13,31 @@ export function destination(url, target = '_self') {
                 if (document.getElementById(hash)) {
                     document.getElementById(hash).scrollIntoView();
                 }
-                this.$router.push(url);
+
+                if (replace) {
+                    window.VueRouterInstance?.replace(url);
+                } else {
+                    window.VueRouterInstance?.push(url);
+                }
+
+                return;
             }
 
-            this.$router.push(url);
+            if (replace) {
+                window.VueRouterInstance?.replace(url);
+            } else {
+                window.VueRouterInstance?.push(url);
+            }
         }
     } else {
         downloadClick(url, target);
     }
+}
+
+export function back() {
+    window.VueRouterInstance?.back();
+}
+
+export function go(delta) {
+    window.VueRouterInstance?.go(delta);
 }

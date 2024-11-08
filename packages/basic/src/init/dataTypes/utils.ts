@@ -293,6 +293,15 @@ export function getI18nList() {
   return window.$global.i18nInfo.I18nList || [];
 }
 
+// 路由back、go
+export function back() {
+  Config.router?.back?.();
+}
+
+export function go(delta) {
+  Config.router?.go?.(delta);
+}
+
 // 下方为H5端的方法
 export function getIsMiniApp() {
   return window.__wxjs_environment === "miniprogram";

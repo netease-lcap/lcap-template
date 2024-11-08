@@ -35,6 +35,7 @@ function initRouter() {
 
     Global.prototype.$destination = $destination;
     Global.prototype.$link = $link;
+
     Global.prototype.$formatMicroFrontUrl = formatMicroFrontUrl;
     Global.prototype.$formatMicroFrontRouterPath = formatMicroFrontRouterPath;
 
