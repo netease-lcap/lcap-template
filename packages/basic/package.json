@@ -13,10 +13,11 @@
     "build": "npm run build:esm && npm run build:cjs && npm run build:umd && npm run build:types",
     "dev": "nodemon --watch src -e 'ts,js,mjs,cjs,json' --exec 'yalc publish --push'",
     "zip": "npm pack",
-    "prepublish": "npm run clean && npm run build:bundle && npm run test",
+    "prepublish": "npm run clean && npm run build && npm run test",
     "test": "jest --coverage",
-    "build": "npm run clean && npm run build:bundle && npm run zip",
-    "clean": "rm -rf dist cjs esm",
+    "prebuild": "npm run clean",
+    "postbuild": "npm run zip",
+    "clean": "rm -rf dist cjs esm typings",
     "deploy": "node scripts/deploy.js"
   },
   "files": [
