@@ -288,7 +288,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
     if (window.preRequest) {
       // preRequest
       service.preConfig.set('preRequest', {
-        resolve(requestInfo, preData) {
+        async resolve(requestInfo, preData) {
           const HttpRequest = {
               requestURI: requestInfo.url.path,
               remoteIp: '',
@@ -299,7 +299,13 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
               cookies: foramtCookie(document.cookie),
               requestInfo
           };
-          return window.preRequest && window.preRequest(HttpRequest, preData);
+
+          let data = preData;
+          if (typeof window.preRequest === "function") {
+            data = await window.preRequest(HttpRequest, preData);
+          }
+
+          return data || preData;
         }
       });
       // 开启 preRequest
@@ -309,7 +315,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
     if (window.postRequest) {
       // postRequest
       service.postConfig.set('postRequest', {
-        resolve(response, params, requestInfo) {
+        async resolve(response, params, requestInfo) {
           if (!response) {
               return Promise.reject();
           }
@@ -329,7 +335,11 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
             response: HttpResponse, requestInfo, status,
             ...HttpResponse
           }
-          window.postRequest && window.postRequest(event);
+
+          if (typeof window.postRequest === 'function') {
+            await window.postRequest(event);
+          }
+
           let body =  event?.response?.body || event?.body
           try {
             response.data  =  JSON.parse(body)
