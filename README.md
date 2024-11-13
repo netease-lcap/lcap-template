@@ -1,3 +1,5 @@
+[![Node.js CI](https://github.com/vusion-templates/lcap-template/actions/workflows/test.yml/badge.svg)](https://github.com/vusion-templates/lcap-template/actions/workflows/test.yml)
+
 # lcap-template
 > 低代码应用模板
 
