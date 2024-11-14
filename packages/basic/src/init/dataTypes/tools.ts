@@ -371,7 +371,7 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
       (isDefString(typeKey) && valueTypeStr === "[object String]")
     );
   }
-  if (!def) {
+  if (!def || value === undefined) {
     return false;
   }
   if (value === null) {
@@ -393,7 +393,7 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
     const properties = def.properties;
     if (properties) {
       return properties.every((prop) => {
-        const propValue = value[prop.name];
+        const propValue = value?.[prop.name];
         if (propValue === undefined) {
           return false;
         }
