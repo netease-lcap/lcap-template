@@ -459,7 +459,7 @@ function inferTypeConstructorAgainstTypeKey(value, typeKey) {
             ) {
               return typeMap[curTypeKey];
             }
-          } else if (exactMatchShapeAgainstDef(value, curDef)) {
+          } else if (candidate === undefined && exactMatchShapeAgainstDef(value, curDef)) {
             candidate = typeMap[curTypeKey];
           }
         }
