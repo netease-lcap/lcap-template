@@ -58,10 +58,13 @@ const evalWrap = function (metaData, fnName) {
 const init = (appConfig, platformConfig, routes, metaData) => {
   // 写入favicon
   if (platformConfig?.documentIcon) {
-    const link = document.createElement("link");
-    link.rel = "shortcut icon";
+    let link = document.querySelector("link[rel='icon']");
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "icon";
+      document.head.appendChild(link);
+    }
     link.href = platformConfig?.documentIcon;
-    document.head.appendChild(link);
   }
 
   // 应用初始化之前 不能访问应用中的任何逻辑
