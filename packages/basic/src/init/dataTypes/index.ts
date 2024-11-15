@@ -11,6 +11,9 @@ function initDataTypes(options) {
   const i18nInfo = options.i18nInfo || {};
   initApplicationConstructor(dataTypesMap, genInitFromSchema);
 
+  // 一定要放在getFrontendVariables之前，因为Vue应用翻译的代码会用到这个
+  window.$genInitFromSchema = genInitFromSchema;
+  Global.prototype.$genInitFromSchema = genInitFromSchema;
   const { frontendVariables, localCacheVariableSet } = getFrontendVariables(options);
 
   const $global = {
@@ -29,9 +32,6 @@ function initDataTypes(options) {
     $global[service] = processPorts[service];
   });
   window.$global = $global;
-
-  window.$genInitFromSchema = genInitFromSchema;
-  Global.prototype.$genInitFromSchema = genInitFromSchema;
 
   Global.prototype.$global = $global;
   Global.prototype.$localCacheVariableSet = localCacheVariableSet;
