@@ -197,4 +197,4 @@ export {
 
 export * as Tools from "./tools";
 
-export * from "./wx";
+export * as wx from "./wx";

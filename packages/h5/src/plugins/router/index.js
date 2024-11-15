@@ -1,4 +1,4 @@
-import { encodeUrl, downloadClick, navigateTo, navigateBack, redirectTo, isMiniApp } from "@lcap/core-template";
+import { encodeUrl, downloadClick, wx } from "@lcap/core-template";
 
 export function destination(url, target = "_self", replace = false) {
   if (!url) {
@@ -6,14 +6,14 @@ export function destination(url, target = "_self", replace = false) {
   }
 
   // 微信小程序跳转
-  if (isMiniApp) {
+  if (wx.isMiniApp) {
     if (target === "_self" && url?.startsWith("http")) {
       location.href = encodeUrl(url);
     } else {
       if (replace) {
-        redirectTo({ url });
+        wx.redirectTo({ url });
       } else {
-        navigateTo({ url });
+        wx.navigateTo({ url });
       }
     }
     return;
@@ -35,8 +35,8 @@ export function destination(url, target = "_self", replace = false) {
 }
 
 export function back() {
-  if (isMiniApp) {
-    navigateBack({ delta: 1 });
+  if (wx.isMiniApp) {
+    wx.navigateBack({ delta: 1 });
     return;
   }
 
@@ -48,9 +48,9 @@ export function go(delta) {
   delta = parseInt(delta, 10);
 
   // 小程序不支持go方法
-  if (isMiniApp) {
+  if (wx.isMiniApp) {
     if (delta < 0) {
-      navigateBack({ delta: Math.abs(delta) });
+      wx.navigateBack({ delta: Math.abs(delta) });
     } else {
       console.warn("go: 小程序中不支持前进方法");
     }
