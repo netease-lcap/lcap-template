@@ -366,7 +366,7 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
     }
     const typeKey = `${ty.typeNamespace}.${ty.typeName}`;
     return (
-      (ty === "nasl.core.Boolean" && valueTypeStr === "[object Boolean]") ||
+      (typeKey === "nasl.core.Boolean" && valueTypeStr === "[object Boolean]") ||
       (isDefNumber(typeKey) && valueTypeStr === "[object Number]") ||
       (isDefString(typeKey) && valueTypeStr === "[object String]")
     );
