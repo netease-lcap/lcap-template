@@ -407,7 +407,7 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
 
 function inferTypeConstructorAgainstTypeKey(value, typeKey) {
   const def = typeDefinitionMap[typeKey];
-  if (!def || value === undefined) {
+  if (!def) {
     return undefined;
   }
   if (def.typeKind === "primitive" && def.concept !== "Enum") {
