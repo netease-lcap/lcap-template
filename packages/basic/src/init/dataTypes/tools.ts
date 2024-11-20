@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import momentTZ from "moment-timezone";
 import moment from "moment";
+import { xor } from "lodash";
 
 import { getAppTimezone, safeNewDate } from "../utils";
 import Config from "../../config";
@@ -351,6 +352,10 @@ const isTypeMatch = (typeKey, value) => {
   return isMatch;
 };
 
+function unorderedArrayEqual<T>(a: T[], b: T[]) {
+  return xor(a, b).length === 0;
+}
+
 function exactMatchShapeAgainstDef(value, def: any): boolean {
   function isMatchForPrimitive(value, ty) {
     const valueTypeStr = Object.prototype.toString.call(value);
@@ -389,13 +394,22 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
   } else if (def.properties) {
     const properties = def.properties;
     if (properties) {
-      return properties.every((prop) => {
-        const propValue = value?.[prop.name];
-        if (propValue === undefined) {
-          return false;
-        }
-        return exactMatchShapeAgainstDef(propValue, prop.typeAnnotation);
-      });
+      if (
+        typeof value === 'object' && value !== null &&
+        Array.isArray(properties) &&
+        unorderedArrayEqual(
+          Object.keys(value),
+          properties.map((prop) => prop.name),
+        )
+      ) {
+        return properties.every((prop) => {
+          const propValue = value?.[prop.name];
+          if (propValue === undefined) {
+            return false;
+          }
+          return exactMatchShapeAgainstDef(propValue, prop.typeAnnotation);
+        });
+      }
     }
     return false;
   }
@@ -413,7 +427,7 @@ function inferTypeConstructorAgainstTypeKey(value, typeKey) {
   }
   if (def.typeKind === "union") {
     // Union的所有分支对应的类型构造器，从左到右匹配：
-    // 1. 对当前类型构造器，看它有无定义tag字段：有tag字段且值和value对应字段相同，直接输出当前类型构造器；否则，跳过。
+    // 1. 对当前类型构造器，看它有无定义tag字段：有tag字段且值和value对应字段相同，直接输出当前类型构造器而无需结构一致；否则，跳过。
     // 2. 先判断结构是否一致（复合类型递归看properties属性；Primitive类型直接判断即可）。结构相同的时候，当前类型构造器作为候选；否则，跳过。
     // 输出：第一个候选，或者无匹配
     let candidate = undefined;
@@ -443,10 +457,8 @@ function inferTypeConstructorAgainstTypeKey(value, typeKey) {
               return [];
             })
             .at(0);
-          if (tagProperty) {
-            if (tagProperty.tagValue === value?.[tagProperty.name] && exactMatchShapeAgainstDef(value, curDef)) {
-              return typeMap[curTypeKey];
-            }
+          if (tagProperty && tagProperty.tagValue === value?.[tagProperty.name]) {
+            return typeMap[curTypeKey];
           } else if (candidate === undefined && exactMatchShapeAgainstDef(value, curDef)) {
             candidate = typeMap[curTypeKey];
           }
