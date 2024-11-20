@@ -103,9 +103,9 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
       }
     }
     let code = `
+            // ${typeKey}
             const level = params.level;
             const defaultValue = params.defaultValue;
-            // 默认值是个对象
             if (defaultValue && Object.prototype.toString.call(defaultValue) === '[object Object]') {
                 Object.assign(this, defaultValue);
             }
@@ -141,8 +141,7 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
         if (Object.prototype.toString.call(parsedValue) === "[object String]" && !defaultCode?.executeCode) {
           parsedValue = `\`${parsedValue.replace(/['"`\\]/g, (m) => `\\${m}`)}\``;
         }
-        const needGenInitFromSchema =
-          typeAnnotation && !["primitive"].includes(typeAnnotation.typeKind);
+        const needGenInitFromSchema = typeAnnotation && !["primitive"].includes(typeAnnotation.typeKind);
         const sortedTypeKey = genSortedTypeKey(typeAnnotation);
         code += `this.${propertyName} = `;
         if (needGenInitFromSchema) {
@@ -201,9 +200,7 @@ export function isInstanceOf(variable, typeKey) {
   const { concept, typeKind, typeNamespace, typeName, typeArguments } = typeDefinition || {};
   const isPrimitive = isDefPrimitive(typeKey);
   if (typeKind === "union") {
-    return !!typeArguments?.some((typeArg) =>
-      isInstanceOf(variable, genSortedTypeKey(typeArg))
-    );
+    return !!typeArguments?.some((typeArg) => isInstanceOf(variable, genSortedTypeKey(typeArg)));
   } else if (concept === "Enum") {
     // 枚举
     const { enumItems } = typeDefinition;
@@ -423,10 +420,7 @@ function inferTypeConstructorAgainstTypeKey(value, typeKey) {
     for (const ty of def.typeArguments) {
       const curTypeKey = `${ty.typeNamespace}.${ty.typeName}`;
       const curDef = typeDefinitionMap[curTypeKey];
-      if (
-        ty.typeKind === "primitive" &&
-        exactMatchShapeAgainstDef(value, curDef)
-      ) {
+      if (ty.typeKind === "primitive" && exactMatchShapeAgainstDef(value, curDef)) {
         // 匹配上了Primitve类型
         return typeMap[curTypeKey];
       } else if (ty.typeKind === "union") {
@@ -440,10 +434,7 @@ function inferTypeConstructorAgainstTypeKey(value, typeKey) {
             .flatMap((prop) => {
               const defaultValue = prop.defaultValue;
               const hardcodedPropertyName = "errorType";
-              if (
-                prop.name === hardcodedPropertyName &&
-                defaultValue?.expression?.concept === "StringLiteral"
-              ) {
+              if (prop.name === hardcodedPropertyName && defaultValue?.expression?.concept === "StringLiteral") {
                 return [
                   // 注意：允许tagValue为undefined
                   { name: prop.name, tagValue: defaultValue.expression.value },
@@ -453,10 +444,7 @@ function inferTypeConstructorAgainstTypeKey(value, typeKey) {
             })
             .at(0);
           if (tagProperty) {
-            if (
-              tagProperty.tagValue === value?.[tagProperty.name] &&
-              exactMatchShapeAgainstDef(value, curDef)
-            ) {
+            if (tagProperty.tagValue === value?.[tagProperty.name] && exactMatchShapeAgainstDef(value, curDef)) {
               return typeMap[curTypeKey];
             }
           } else if (candidate === undefined && exactMatchShapeAgainstDef(value, curDef)) {
@@ -543,15 +531,9 @@ export const genInitData = (typeKey, defaultValue, parentLevel?) => {
       }
       return parsedValue;
     } else if (typeKey) {
-      const TypeConstructor = inferTypeConstructorAgainstTypeKey(
-        parsedValue,
-        typeKey
-      );
+      const TypeConstructor = inferTypeConstructorAgainstTypeKey(parsedValue, typeKey);
       if (TypeConstructor) {
-        if (
-          concept === "Structure" &&
-          Object.prototype.toString.call(parsedValue) === "[object Object]"
-        ) {
+        if (concept === "Structure" && Object.prototype.toString.call(parsedValue) === "[object Object]") {
           parsedValue = jsonNameReflection(properties, parsedValue);
         }
         const instance = new TypeConstructor({
