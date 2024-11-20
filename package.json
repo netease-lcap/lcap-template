@@ -4,6 +4,7 @@
   "description": "低代码应用模板",
   "version": "1.6.0",
   "scripts": {
+    "doc": "pnpm --filter=@lcap/basic-template run doc",
     "prepare": "husky",
     "test": "pnpm --filter \"./packages/*\" run test",
     "change:version": "node ./scripts/version",
