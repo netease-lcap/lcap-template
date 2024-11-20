@@ -219,7 +219,7 @@ describe("genInitFromSchema支持tagged-union", () => {
   });
 
   describe("形状和union的第一个分支无法完全match", () => {
-    test("尊重tag", () => {
+    test("如存在tag，则不需要考虑形状", () => {
       const unionTypedInterfaceErrorWithNull = genInitFromSchema(unionTypeKey, {
         errorType: "nasl.error.DatabaseError",
         errorMsg: null,
@@ -227,6 +227,7 @@ describe("genInitFromSchema支持tagged-union", () => {
         statusCode: null,
       });
       expect(global.$isInstanceOf(unionTypedInterfaceErrorWithNull, "nasl.error.DatabaseError")).toBe(true);
+      expect(global.$isInstanceOf(unionTypedInterfaceErrorWithNull, "nasl.error.InterfaceError")).toBe(false);
       expect(global.$isInstanceOf(unionTypedInterfaceErrorWithNull, unionTypeKey)).toBe(true);
     });
   });
