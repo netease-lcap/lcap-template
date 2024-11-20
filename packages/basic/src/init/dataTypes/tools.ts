@@ -103,6 +103,7 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
       }
     }
     let code = `
+            // ${typeKey}
             const level = params.level;
             const defaultValue = params.defaultValue;
             // 默认值是个对象
