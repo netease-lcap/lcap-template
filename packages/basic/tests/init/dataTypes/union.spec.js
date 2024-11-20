@@ -643,33 +643,37 @@ describe("genInitFromSchema支持形状推断算法", () => {
     test.todo("Entity2{a: String} | Entity1{a: String} | Entity3{a: String} | String");
   });
   describe("非同构推断", () => {
-    test("Structure1{name: String, age: Long} | StudentInfo{name: String, age: Long, id: Long, classId: Long, num: Long, createdTime: DateTime, updatedTime: DateTime, createdBy: String, updatedBy: String}", () => {
-      const studentInfo = genInitFromSchema(
-        "app.structures.Structure1 | app.dataSources.defaultDS.entities.StudentInfo",
-        {
-          id: null,
-          createdTime: null,
-          updatedTime: null,
-          createdBy: null,
-          updatedBy: null,
-          num: "1001",
-          name: "小明",
-          age: 15,
-          classId: 501,
-        },
-      );
-      expect(global.$isInstanceOf(studentInfo, "app.dataSources.defaultDS.entities.StudentInfo")).toBe(true);
-      expect(global.$isInstanceOf(studentInfo, "app.structures.Structure1")).toBe(false);
+    describe("Structure1{name: String, age: Long} | StudentInfo{name: String, age: Long, id: Long, classId: Long, num: Long, createdTime: DateTime, updatedTime: DateTime, createdBy: String, updatedBy: String}", () => {
+      test("StudentInfo形状正确寻找到构造器", () => {
+        const studentInfo = genInitFromSchema(
+          "app.structures.Structure1 | app.dataSources.defaultDS.entities.StudentInfo",
+          {
+            id: null,
+            createdTime: null,
+            updatedTime: null,
+            createdBy: null,
+            updatedBy: null,
+            num: "1001",
+            name: "小明",
+            age: 15,
+            classId: 501,
+          },
+        );
+        expect(global.$isInstanceOf(studentInfo, "app.dataSources.defaultDS.entities.StudentInfo")).toBe(true);
+        expect(global.$isInstanceOf(studentInfo, "app.structures.Structure1")).toBe(false);
+      });
 
-      const structure1 = genInitFromSchema(
-        "app.structures.Structure1 | app.dataSources.defaultDS.entities.StudentInfo",
-        {
-          name: "小明",
-          age: 15,
-        },
-      );
-      expect(global.$isInstanceOf(structure1, "app.dataSources.defaultDS.entities.StudentInfo")).toBe(false);
-      expect(global.$isInstanceOf(structure1, "app.structures.Structure1")).toBe(true);
+      test("Structure1形状正确寻找到构造器", () => {
+        const structure1 = genInitFromSchema(
+          "app.structures.Structure1 | app.dataSources.defaultDS.entities.StudentInfo",
+          {
+            name: "小明",
+            age: 15,
+          },
+        );
+        expect(global.$isInstanceOf(structure1, "app.dataSources.defaultDS.entities.StudentInfo")).toBe(false);
+        expect(global.$isInstanceOf(structure1, "app.structures.Structure1")).toBe(true);
+      });
     });
     test.todo("Entity1 | Boolean");
   });
