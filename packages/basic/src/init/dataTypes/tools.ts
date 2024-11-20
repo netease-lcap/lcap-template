@@ -395,6 +395,8 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
     const properties = def.properties;
     if (properties) {
       if (
+        typeof value === 'object' && value !== null &&
+        Array.isArray(properties) &&
         unorderedArrayEqual(
           Object.keys(value),
           properties.map((prop) => prop.name),
