@@ -46,7 +46,7 @@ const Config: ConfigType = {
   },
 };
 
-export function setConfig(newConfig) {
+export function setConfig(newConfig: Partial<ConfigType>) {
   Object.assign(Config, newConfig);
 }
 

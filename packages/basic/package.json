@@ -18,7 +18,8 @@
     "prebuild": "npm run clean",
     "postbuild": "npm run zip",
     "clean": "rm -rf dist cjs esm typings",
-    "deploy": "node scripts/deploy.js"
+    "deploy": "node scripts/deploy.js",
+    "doc": "typedoc --out ../../docs src"
   },
   "files": [
     "esm",
@@ -60,6 +61,7 @@
     "rollup": "^4.19.1",
     "rollup-plugin-polyfill-node": "^0.13.0",
     "ts-jest": "^29.1.1",
+    "typedoc": "^0.26.11",
     "typescript": "^5.3.3",
     "yalc": "^1.0.0-pre.53"
   }
