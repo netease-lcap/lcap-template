@@ -31,8 +31,9 @@ export function httpCode(response, params, requestInfo) {
 }
 
 export function shortResponse(response, params, requestInfo) {
-  // 原logic接口返回不变
-  if (requestInfo.config?.concept === "Logic") {
+  if (requestInfo.config?.concept === "Logic" || requestInfo.config?.handleError) {
+    // 1. 原logic接口返回不变
+    // 2. handleError为true时，返回Data
     return response.data?.Data !== undefined ? response.data?.Data : response.data;
   }
 
