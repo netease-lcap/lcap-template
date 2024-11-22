@@ -528,9 +528,6 @@ export const utils = {
     if (!arr || typeof getVal !== "function") {
       return null;
     }
-    if (arr.length === 0) {
-      return arr;
-    }
     const res = {};
     arr.forEach((e) => {
       const val = getVal(e);
@@ -547,9 +544,6 @@ export const utils = {
     // getVal : <A,B> . A => B 给一个 A 类型的数据，返回 A 类型中被用户选中的 field 的 value
     if (!arr || typeof getVal !== "function") {
       return null;
-    }
-    if (arr.length === 0) {
-      return arr;
     }
     const res = {};
     for (let i = 0; i < arr.length; i++) {
