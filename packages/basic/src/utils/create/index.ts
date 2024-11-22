@@ -387,6 +387,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           body: JSON.stringify(response.response.data),
           headers: response.response.headers,
           cookies: foramtCookie(document.cookie),
+          requestInfo
         };
         window.postRequest && window.postRequest(HttpResponse, requestInfo, status);
         throw err;
