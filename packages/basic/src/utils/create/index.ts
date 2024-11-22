@@ -353,7 +353,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
       },
     });
     service.postConfig.set("postRequestError", {
-      reject(response, params, requestInfo) {
+      async reject(response, params, requestInfo) {
         response.Code = response.code || response.status;
         const status = "error";
         const err = response;
@@ -387,9 +387,31 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           body: JSON.stringify(response.response.data),
           headers: response.response.headers,
           cookies: foramtCookie(document.cookie),
-          requestInfo
         };
-        window.postRequest && window.postRequest(HttpResponse, requestInfo, status);
+
+        let event = {
+          response: HttpResponse,
+          requestInfo,
+          status,
+          ...HttpResponse,
+        };
+
+        if (typeof window.postRequest === "function") {
+          await window.postRequest(event);
+        }
+        // 开启handleError时，不抛出错误，返回response
+        if (config?.handleError) {
+          let body = event?.response?.body || event?.body;
+          try {
+            response.data = JSON.parse(body);
+          } catch (error) {
+            // 解析不了则直接返回
+            throw err;
+          }
+          response.headers = event?.response?.headers || event?.headers;
+          return response;
+        }
+
         throw err;
       },
     });
