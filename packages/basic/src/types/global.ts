@@ -7,6 +7,7 @@ interface Window {
   __wxjs_environment: string;
   wx: any;
   $global: any;
+  $isInstanceOf: any;
   $genInitFromSchema: any;
   $logics: any;
   LcapMicro: any;
