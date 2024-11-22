@@ -278,6 +278,10 @@ export const createService = function createService(apiSchemaList, serviceConfig
           ...HttpResponse,
         };
 
+        if (typeof window.postRequest === "function") {
+          await window.postRequest(event);
+        }
+
         // 开启handleError时，不抛出错误，返回response
         if (config?.handleError) {
           let body = event?.response?.body || event?.body;
