@@ -395,7 +395,8 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
     const properties = def.properties;
     if (properties) {
       if (
-        typeof value === 'object' && value !== null &&
+        typeof value === "object" &&
+        value !== null &&
         Array.isArray(properties) &&
         unorderedArrayEqual(
           Object.keys(value),
@@ -421,7 +422,7 @@ function inferTypeConstructorAgainstTypeKey(value, typeKey) {
   if (!def) {
     return undefined;
   }
-  if (def.typeKind === "primitive" && def.concept !== "Enum") {
+  if (def.typeKind === "primitive" || def.concept === "Enum") {
     // 视作没有Constructor
     return undefined;
   }
