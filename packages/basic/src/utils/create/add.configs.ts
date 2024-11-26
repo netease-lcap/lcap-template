@@ -31,9 +31,13 @@ export function httpCode(response, params, requestInfo) {
 }
 
 export function shortResponse(response, params, requestInfo) {
-  if (requestInfo.config?.concept === "Logic" || response.skipShortResponseCopy) {
-    // 1. 原logic接口返回不变
-    // 2. response上具有skipShortResponseCopy时，意味着是createService中的postRequestError启用了handleError的情形，也无需调整返回值
+  if(response.skipShortResponseCopy){
+    // response上具有skipShortResponseCopy时，意味着是createService中的postRequestError启用了handleError的情形
+    // 此时也被服务端包过，直接取data字段即可
+    return response.data?.Data !== undefined ? response.data?.Data : response.data;
+  }
+  if (requestInfo.config?.concept === "Logic") {
+    // logic接口被服务端包过，因此直接取data字段即可
     return response.data?.Data !== undefined ? response.data?.Data : response.data;
   }
 
