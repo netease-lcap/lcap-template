@@ -256,6 +256,60 @@ export const createService = function createService(apiSchemaList, serviceConfig
     httpError: true,
     shortResponse: true,
   });
+
+  {
+    service.postConfig.set("postRequestError", {
+      async reject(response, params, requestInfo) {
+        response.Code = response.code || response.status;
+        const status = "error";
+        const err = response;
+        const { config } = requestInfo;
+        const HttpResponse = {
+          status: response.response.status + "",
+          body: JSON.stringify(response.response.data),
+          headers: response.response.headers,
+          cookies: foramtCookie(document.cookie),
+        };
+
+        let event = {
+          response: HttpResponse,
+          requestInfo,
+          status,
+          ...HttpResponse,
+        };
+
+        if (typeof window.postRequest === "function") {
+          await window.postRequest(event);
+        }
+
+        // 开启handleError时，不抛出错误，返回response
+        if (config?.handleError) {
+          let body = event?.response?.body || event?.body;
+          try {
+            response.data = JSON.parse(body);
+          } catch (error) {
+            // 解析不了则直接返回
+            throw err;
+          }
+          // 此时跳过shortResponse中的兼容操作
+          response.skipShortResponseCopy = true;
+          response.headers = event?.response?.headers || event?.headers;
+          return response;
+        }
+
+        throw err;
+      },
+    });
+    fixServiceConfig.config = {
+      ...fixServiceConfig.config,
+      priority: {
+        ...(fixServiceConfig.config.priority ? fixServiceConfig.config.priority : {}),
+        postRequestError: 10,
+      },
+    };
+    fixServiceConfig.config.postRequestError = true;
+  }
+
   serviceConfig = fixServiceConfig;
   const newApiSchemaMap = adjustPathWithSysPrefixPath(apiSchemaList);
   let logicsInstance = service.generator(newApiSchemaMap, dynamicServices, serviceConfig);
@@ -353,7 +407,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
       },
     });
     service.postConfig.set("postRequestError", {
-      reject(response, params, requestInfo) {
+      async reject(response, params, requestInfo) {
         response.Code = response.code || response.status;
         const status = "error";
         const err = response;
@@ -388,7 +442,30 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           headers: response.response.headers,
           cookies: foramtCookie(document.cookie),
         };
-        window.postRequest && window.postRequest(HttpResponse, requestInfo, status);
+
+        let event = {
+          response: HttpResponse,
+          requestInfo,
+          status,
+          ...HttpResponse,
+        };
+
+        if (typeof window.postRequest === "function") {
+          await window.postRequest(event);
+        }
+        // 开启handleError时，不抛出错误，返回response
+        if (config?.handleError) {
+          let body = event?.response?.body || event?.body;
+          try {
+            response.data = JSON.parse(body);
+          } catch (error) {
+            // 解析不了则直接返回
+            throw err;
+          }
+          response.headers = event?.response?.headers || event?.headers;
+          return response;
+        }
+
         throw err;
       },
     });

@@ -35,6 +35,7 @@ function initDataTypes(options) {
 
   Global.prototype.$global = $global;
   Global.prototype.$localCacheVariableSet = localCacheVariableSet;
+  window.$isInstanceOf = isInstanceOf;
   Global.prototype.$isInstanceOf = isInstanceOf;
   // 判断两个对象是否相等，不需要引用完全一致
   Global.prototype.$isLooseEqualFn = isLooseEqualFn;
