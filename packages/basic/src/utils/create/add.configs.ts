@@ -31,9 +31,9 @@ export function httpCode(response, params, requestInfo) {
 }
 
 export function shortResponse(response, params, requestInfo) {
-  if (requestInfo.config?.concept === "Logic" || requestInfo.config?.handleError) {
+  if (requestInfo.config?.concept === "Logic" || response.skipShortResponseCopy) {
     // 1. 原logic接口返回不变
-    // 2. handleError为true时，返回Data
+    // 2. response上具有skipShortResponseCopy时，意味着是createService中的postRequestError启用了handleError的情形，也无需调整返回值
     return response.data?.Data !== undefined ? response.data?.Data : response.data;
   }
 
