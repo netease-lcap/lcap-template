@@ -41,8 +41,6 @@ Vue.prototype.$sleep = function () {
 };
 
 window._lcapCreateService = createService;
-window.appVue = Vue;
-window.Vue = Vue;
 window.LcapInstall = install;
 
 installOptions(Vue);
