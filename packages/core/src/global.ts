@@ -2,7 +2,8 @@ import Vue from "vue";
 
 declare global {
   interface Window {
-    appVue: typeof Vue;
+    appVue: any;
+    Vue: any;
   }
 }
 
