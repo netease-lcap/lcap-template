@@ -1,3 +1,4 @@
+import "./global";
 import filters from "./filters";
 import * as directives from "./directives";
 export * from "./mixins";
