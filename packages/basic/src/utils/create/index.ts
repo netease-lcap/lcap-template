@@ -289,7 +289,7 @@ export const createService = function createService(apiSchemaList, serviceConfig
             response.data = JSON.parse(body);
           } catch (error) {
             // 解析不了则直接返回
-            throw err;
+            throw error;
           }
           response.headers = event?.response?.headers || event?.headers;
           return response;
@@ -458,7 +458,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
             response.data = JSON.parse(body);
           } catch (error) {
             // 解析不了则直接返回
-            throw err;
+            throw error;
           }
           response.headers = event?.response?.headers || event?.headers;
           return response;
