@@ -54,6 +54,14 @@ installDirectives(Vue, directives);
 
 // 需要兼容老应用的制品，因此新版本入口函数参数不做改变
 const init = (appConfig, platformConfig, routes, metaData) => {
+    // 写入favicon
+    if (platformConfig?.documentIcon) {
+        const link = document.createElement('link');
+        link.rel = 'shortcut icon';
+        link.href = platformConfig?.documentIcon;
+        document.head.appendChild(link);
+    }
+
     // 应用初始化之前 不能访问应用中的任何逻辑
     evalWrap.bind(window)(metaData, 'rendered');
     ['preRequest', 'postRequest'].forEach((fnName) => {
