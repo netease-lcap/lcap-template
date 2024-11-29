@@ -4,7 +4,7 @@ type Nil = null | undefined;
  * @param data
  * @param errorMessage
  */
-export function overwriteErrorMsgFieldAsSpecified(
+export function overwriteErrorMsgFieldIfSpecified(
   data: { errorMsg: string | Nil } | {} | Nil,
   errorMessage: string | Nil,
 ) {

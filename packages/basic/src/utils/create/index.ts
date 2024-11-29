@@ -12,7 +12,7 @@ import { createMockServiceByData } from "./mockData";
 import { sseRequester } from "./sseRequester";
 
 import Config from "../../config";
-import { overwriteErrorMsgFieldAsSpecified as overwriteErrorMsgFieldIfSpecified } from "./utils";
+import { overwriteErrorMsgFieldIfSpecified } from "./utils";
 
 const getData = (str) => new Function("return " + str)();
 
