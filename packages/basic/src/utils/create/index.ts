@@ -12,7 +12,7 @@ import { createMockServiceByData } from "./mockData";
 import { sseRequester } from "./sseRequester";
 
 import Config from "../../config";
-import { overwriteErrorMsgFieldAsSpecified } from "./utils";
+import { overwriteErrorMsgFieldAsSpecified as overwriteErrorMsgFieldIfSpecified } from "./utils";
 
 const getData = (str) => new Function("return " + str)();
 
@@ -266,7 +266,7 @@ export const createService = function createService(apiSchemaList, serviceConfig
         const err = response;
         const { config } = requestInfo;
 
-        overwriteErrorMsgFieldAsSpecified(response.response.data?.Data, requestInfo?.config?.errorMessage);
+        overwriteErrorMsgFieldIfSpecified(response.response.data?.Data, requestInfo?.config?.errorMessage);
 
         const HttpResponse = {
           status: response.response.status + "",
@@ -441,7 +441,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           throw Error("程序中止");
         }
 
-        overwriteErrorMsgFieldAsSpecified(response.response.data?.Data, requestInfo?.config?.errorMessage);
+        overwriteErrorMsgFieldIfSpecified(response.response.data?.Data, requestInfo?.config?.errorMessage);
 
         const HttpResponse = {
           status: response.response.status + "",
