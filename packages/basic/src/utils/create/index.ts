@@ -12,6 +12,7 @@ import { createMockServiceByData } from "./mockData";
 import { sseRequester } from "./sseRequester";
 
 import Config from "../../config";
+import { overwriteErrorMsgFieldAsSpecified } from "./utils";
 
 const getData = (str) => new Function("return " + str)();
 
@@ -264,6 +265,9 @@ export const createService = function createService(apiSchemaList, serviceConfig
         const status = "error";
         const err = response;
         const { config } = requestInfo;
+
+        overwriteErrorMsgFieldAsSpecified(response.response.data?.Data, requestInfo?.config?.errorMessage);
+
         const HttpResponse = {
           status: response.response.status + "",
           body: JSON.stringify(response.response.data),
@@ -277,16 +281,6 @@ export const createService = function createService(apiSchemaList, serviceConfig
           status,
           ...HttpResponse,
         };
-
-        // 若有定义errorMessage为string，且response的Data中包含errorMsg字段，则直接写入字段尝试替换错误信息
-        if (typeof requestInfo?.config?.errorMessage === "string") {
-          const errorMessage = requestInfo.config.errorMessage;
-          const data = response?.response?.data?.Data;
-          // Data字段的值可能形如：{errorMsg: string; errorType: string};
-          if (data?.hasOwnProperty("errorMsg")) {
-            data.errorMsg = errorMessage;
-          }
-        }
 
         if (typeof window.postRequest === "function") {
           await window.postRequest(event);
@@ -447,15 +441,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           throw Error("程序中止");
         }
 
-        // 若有定义errorMessage为string，且response的Data中包含errorMsg字段，则直接写入字段尝试替换错误信息
-        if (typeof requestInfo?.config?.errorMessage === "string") {
-          const errorMessage = requestInfo.config.errorMessage;
-          const data = response?.response?.data?.Data;
-          // Data字段的值可能形如：{errorMsg: string; errorType: string};
-          if (data?.hasOwnProperty("errorMsg")) {
-            data.errorMsg = errorMessage;
-          }
-        }
+        overwriteErrorMsgFieldAsSpecified(response.response.data?.Data, requestInfo?.config?.errorMessage);
 
         const HttpResponse = {
           status: response.response.status + "",
