@@ -5,7 +5,7 @@ type Nil = null | undefined;
  * @param errorMessage
  */
 export function overwriteErrorMsgFieldIfSpecified(
-  data: { errorMsg: string | Nil } | {} | Nil,
+  data: Record<string, unknown> & { errorMsg?: string | Nil } | Nil,
   errorMessage: string | Nil,
 ) {
   if (typeof errorMessage === "string" && data) {
