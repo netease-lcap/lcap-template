@@ -14,7 +14,7 @@
         <view class="userinfo-nickname-label">昵称</view>
         <input name="nickname" id="nickname-input"   type="nickname" @nicknamereview="handleChangeNickName" placeholder-class="wechat-input-placeholder" class="wechat-input" placeholder="请输入昵称" />
       </view>
-     
+
     </view>
     <button  form-type="submit" class="userinfo-btn" >确定</button>
   </form>
@@ -59,7 +59,7 @@ export default {
     },
     handleChangeNickName(e) {
       const { detail } = e
-    },  
+    },
     handleSubmit(e) {
       let pages = Taro.getCurrentPages()
       let prevPage = pages[pages.length - 2]
@@ -72,8 +72,9 @@ export default {
         })
       }
       prevPage.setData({
-          userinfo: {wxHeadImg, wxNickName},
-        });
+        wxHeadImg,
+        wxNickName,
+      });
       Taro.navigateBack({
         delta: 1
       });

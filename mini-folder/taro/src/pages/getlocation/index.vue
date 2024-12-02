@@ -42,8 +42,8 @@ export default {
       let prevPage = pages[pages.length - 2]
       const { location } = this
       prevPage.setData({
-          userinfo: {wxLocation:location},
-        });
+        wxLocation: location,
+      });
       Taro.navigateBack({
         delta: 1
       });

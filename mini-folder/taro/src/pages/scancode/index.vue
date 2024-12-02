@@ -39,8 +39,8 @@ export default {
       let prevPage = pages[pages.length - 2]
       const { wxScanCode } = this
       prevPage.setData({
-          userinfo: {wxScanCode},
-        });
+        wxScanCode
+      });
       Taro.navigateBack({
         delta: 1
       });

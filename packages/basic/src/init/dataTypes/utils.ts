@@ -319,15 +319,11 @@ export function getWeChatPhone() {
 }
 
 export function getWeChatScanCode() {
-  const data = localStorage.getItem("_wx_scan_code");
-  localStorage.setItem("_wx_scan_code", "");
-  return data;
+  return localStorage.getItem("_wx_scan_code");
 }
 
 export function getWeChatLocation() {
-  const data = localStorage.getItem("_wx_location");
-  localStorage.setItem("_wx_location", "");
-  return data;
+  return localStorage.getItem("_wx_location");
 }
 
 export function navigateToUserInfo() {

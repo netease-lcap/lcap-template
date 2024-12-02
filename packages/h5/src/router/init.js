@@ -6,7 +6,8 @@ export function createRouter({ routes, VueRouter }) {
   });
 
   router.afterEach((to, from) => {
-    const saveList = [
+    // 这些参数是微信传过来的，web端转存在localStorage中， 所以web端查询都是在localStorage中查询
+    const wx_query_list = [
       "_wx_openid",
       "_wx_headimg",
       "_wx_nickname",
@@ -17,7 +18,7 @@ export function createRouter({ routes, VueRouter }) {
     ];
     if (to.query)
       for (const i in to.query) {
-        if (saveList.includes(i)) {
+        if (wx_query_list.includes(i)) {
           window.localStorage.setItem(i, to.query[i]);
         }
       }

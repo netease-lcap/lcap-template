@@ -50,7 +50,7 @@ export default {
         let pages = Taro.getCurrentPages()
         let prevPage = pages[pages.length - 2]
         prevPage.setData({
-            userinfo: {wxPhone:phone_info.countryCode+'-'+phone_info.purePhoneNumber},
+          wxPhone: phone_info?.countryCode + '-' +phone_info?.purePhoneNumber
         });
         Taro.navigateBack({
           delta: 1
@@ -64,7 +64,7 @@ export default {
     },
     handleChangeNickName(e) {
       const { detail } = e
-    },  
+    },
     handleSubmit(e) {
       let pages = Taro.getCurrentPages()
       let prevPage = pages[pages.length - 2]
