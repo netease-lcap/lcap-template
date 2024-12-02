@@ -3,37 +3,36 @@
 </template>
 
 <script>
-import { baseUrl } from "../../utils/config"
 import Taro from "@tarojs/taro"
 
 export default {
   data () {
     return {
-      wxScanCode:"",
+      wxScanCode: "",
     }
   },
   onLoad(options) {
-    this.init(options);
-    Taro.scanCode({
-      success:(r)=>{
-        this.wxScanCode = r.result
-        this.handleSave()
-      },
-      fail:(error)=>{
-        Taro.showToast({
-          title: '扫码失败',
-          icon:"none"
-        })
-        Taro.navigateBack({
-          delta: 1
-        });
-      }
-    })
+    this.startScanCode();
   },
   methods: {
-    init(options) {
-      console.log(options);
+    startScanCode() {
+      Taro.scanCode({
+        success: (r) => {
+          this.wxScanCode = r.result
+          this.handleSave()
+        },
+        fail: (error) => {
+          Taro.showToast({
+            title: '扫码失败',
+            icon:"none"
+          })
+          Taro.navigateBack({
+            delta: 1
+          });
+        }
+      })
     },
+
     handleSave(e) {
       let pages = Taro.getCurrentPages()
       let prevPage = pages[pages.length - 2]

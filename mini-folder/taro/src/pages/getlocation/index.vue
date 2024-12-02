@@ -12,31 +12,31 @@ import './index.less'
 export default {
   data () {
     return {
-      location:"",
+      location: "",
     }
   },
   onLoad(options) {
-    this.init(options);
-    Taro.getLocation({
-      type: 'wgs84',
-      success:(r)=>{
-        this.location = r.latitude+","+r.longitude
-        setTimeout(()=>{
-          this.handleSave()
-        },1000)
-      },
-      fail:(error)=>{
-        Taro.showToast({
-          title: error,
-          icon:"none"
-        })
-      }
-    })
+    this.startGetLocation();
   },
   methods: {
-    init(options) {
-      console.log(options,222);
+    startGetLocation() {
+      Taro.getLocation({
+        type: 'wgs84',
+        success: (r) => {
+          this.location = r.latitude + "," + r.longitude
+          setTimeout(() => {
+            this.handleSave()
+          }, 1000)
+        },
+        fail: (error) => {
+          Taro.showToast({
+            title: error,
+            icon: "none"
+          })
+        }
+      })
     },
+
     handleSave(e) {
       let pages = Taro.getCurrentPages()
       let prevPage = pages[pages.length - 2]

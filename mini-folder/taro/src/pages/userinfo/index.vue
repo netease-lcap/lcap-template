@@ -30,26 +30,23 @@ export default {
   data () {
     return {
       wxHeadImg: "",
-      wxNickName:"",
+      wxNickName: "",
     }
   },
   onLoad(options) {
-    this.init(options);
+
   },
   methods: {
-    init(options) {
-      console.log(options);
-    },
     async handleLaunch(e) {
       try {
         const { avatarUrl } = e.detail
         const {data}  = await Taro.uploadFile({
             filePath: avatarUrl,
-            url: baseUrl+"upload",
-            name:"file"
+            url: baseUrl + "upload",
+            name: "file"
         })
-        const result =   JSON.parse(data)?.result
-        this.wxHeadImg = result
+        const result = JSON.parse(data)?.result;
+        this.wxHeadImg = result;
       } catch (error) {
         Taro.showToast({
           title: '上传头像失败',

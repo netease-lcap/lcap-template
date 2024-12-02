@@ -19,7 +19,6 @@
 
 <script>
 import apis from "../../apis";
-import { baseUrl } from "../../utils/config"
 import Taro from "@tarojs/taro"
 import './index.less'
 
@@ -30,12 +29,9 @@ export default {
     }
   },
   onLoad(options) {
-    this.init(options);
+
   },
   methods: {
-    init(options) {
-      console.log(options);
-    },
     async handleLaunch(e) {
       try {
         console.log(e)
@@ -62,27 +58,6 @@ export default {
         })
       }
     },
-    handleChangeNickName(e) {
-      const { detail } = e
-    },
-    handleSubmit(e) {
-      let pages = Taro.getCurrentPages()
-      let prevPage = pages[pages.length - 2]
-      this.wxNickName =  e.detail.value.nickname
-      const { wxHeadImg, wxNickName } = this
-      if (!wxHeadImg  ||!wxNickName) {
-       return Taro.showToast({
-          icon: "none",
-          title: "昵称和头像不能为空"
-        })
-      }
-      prevPage.setData({
-          userinfo: {wxHeadImg, wxNickName},
-        });
-      Taro.navigateBack({
-        delta: 1
-      });
-    }
   }
 }
 </script>
