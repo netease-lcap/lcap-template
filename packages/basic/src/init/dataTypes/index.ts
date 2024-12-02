@@ -31,6 +31,18 @@ function initDataTypes(options) {
   Object.keys(processPorts).forEach((service) => {
     $global[service] = processPorts[service];
   });
+
+  // Vue版本需要响应式
+  try {
+    new Global({
+      data: {
+        $global,
+      },
+    });
+  } catch (error) {
+    console.error("Vue版本给$global创建响应式失败", error);
+  }
+
   window.$global = $global;
 
   Global.prototype.$global = $global;
