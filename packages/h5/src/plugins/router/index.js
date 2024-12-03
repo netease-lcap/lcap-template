@@ -6,7 +6,7 @@ export function destination(url, target = "_self", replace = false) {
   }
 
   // 微信小程序跳转
-  if (wx.isMiniApp) {
+  if (wx.isMiniApp()) {
     if (target === "_self" && url?.startsWith("http")) {
       location.href = encodeUrl(url);
     } else {
@@ -35,7 +35,7 @@ export function destination(url, target = "_self", replace = false) {
 }
 
 export function back() {
-  if (wx.isMiniApp) {
+  if (wx.isMiniApp()) {
     wx.navigateBack({ delta: 1 });
     return;
   }
@@ -48,7 +48,7 @@ export function go(delta) {
   delta = parseInt(delta, 10);
 
   // 小程序不支持go方法
-  if (wx.isMiniApp) {
+  if (wx.isMiniApp()) {
     if (delta < 0) {
       wx.navigateBack({ delta: Math.abs(delta) });
     } else {

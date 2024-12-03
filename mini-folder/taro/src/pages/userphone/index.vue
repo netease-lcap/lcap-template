@@ -35,18 +35,18 @@ export default {
     async handleLaunch(e) {
       try {
         console.log(e)
-        const { code,errMsg,errno } = e.detail
-        if(errMsg!=="getPhoneNumber:ok"){
+        const { code, errMsg, errno } = e.detail;
+        if(errMsg !== "getPhoneNumber:ok") {
           throw new Error(errMsg)
         }
-        const {phone_info,errmsg,errcode}  = await apis.getPhone({ code });
-        if(errcode!=="0"){
+        const { phone_info, errmsg, errcode } = await apis.getPhone({ code });
+        if(errcode !== "0") {
           throw new Error(errmsg)
         }
         let pages = Taro.getCurrentPages()
         let prevPage = pages[pages.length - 2]
         prevPage.setData({
-          wxPhone: phone_info?.countryCode + '-' +phone_info?.purePhoneNumber
+          wxPhone: `${phone_info?.countryCode}-${phone_info?.purePhoneNumber}`
         });
         Taro.navigateBack({
           delta: 1

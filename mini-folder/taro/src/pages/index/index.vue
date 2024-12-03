@@ -53,13 +53,13 @@ export default {
     } = currentPage.data;
 
     url = this.appendUrlParams(url, {
-      _wx_openid: this.wxOpenId || getGlobalData("wxOpenId"),
       _wx_headimg: wxHeadImg,
       _wx_nickname: wxNickName,
       _wx_phone: wxPhone,
       _wx_scan_code: wxScanCode,
       _wx_location: wxLocation,
       _wx_is_mini: 1,
+      _wx_openid: this.wxOpenId || getGlobalData("wxOpenId"),
       ...(this.$instance.router.params || {}),
     });
 
