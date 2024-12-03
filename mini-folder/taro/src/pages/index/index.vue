@@ -135,6 +135,11 @@ export default {
         const keys = Object.keys(params) || [];
         for (let i = 0; i < keys.length; i++) {
           const key = keys[i];
+
+          // 过滤detailUrl
+          if (key === "detailUrl") {
+            continue;
+          }
           if (params[key] === undefined) {
             continue;
           }
