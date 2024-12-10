@@ -212,6 +212,12 @@
           "method": "post"
       }
   },
+  "getBackNodes": {
+      "url": {
+          "path": "/api/system/processV2/getBackNodes",
+          "method": "post"
+      }  
+  },
 
 
   "getTaskInstanceList": {
