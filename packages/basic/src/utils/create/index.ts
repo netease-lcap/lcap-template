@@ -51,7 +51,7 @@ const parseCookie = (str) => {
     }, {});
 };
 
-const foramtCookie = (cookieStr) => {
+const formatCookie = (cookieStr) => {
   const result = {};
   if (document.cookie.length <= 0) {
     return result;
@@ -279,7 +279,7 @@ export const createService = function createService(apiSchemaList, serviceConfig
           status: response.response.status + "",
           body: JSON.stringify(response.response.data),
           headers: response.response.headers,
-          cookies: foramtCookie(document.cookie),
+          cookies: formatCookie(document.cookie),
         };
 
         let event = {
@@ -363,7 +363,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           body: JSON.stringify(requestInfo.url.body),
           headers: requestInfo.url.headers,
           querys: JSON.stringify(requestInfo.url.query),
-          cookies: foramtCookie(document.cookie),
+          cookies: formatCookie(document.cookie),
           requestInfo,
         };
 
@@ -394,7 +394,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           status: response.status + "",
           body: JSON.stringify(response.data),
           headers: response.headers,
-          cookies: foramtCookie(document.cookie),
+          cookies: formatCookie(document.cookie),
         };
         let event = {
           response: HttpResponse,
@@ -454,7 +454,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           status: response.response.status + "",
           body: JSON.stringify(response.response.data),
           headers: response.response.headers,
-          cookies: foramtCookie(document.cookie),
+          cookies: formatCookie(document.cookie),
         };
 
         let event = {
