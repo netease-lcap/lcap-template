@@ -1,7 +1,7 @@
 import axios from "axios";
 import { stringify } from "qs";
 
-import Service from "../../request-pre";
+import Service from "../request-pre";
 import { formatMicroFrontUrl } from "../../init/router/microFrontUrl"; // 微前端路由方法
 
 import cookie from "../cookie";
