@@ -1,7 +1,7 @@
 import axios from "axios";
-import Service from "request-pre";
 import { stringify } from "qs";
 
+import Service from "../../request-pre";
 import { formatMicroFrontUrl } from "../../init/router/microFrontUrl"; // 微前端路由方法
 
 import cookie from "../cookie";
@@ -13,6 +13,7 @@ import { sseRequester } from "./sseRequester";
 
 import Config from "../../config";
 import { overwriteErrorMsgFieldIfSpecified } from "./utils";
+import { default as builtInInterceptors } from "./interceptors";
 
 const getData = (str) => new Function("return " + str)();
 
@@ -199,14 +200,20 @@ const requester = function (requestInfo) {
     return sseRequester(requestInfo);
   }
 
-  if (Config.axios?.interceptors?.length) {
-    Config.axios?.interceptors.forEach((interceptor) => {
-      const { onSuccess, onError } = interceptor;
-      axios.interceptors.response.use(onSuccess, onError);
-    });
-  }
+  // 内置拦截器
+  builtInInterceptors.forEach((interceptor) => {
+    const { request, response } = interceptor;
+    const defaultErrorHandler = (error) => Promise.reject(error);
+    if (request) {
+      axios.interceptors.request.use(request.onSuccess, request.onError || defaultErrorHandler);
+    }
+    if (response) {
+      axios.interceptors.response.use(response.onSuccess, response.onError || defaultErrorHandler);
+    }
+  });
 
   const options = genBaseOptions(requestInfo);
+
   if (typeof window.axiosOptionsSetup === "function") {
     window.axiosOptionsSetup(options);
   }
