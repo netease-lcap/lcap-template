@@ -18,6 +18,20 @@ import Config from "../../config";
 import { overwriteErrorMsgFieldIfSpecified } from "./utils";
 import { default as builtInInterceptors } from "./interceptors";
 
+// 全局对象，用于存储钩子函数
+window.$axiosHookManager = {
+  requestHooks: [],
+  responseHooks: [],
+};
+
+window.$registerAxiosHook = function (type: "request" | "response", hook: Function) {
+  if (type === "request") {
+    window.$axiosHookManager.requestHooks.push(hook);
+  } else if (type === "response") {
+    window.$axiosHookManager.responseHooks.push(hook);
+  }
+};
+
 const getData = (str) => new Function("return " + str)();
 function getJsonParse() {
   let hasSource = false;
@@ -232,15 +246,32 @@ const requester = function (requestInfo) {
     return sseRequester(requestInfo);
   }
 
+  const defaultErrorHandler = (error) => Promise.reject(error);
+
   // 内置拦截器
   builtInInterceptors.forEach((interceptor) => {
     const { request, response } = interceptor;
-    const defaultErrorHandler = (error) => Promise.reject(error);
     if (request) {
       axios.interceptors.request.use(request.onSuccess, request.onError || defaultErrorHandler);
     }
     if (response) {
       axios.interceptors.response.use(response.onSuccess, response.onError || defaultErrorHandler);
+    }
+  });
+
+  // 依赖库定义的响应拦截器
+  const requestHooks = window.$axiosHookManager.requestHooks.sort((a, b) => a?.order - b?.order);
+  requestHooks.forEach((hook) => {
+    if (hook && hook.onSuccess) {
+      axios.interceptors.request.use(hook.onSuccess, hook.onError || defaultErrorHandler);
+    }
+  });
+
+  // 依赖库定义的响应拦截器
+  const responseHooks = window.$axiosHookManager.responseHooks.sort((a, b) => a?.order - b?.order);
+  responseHooks.forEach((hook) => {
+    if (hook && hook.onSuccess) {
+      axios.interceptors.response.use(hook.onSuccess, hook.onError || defaultErrorHandler);
     }
   });
 
