@@ -5,4 +5,6 @@ import { routes } from "./router/routes";
 import cloudAdminDesigner from "./init";
 import "./library";
 
+import "@/assets/css/index.css";
+
 cloudAdminDesigner.init(platformConfig?.appConfig, platformConfig, routes, metaData);

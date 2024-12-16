@@ -28,14 +28,6 @@ require(`${root}/scripts/copy-assets.js`)({
   },
 });
 
-// 复制core的zip.tgz文件到临时目录下的core-template@version
-const coreTargetDir = path.resolve(tempDir, `core-template@${version}`);
-fs.mkdirSync(coreTargetDir);
-const coreRoot = path.resolve(__dirname, "../packages/core");
-require(`${coreRoot}/scripts/copy-assets.js`)({
-  target: coreTargetDir,
-});
-
 // 复制basic的zip.tgz文件到临时目录下的basic-template@version
 const basicTargetDir = path.resolve(tempDir, `basic-template@${version}`);
 fs.mkdirSync(basicTargetDir);

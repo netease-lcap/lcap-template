@@ -27,6 +27,8 @@ export function setI18nLocale(appConfig) {
     messages: i18nInfo.messages,
   });
   window.$i18n = i18n;
+
+  return i18n;
 }
 
 function getUserLanguage(appConfig, messages = {}) {

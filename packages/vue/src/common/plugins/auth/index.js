@@ -1,7 +1,7 @@
 import { initAuth, authService } from "@lcap/basic-template";
 
 export default {
-  install(Vue, options: any = {}) {
+  install(Vue, options = {}) {
     initAuth(options);
 
     const base = (options.base || "").replace(/\/$/, "");

@@ -30,8 +30,6 @@ import { getTitleGuard } from "./router";
 import App from "./App.vue";
 import { setI18nLocale } from "./i18n";
 
-import "@/assets/css/index";
-
 Vue.config.productionTip = false;
 
 Vue.prototype.$sleep = function () {
@@ -86,7 +84,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   installComponents(Vue, Components);
 
   // 处理当前语言
-  setI18nLocale(appConfig);
+  const i18n = setI18nLocale(appConfig);
 
   Vue.use(LogicsPlugin, metaData);
   Vue.use(RouterPlugin);

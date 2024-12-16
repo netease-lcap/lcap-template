@@ -5,6 +5,8 @@ import Global from "../../global";
 
 import { initApplicationConstructor, genInitData, isInstanceOf, genSortedTypeKey } from "./tools";
 import * as Utils from "./utils";
+import * as Tools from "./tools";
+import * as wx from "./wx";
 
 function initDataTypes(options) {
   const dataTypesMap = options.dataTypesMap || {};
@@ -206,8 +208,6 @@ export {
   resolveRequestData,
   parseRequestDataType,
   Utils,
+  Tools,
+  wx,
 };
-
-export * as Tools from "./tools";
-
-export * as wx from "./wx";

@@ -110,6 +110,8 @@ module.exports = (env) => {
 
   let config = baseConfig;
 
+  // entry
+  config.entry = [path.resolve(root, `./src/assets/css/index.${type}.css`), config.entry];
   // 输出目录
   config.output.path = path.resolve(root, `dist/${type}`);
   // 文件拓展名
