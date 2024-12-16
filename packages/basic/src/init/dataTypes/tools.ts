@@ -103,67 +103,87 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
         }
       }
     }
-    let code = `
-            // ${typeKey}
-            const level = params.level;
-            const defaultValue = params.defaultValue;
-            if (defaultValue && Object.prototype.toString.call(defaultValue) === '[object Object]') {
-                Object.assign(this, defaultValue);
-            }
-        `;
-    if (Array.isArray(propList)) {
-      propList.forEach((property) => {
-        const { name: propertyName, typeAnnotation, defaultCode } = property || {};
-        const defaultValue = defaultCode?.code;
-        // const defaultValue = property.defaultCode;
-        const defaultValueType = Object.prototype.toString.call(defaultValue);
-        const typeKey = genSortedTypeKey(typeAnnotation);
-        const typeDefinition = typeDefinitionMap[typeKey];
-        const { concept } = typeDefinition || {};
-        let parsedValue = defaultValue;
-        // 设置成null，才能同步给后端清除该值，但是null对checkbox组件是一种特殊状态
-        if (typeKey === "nasl.core.Boolean") {
-          parsedValue = defaultValue ?? undefined;
-        }
-        if (
-          defaultValueType === "[object String]" &&
-          !["nasl.core.String", "nasl.core.Text", "nasl.core.Email"].includes(typeKey) &&
-          concept !== "Enum" &&
-          !["union"].includes(typeKind)
-        ) {
-          // 一些特殊情况，特殊处理成undefined
-          // 1.defaultValue在nasl节点上错误得赋值给了空制符串
-          if ([""].includes(defaultValue)) {
-            parsedValue = undefined;
-          } else {
-            parsedValue = tryJSONParse(defaultValue) ?? defaultValue;
-          }
-        }
-        if (Object.prototype.toString.call(parsedValue) === "[object String]" && !defaultCode?.executeCode) {
-          parsedValue = `\`${parsedValue.replace(/['"`\\]/g, (m) => `\\${m}`)}\``;
-        }
-        const needGenInitFromSchema = typeAnnotation && !["primitive"].includes(typeAnnotation.typeKind);
-        const sortedTypeKey = genSortedTypeKey(typeAnnotation);
-        code += `this.${propertyName} = `;
-        if (needGenInitFromSchema) {
-          code += `genInitFromSchema('${sortedTypeKey}',`;
-        }
-        code += `((defaultValue && defaultValue.${propertyName}) === null || (defaultValue && defaultValue.${propertyName}) === undefined) ? ${parsedValue} : defaultValue && defaultValue.${propertyName}`;
-        if (needGenInitFromSchema) {
-          code += `, level)`;
-        }
-        code += `;\n`;
-      });
-    }
-    // eslint-disable-next-line no-new-func
-    const fn = Function("genInitFromSchema", "params", code).bind(null, genInitFromSchema);
 
-    // fn设置name
-    Object.defineProperty(fn, "name", {
-      value: "NaslTypeConstructor",
+    const makeConstructor = ({ genInitFromSchema, genSortedTypeKey, typeDefinitionMap }) => {
+      const properties = [];
+
+      if (Array.isArray(propList)) {
+        propList.forEach((property) => {
+          const { name: propertyName, typeAnnotation, defaultCode } = property || {};
+          const defaultValue = defaultCode?.code;
+          const defaultValueType = Object.prototype.toString.call(defaultValue);
+          const typeKey = genSortedTypeKey(typeAnnotation);
+          const typeDefinition = typeDefinitionMap[typeKey];
+          const { concept } = typeDefinition || {};
+          let parsedValue = defaultValue;
+          // 设置成null，才能同步给后端清除该值，但是null对checkbox组件是一种特殊状态
+          if (typeKey === "nasl.core.Boolean") {
+            parsedValue = defaultValue ?? undefined;
+          }
+          if (
+            defaultValueType === "[object String]" &&
+            !["nasl.core.String", "nasl.core.Text", "nasl.core.Email"].includes(typeKey) &&
+            concept !== "Enum" &&
+            !["union"].includes(typeKind)
+          ) {
+            // 一些特殊情况，特殊处理成undefined
+            // 1.defaultValue在nasl节点上错误得赋值给了空制符串
+            if ([""].includes(defaultValue)) {
+              parsedValue = undefined;
+            } else {
+              parsedValue = tryJSONParse(defaultValue) ?? defaultValue;
+            }
+          }
+          if (Object.prototype.toString.call(parsedValue) === "[object String]" && !defaultCode?.executeCode) {
+            parsedValue = `\`${parsedValue.replace(/['"`\\]/g, (m) => `\\${m}`)}\``;
+          }
+          const needGenInitFromSchema = typeAnnotation && !["primitive"].includes(typeAnnotation.typeKind);
+          const sortedTypeKey = genSortedTypeKey(typeAnnotation);
+
+          const item = {
+            propertyName,
+            parsedValue,
+            needGenInitFromSchema,
+            sortedTypeKey,
+          };
+          properties.push(item);
+        });
+      }
+
+      function ctor(params) {
+        const level = params.level;
+        const defaultValue = params.defaultValue;
+        if (defaultValue && Object.prototype.toString.call(defaultValue) === "[object Object]") {
+          Object.assign(this, defaultValue);
+        }
+
+        properties.forEach((item) => {
+          let value =
+            defaultValue?.[item.propertyName] === null || defaultValue?.[item.propertyName] === undefined
+              ? item.parsedValue
+              : defaultValue?.[item.propertyName];
+          if (item.needGenInitFromSchema) {
+            value = genInitFromSchema(item.sortedTypeKey, value, level);
+          }
+          this[item.propertyName] = value;
+        });
+      }
+      // ctor设置name
+      Object.defineProperty(ctor, "name", {
+        value: "NaslTypeConstructor",
+      });
+
+      return ctor;
+    };
+
+    const fn = makeConstructor({
+      genInitFromSchema,
+      genSortedTypeKey,
+      typeDefinitionMap,
     });
 
     typeMap[typeKey] = fn;
+
     return fn;
   }
 }

@@ -164,8 +164,7 @@ function resolveRequestData(root) {
 function parseRequestDataType(root, _prop) {
   let value;
   try {
-    // eslint-disable-next-line no-eval
-    value = eval(root[_prop]);
+    value = new Function("return " + root[_prop])();
   } catch (err) {
     value = root.value;
   }
