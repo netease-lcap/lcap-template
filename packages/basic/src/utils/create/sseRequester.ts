@@ -22,12 +22,14 @@ export const sseRequester = function (requestInfo) {
   }
 
   function formatMessage(m: EventSourceMessage) {
+    // 响应处理
     return onMessage?.(m.data, m.event);
   }
 
   let leftRetries = Math.max((body?.retryTimes ?? MAX_RETRY_TIME) - 1, 0);
   fetchEventSource(url.path, {
     ...options,
+    // 请求处理
     body: JSON.stringify(rest),
     signal: controller.signal,
     openWhenHidden: true, // 当窗口被隐藏时，阻止再次发送请求

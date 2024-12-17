@@ -3,6 +3,7 @@ import momentTZ from "moment-timezone";
 import moment from "moment";
 import { xor } from "lodash";
 
+import BigNumber from "bignumber.js";
 import { getAppTimezone, safeNewDate } from "../utils";
 import Config from "../../config";
 
@@ -240,6 +241,7 @@ export function isInstanceOf(variable, typeKey) {
       }
     }
   } else if (isPrimitive) {
+    const isBigNumber = variable instanceof BigNumber || BigNumber.isBigNumber(variable);
     // 基础类型
     if (varStr === "[object String]") {
       const actualStrType = judgeStrType(variable);
@@ -248,7 +250,10 @@ export function isInstanceOf(variable, typeKey) {
       } else if (["nasl.core.String", "nasl.core.Binary"].includes(typeKey)) {
         return true;
       }
-    } else if (varStr === "[object Number]" && ["nasl.core.Long", "nasl.core.Decimal"].includes(typeKey)) {
+    } else if (
+      (varStr === "[object Number]" || isBigNumber) &&
+      ["nasl.core.Long", "nasl.core.Decimal"].includes(typeKey)
+    ) {
       return true;
     } else if (varStr === "[object Boolean]" && typeKey === "nasl.core.Boolean") {
       return true;
