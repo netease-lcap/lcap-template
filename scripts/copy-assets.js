@@ -20,7 +20,7 @@ const mobileTargetDir = path.resolve(tempDir, `mobile-template@${version}`);
 const pcTargetDir = path.resolve(tempDir, `pc-template@${version}`);
 fs.mkdirSync(mobileTargetDir);
 fs.mkdirSync(pcTargetDir);
-const root = path.resolve(__dirname, "../packages/vue");
+const root = path.resolve(__dirname, "../packages/vue2");
 require(`${root}/scripts/copy-assets.js`)({
   target: {
     mobile: mobileTargetDir,
