@@ -208,14 +208,22 @@ export function genBaseOptions(requestInfo) {
     method: method2,
     transformRequest: [
       function (data) {
-        const request = JSONbig.stringify(data);
-        return request;
+        try {
+          const request = JSONbig.stringify(data);
+          return request;
+        } catch (error) {
+          return data;
+        }
       },
     ],
     transformResponse: [
       function (data) {
-        const response = jsonParse(data);
-        return response;
+        try {
+          const response = jsonParse(data);
+          return response;
+        } catch (error) {
+          return data;
+        }
       },
     ],
     url: path,
