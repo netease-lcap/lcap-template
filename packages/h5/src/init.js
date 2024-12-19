@@ -68,6 +68,16 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   ["preRequest", "postRequest"].forEach((fnName) => {
     evalWrap.bind(window)(metaData, fnName);
   });
+  if (window.LcapMicro?.container) {
+    if (
+      document.currentScript &&
+      (!document.head.contains(document.currentScript) || document.currentScript.active === false)
+    )
+      return;
+
+    if (Vue.prototype.$auth?._map) Vue.prototype.$auth._map = undefined;
+  }
+
   window.appInfo = Object.assign(appConfig, platformConfig);
 
   installFilters(Vue, filters);
@@ -211,7 +221,14 @@ const init = (appConfig, platformConfig, routes, metaData) => {
         }
       } catch (err) {}
     });
-  app.$mount("#app");
+
+  if (window.LcapMicro?.container) {
+    const container = window.LcapMicro.container;
+    container.innerHTML = "";
+    app.$mount();
+    container.appendChild(app.$el);
+  } else app.$mount("#app");
+
   return app;
 };
 
