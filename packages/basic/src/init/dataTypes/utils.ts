@@ -65,6 +65,97 @@ export function divide(x, y) {
   return xx.div(yy).toNumber();
 }
 
+export function Ceil(x: number): number {
+  x = +x;
+
+  return Math.ceil(x);
+}
+
+export function Floor(x: number): number {
+  x = +x;
+
+  return Math.floor(x);
+}
+
+export function Trunc(x: number): number {
+  x = +x;
+
+  return Math.trunc(x);
+}
+
+export function TruncDivide(x: number, y: number): number {
+  x = +x;
+  y = +y;
+
+  // 余数
+  const rest = x % y;
+
+  return (x - rest) / y;
+}
+
+export function Abs(x: number): number {
+  x = +x;
+
+  return Math.abs(x);
+}
+
+export function Pow(x: number, y: number): number {
+  x = +x;
+  y = +y;
+
+  return Math.pow(x, y);
+}
+
+export function Sqrt(x: number): number {
+  x = +x;
+
+  return Math.sqrt(x);
+}
+
+export function Crbt(x: number): number {
+  x = +x;
+
+  return Math.cbrt(x);
+}
+
+export function Log(x: number): number {
+  x = +x;
+
+  return Math.log(x);
+}
+
+export function PadStart(str: string, targetLength: number, padString: string) {
+  if (typeof str !== "string") {
+    return str;
+  }
+
+  return str.padStart(targetLength, padString);
+}
+
+export function PadEnd(str: string, targetLength: number, padString: string) {
+  if (typeof str !== "string") {
+    return str;
+  }
+
+  return str.padEnd(targetLength, padString);
+}
+
+export function TrimStart(str: string) {
+  if (typeof str !== "string") {
+    return str;
+  }
+
+  return str.trimStart();
+}
+
+export function TrimEnd(str: string) {
+  if (typeof str !== "string") {
+    return str;
+  }
+
+  return str.trimEnd();
+}
+
 export function isEqual(x, y) {
   // eslint-disable-next-line eqeqeq
   return x == y;
