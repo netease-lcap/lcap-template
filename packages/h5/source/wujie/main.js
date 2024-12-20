@@ -10,7 +10,7 @@ if (!window.__POWERED_BY_WUJIE__) {
 }
 let appVM;
 
-export function mount() {
+window.__WUJIE_MOUNT = () => {
   window.LcapMicro = window.LcapMicro || {};
   Object.assign(window.LcapMicro, __properties__);
 
@@ -32,12 +32,12 @@ export function mount() {
   window.LcapMicro.container = document.querySelector("#app");
   window.LcapMicro.props = window.$wujie?.props;
   appVM = cloudAdminDesigner.init(platformConfig?.appConfig, platformConfig, routes, metaData);
-}
+};
 
-export function unmount() {
+window.__WUJIE_UNMOUNT = () => {
   window.LcapMicro.container.innerHTML = null;
   appVM?.$destroy();
   document.querySelectorAll("script.lazyload").forEach((ele) => {
     ele.active = false;
   });
-}
+};
