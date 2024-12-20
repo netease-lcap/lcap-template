@@ -19,9 +19,6 @@ module.exports = {
   },
   lintOnSave: false,
   runtimeCompiler: true,
-  css: {
-    extract: true,
-  },
   chainWebpack: (config) => {
     config.module.rule("fonts").use("url-loader").loader("url-loader").options({}).end();
     config.module.rule("images").use("url-loader").loader("url-loader").options({}).end();
