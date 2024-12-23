@@ -14,3 +14,32 @@ export function overwriteErrorMsgFieldIfSpecified(
     }
   }
 }
+
+/**
+ * stringfy 过滤掉 function 和循环引用
+ * */
+export function stringifyWithLoopProtection(obj, replacer?, space?) {
+  const seen = new WeakSet();
+  let hasCircleProp = false;
+  const result = JSON.stringify(obj, function(key, value) {
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) {
+        hasCircleProp = true;
+        // 如果已经见过该对象，则返回undefined;
+        return undefined;
+      }
+      seen.add(value);
+    }
+    // 使用用户提供的replacer函数（如果有的话）
+    if (replacer) {
+      return replacer(key, value);
+    } else {
+      return value;
+    }
+  }, space);
+
+  return {
+    result,
+    hasCircleProp,
+  };
+}
