@@ -1579,7 +1579,7 @@ export const utils = {
     return Math.sqrt(x);
   },
 
-  Crbt(x: number): number {
+  Cbrt(x: number): number {
     x = +x;
 
     return Math.cbrt(x);
