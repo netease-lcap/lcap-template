@@ -1531,6 +1531,97 @@ export const utils = {
 
     return isValid;
   },
+
+  Ceil(x: number): number {
+    x = +x;
+
+    return Math.ceil(x);
+  },
+
+  Floor(x: number): number {
+    x = +x;
+
+    return Math.floor(x);
+  },
+
+  Trunc(x: number): number {
+    x = +x;
+
+    return Math.trunc(x);
+  },
+
+  TruncDivide(x: number, y: number): number {
+    x = +x;
+    y = +y;
+
+    // 余数
+    const rest = x % y;
+
+    return (x - rest) / y;
+  },
+
+  Abs(x: number): number {
+    x = +x;
+
+    return Math.abs(x);
+  },
+
+  Pow(x: number, y: number): number {
+    x = +x;
+    y = +y;
+
+    return Math.pow(x, y);
+  },
+
+  Sqrt(x: number): number {
+    x = +x;
+
+    return Math.sqrt(x);
+  },
+
+  Crbt(x: number): number {
+    x = +x;
+
+    return Math.cbrt(x);
+  },
+
+  Log(x: number): number {
+    x = +x;
+
+    return Math.log(x);
+  },
+
+  PadStart(str: string, targetLength: number, padString: string) {
+    if (typeof str !== "string") {
+      return str;
+    }
+
+    return str.padStart(targetLength, padString);
+  },
+
+  PadEnd(str: string, targetLength: number, padString: string) {
+    if (typeof str !== "string") {
+      return str;
+    }
+
+    return str.padEnd(targetLength, padString);
+  },
+
+  TrimStart(str: string) {
+    if (typeof str !== "string") {
+      return str;
+    }
+
+    return str.trimStart();
+  },
+
+  TrimEnd(str: string) {
+    if (typeof str !== "string") {
+      return str;
+    }
+
+    return str.trimEnd();
+  },
 };
 
 function initUtils(
