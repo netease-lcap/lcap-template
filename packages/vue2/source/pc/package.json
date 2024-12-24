@@ -12,10 +12,7 @@
     "babel-polyfill": "^6.26.0",
     "core-js": "^3.6.5",
     "vue": "2.6.12",
-    "vue-i18n": "^8.28.2",
-    "date-fns": "^2.6.0",
-    "lodash": "^4.17.15",
-    "vue-router": "^3.1.2"
+    "vue-i18n": "^8.28.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.13",

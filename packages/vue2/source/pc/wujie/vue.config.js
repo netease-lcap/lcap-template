@@ -1,4 +1,3 @@
-// 修改该文件时，需要同步修改 source/icestark/vue.config.js 和 source/qiankun/vue.config.js 和 source/wujie/vue.config.js
 const path = require("path");
 
 module.exports = {
@@ -6,6 +5,9 @@ module.exports = {
     if (process.env.NODE_ENV === "production") {
       config.devtool = false;
     }
+
+    config.output.libraryTarget = "umd";
+    config.output.library = __microAppName__;
 
     /// cloud-ui-alias-start
     config.resolve.alias["@lcap/pc-ui$"] = path.resolve(__dirname, "node_modules/@lcap/pc-ui/dist-theme/index.js");
@@ -23,15 +25,17 @@ module.exports = {
   },
   lintOnSave: false,
   runtimeCompiler: true,
+  chainWebpack: (config) => {
+    config.module.rule("fonts").use("url-loader").loader("url-loader").options({}).end();
+    config.module.rule("images").use("url-loader").loader("url-loader").options({}).end();
+  },
   devServer: {
     compress: true,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
     port: 8810,
     proxy: {
-      "/assets": {
-        target: "http://localhost:8080",
-        changeOrigin: true,
-        autoRewrite: true,
-      },
       "/api": {
         target: "http://localhost:8080",
         changeOrigin: true,

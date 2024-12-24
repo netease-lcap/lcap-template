@@ -1,4 +1,3 @@
-// 修改该文件时，需要同步修改 source/icestark/vue.config.js 和 source/qiankun/vue.config.js 和 source/wujie/vue.config.js
 const path = require("path");
 
 module.exports = {
@@ -7,11 +6,8 @@ module.exports = {
       config.devtool = false;
     }
 
-    /// cloud-ui-alias-start
-    config.resolve.alias["@lcap/pc-ui$"] = path.resolve(__dirname, "node_modules/@lcap/pc-ui/dist-theme/index.js");
-    config.resolve.alias["@lcap/pc-ui/css$"] = path.resolve(__dirname, "node_modules/@lcap/pc-ui/dist-theme/index.css");
-    config.resolve.alias["cloud-ui.vusion"] = "@lcap/pc-ui";
-    /// cloud-ui-alias-end
+    config.output.libraryTarget = "umd";
+    config.output.library = __microAppName__;
   },
   chainWebpack(config) {
     // 构建产物中删除console相关代码
@@ -23,15 +19,20 @@ module.exports = {
   },
   lintOnSave: false,
   runtimeCompiler: true,
+  css: {
+    extract: true,
+  },
+  chainWebpack: (config) => {
+    config.module.rule("fonts").use("url-loader").loader("url-loader").options({}).end();
+    config.module.rule("images").use("url-loader").loader("url-loader").options({}).end();
+  },
   devServer: {
     compress: true,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
     port: 8810,
     proxy: {
-      "/assets": {
-        target: "http://localhost:8080",
-        changeOrigin: true,
-        autoRewrite: true,
-      },
       "/api": {
         target: "http://localhost:8080",
         changeOrigin: true,
