@@ -5,7 +5,7 @@ const { baseConfig } = require("./webpack.config");
 
 const root = path.resolve(__dirname, "..");
 
-module.exports = merge(baseConfig, {
+module.exports = merge(baseConfig("pc"), {
   mode: "development",
   devtool: "eval",
   devServer: {

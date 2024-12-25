@@ -4,7 +4,7 @@
   "description": "base on vue",
   "scripts": {
     "dev": "webpack-dev-server --config build/webpack.dev.config.js",
-    "build": "webpack --env type=pc --config build/webpack.config.js  && webpack --env type=mobile --config build/webpack.config.js",
+    "build": "webpack --config build/webpack.config.js",
     "prebuild": "rm -rf dist",
     "postbuild": "npm run zip",
     "zip": "node ./scripts/zip.js",
