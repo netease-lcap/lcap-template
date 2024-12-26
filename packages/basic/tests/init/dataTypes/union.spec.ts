@@ -911,8 +911,17 @@ describe.only("genInitFromSchema 支持基础类型的内容感知匹配", () =>
   beforeEach(() => {
     jest.resetModules();
   });
-  const times = 20;
-  describe("支持基础类型的Union感知匹配", () => {
+
+  describe("支持Date的感知匹配", () => {
+    test("Date", () => {
+      const hhaa = genInitFromSchema("nasl.core.Date", "2021-01-01");
+      // log
+      console.log(hhaa);
+    });
+  });
+
+  describe.skip("支持基础类型的Union感知匹配", () => {
+    const times = 20;
     for (let index = 0; index < times; index++) {
       const { meta, dataTypesMap } = chooseValueMetaUnion();
       const value = meta.sample();

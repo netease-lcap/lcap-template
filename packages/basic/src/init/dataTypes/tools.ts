@@ -127,7 +127,7 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
         }
         if (
           defaultValueType === "[object String]" &&
-          !["nasl.core.String", "nasl.core.Text", "nasl.core.Email"].includes(typeKey) &&
+          !["nasl.core.String", "nasl.core.Text"].includes(typeKey) &&
           concept !== "Enum" &&
           !["union"].includes(typeKind)
         ) {
@@ -182,8 +182,7 @@ function judgeStrType(str) {
   const regMap = {
     "nasl.core.Date": /^\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2}$/,
     "nasl.core.Time": /^(\d{1,2})(:\d{1,2})?:(\d{1,2})$/,
-    "nasl.core.DateTimeReg": /^\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2}\s(\d{1,2})(:\d{1,2})?:(\d{1,2})$/,
-    "nasl.core.Email": /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
+    "nasl.core.DateTime": /^\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2}T(\d{1,2})(:\d{1,2})?:(\d{1,2})Z$/,
   };
   for (const key in regMap) {
     const reg = regMap[key];
@@ -288,7 +287,6 @@ const isDefPrimitive = (typeKey) =>
     "nasl.core.Date",
     "nasl.core.Time",
     "nasl.core.DateTime",
-    "nasl.core.Email",
   ].includes(typeKey);
 
 // 类型定义是否属于字符串大类
@@ -300,7 +298,6 @@ export const isDefString = (typeKey) =>
     "nasl.core.Date",
     "nasl.core.Time",
     "nasl.core.DateTime",
-    "nasl.core.Email",
   ].includes(typeKey);
 
 // 类型定义是否属于数字大类
@@ -488,7 +485,7 @@ export const genInitData = (typeKey, defaultValue, parentLevel?) => {
   if (parentLevel !== undefined) {
     level = parentLevel + 1;
   }
-  const defaultValueType = Object.prototype.toString.call(defaultValue);
+  const defaultValueType: string = Object.prototype.toString.call(defaultValue);
   let parsedValue = defaultValue;
   // 设置成null，才能同步给后端清除该值，但是null对checkbox组件是一种特殊状态
   if (typeKey === "nasl.core.Boolean") {
@@ -498,12 +495,12 @@ export const genInitData = (typeKey, defaultValue, parentLevel?) => {
   const { concept, typeKind, typeNamespace, typeName, typeArguments, properties } = typeDefinition || {};
   if (
     defaultValueType === "[object String]" &&
-    !["nasl.core.String", "nasl.core.Text", "nasl.core.Email"].includes(typeKey) &&
+    !["nasl.core.String", "nasl.core.Text"].includes(typeKey) &&
     concept !== "Enum" &&
     !["union"].includes(typeKind)
   ) {
     // 一些特殊情况，特殊处理成undefined
-    // 1.defaultValue在nasl节点上错误得赋值给了空制符串
+    // 1.defaultValue在nasl节点上错误得赋值给了空字符串
     if ([""].includes(defaultValue)) {
       parsedValue = undefined;
     } else {
