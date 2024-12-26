@@ -680,3 +680,251 @@ describe("genInitFromSchema支持形状推断算法", () => {
     test.todo("Entity1{list: List<Entity1>} | Entity2{list: List<Entity2>} | Boolean");
   });
 });
+
+interface MetaClass {
+  sample(): any;
+  toSchema(): any;
+  toTypeAnnotation(): any;
+  typeName: string;
+}
+
+class MetaNaslDate implements MetaClass {
+  toTypeAnnotation() {
+    return this.toSchema();
+  }
+  toSchema() {
+    return { concept: "TypeAnnotation", typeKind: "primitive", typeNamespace: "nasl.core", typeName: "Date" };
+  }
+  sample() {
+    return "2021-01-01";
+  }
+  get typeName() {
+    return "nasl.core.Date";
+  }
+}
+
+class MataNaslInteger implements MetaClass {
+  toTypeAnnotation() {
+    return this.toSchema();
+  }
+  toSchema() {
+    return {
+      concept: "TypeAnnotation",
+      typeKind: "primitive",
+      typeNamespace: "nasl.core",
+      typeName: "Integer",
+    };
+  }
+  sample() {
+    return 1;
+  }
+  typeName = "nasl.core.Integer";
+}
+
+class MetaNaslDecimal implements MetaClass {
+  toTypeAnnotation() {
+    return this.toSchema();
+  }
+  toSchema() {
+    return { concept: "TypeAnnotation", typeKind: "primitive", typeNamespace: "nasl.core", typeName: "Decimal" };
+  }
+  sample() {
+    return 1.2;
+  }
+  typeName = "nasl.core.Decimal";
+}
+
+class MetaNaslDateTime implements MetaClass {
+  toTypeAnnotation() {
+    return this.toSchema();
+  }
+  toSchema() {
+    return { concept: "TypeAnnotation", typeKind: "primitive", typeNamespace: "nasl.core", typeName: "DateTime" };
+  }
+  sample() {
+    return "2021-01-01 12:12:12";
+  }
+  typeName = "nasl.core.DateTime";
+}
+
+class MetaNaslTime implements MetaClass {
+  toTypeAnnotation() {
+    return this.toSchema();
+  }
+  sample() {
+    return "12:12:12";
+  }
+  toSchema() {
+    return { concept: "TypeAnnotation", typeKind: "primitive", typeNamespace: "nasl.core", typeName: "Time" };
+  }
+
+  typeName = "nasl.core.Time";
+}
+
+class MetaProperty implements MetaClass {
+  concept: "StructureProperty";
+  _meta = chooseSingleMeta();
+  constructor(public readonly name: string) {}
+  toTypeAnnotation() {
+    return this.toSchema();
+  }
+  sample() {
+    return this._meta.sample();
+  }
+  typeName: string;
+  toSchema() {
+    return { concept: "StructureProperty", name: this.name, typeAnnotation: this._meta.toSchema() };
+  }
+}
+
+import * as _ from "lodash";
+
+function chooseSingleMeta(options?: { noObjects: boolean }): MetaClass {
+  const Primitives = [MetaNaslDate, MetaNaslDateTime, MetaNaslTime, MetaNaslDecimal, MataNaslInteger] as const;
+  const ObjectTypes = [MetaMap, MetaStructure] as const;
+  const candidates = options?.noObjects ? Primitives : [...Primitives, ...ObjectTypes];
+  const func = _.sample(candidates);
+  return new func();
+}
+
+class MetaMap implements MetaClass {
+  toTypeAnnotation() {
+    return this.toSchema();
+  }
+  toSchema() {
+    return {
+      concept: "TypeAnnotation",
+      typeKind: "generic",
+      typeNamespace: "nasl.collection",
+      typeName: this.typeName,
+      typeArguments: [this.MetaKey.toSchema(), this.MetaValue.toSchema()],
+    };
+  }
+  typeName: string = "Map";
+  concept: "unknown!!!";
+  private MetaKey = chooseSingleMeta({ noObjects: true });
+  private MetaValue = chooseSingleMeta();
+  private size = _.random(0, 10);
+  sample() {
+    const obj = {};
+    for (let i = 0; i < this.size; i++) {
+      obj[this.MetaKey.sample()] = this.MetaValue.sample();
+    }
+    return obj;
+  }
+}
+
+// abstract class MetaAtomTypeAnnotation implements MetaClass {
+//   abstract toSchema(): any;
+//   typeName: string;
+//   concept: "TypeAnnotation";
+//   typeKind: string;
+//   abstract sample(): any;
+// }
+
+class MetaUnionTypeAnnotation implements MetaClass {
+  concept: "TypeAnnotation";
+  typeKind = "union";
+  typeArguments: MetaClass[];
+  constructor() {
+    const size = _.random(2, 5);
+    this.typeArguments = Array.from({ length: size }).map((x) => {
+      return chooseSingleMeta();
+    });
+  }
+  toTypeAnnotation() {
+    return this.toSchema();
+  }
+  typeName = "nasl.core.Union";
+  sample() {
+    return _.sample(this.typeArguments).sample();
+  }
+  toSchema() {
+    const res = {
+      sortedKey: {
+        concept: "TypeAnnotation",
+        typeKind: "union",
+        typeArguments: this.typeArguments.map((x) => {
+          return x.toTypeAnnotation();
+        }),
+      },
+    };
+    for (const arg of this.typeArguments) {
+      // toSchema recursively
+      res[arg.typeName] = arg.toSchema();
+    }
+    return res;
+  }
+}
+
+// class MetaReferenceTypeAnnotation implements MetaClass {
+//   toSchema() {
+//     return this.sample();
+//   }
+//   typeName: string;
+//   typeNamespace: string;
+//   concept: "TypeAnnotation";
+//   typeKind = "reference";
+//   sample() {
+//     throw new Error("Method not implemented.");
+//   }
+// }
+
+class MetaStructure implements MetaClass {
+  typeName: string;
+  name: string;
+  properties: MetaProperty[];
+  constructor() {
+    this.typeName = `app.structures.Structure${1}`;
+    const size = _.random(0, 5);
+    this.properties = Array.from({ length: size }).map((x, index) => {
+      return new MetaProperty(`property${index}`);
+    });
+  }
+  sample() {
+    const res = {};
+    for (const p of this.properties) {
+      res[p.name] = p.sample();
+    }
+    return res;
+  }
+  toSchema() {
+    return {
+      concept: "Structure",
+      name: this.name,
+      properties: this.properties.map((x) => x.toSchema()),
+    };
+  }
+  toTypeAnnotation() {
+    return {
+      concept: "TypeAnnotation",
+      typeKind: "reference",
+      typeName: this.typeName,
+    };
+  }
+}
+
+function chooseValueMetaUnion() {
+  const meta = new MetaUnionTypeAnnotation();
+  return { dataTypesMap: meta.toSchema(), meta };
+}
+
+describe.only("genInitFromSchema 支持基础类型的内容感知匹配", () => {
+  beforeEach(() => {
+    jest.resetModules();
+  });
+  const times = 20;
+  describe("支持基础类型的Union感知匹配", () => {
+    for (let index = 0; index < times; index++) {
+      const { meta, dataTypesMap } = chooseValueMetaUnion();
+      const value = meta.sample();
+      test(`${JSON.stringify(value)}`, () => {
+        console.log(JSON.stringify(meta.toSchema(), undefined, 2));
+        expect(dataTypesMap).not.toBeUndefined();
+        initDataTypes({ dataTypesMap });
+        const result = genInitFromSchema(meta.typeName, value);
+        expect(result).toEqual(value);
+      });
+    }
+  });
+});

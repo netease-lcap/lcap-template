@@ -68,6 +68,13 @@ function initDataTypes(options) {
   };
 }
 
+/**
+ * 根据typeKey寻找对应类型的定义，并生成此类型的初始值
+ * @param typeKey 类型标识符
+ * @param defaultValue 可选的默认值
+ * @param level 当前深度。用于递归初始化时截断递归。
+ * @returns 此类型的初始值。若找不到此类型则返回undefined。
+ */
 function genInitFromSchema(typeKey, defaultValue?, level?) {
   return genInitData(typeKey, defaultValue, level);
 }
