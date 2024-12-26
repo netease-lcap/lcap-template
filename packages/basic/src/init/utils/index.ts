@@ -820,7 +820,7 @@ export const utils = {
   },
   CurrDateTime(tz) {
     if (!tz) {
-      return this.CurrTime("global");
+      return this.CurrDateTime("global");
     }
     const localDate = convertJSDateInTargetTimeZone(new Date(), tz);
     return JSON.stringify(localDate);
