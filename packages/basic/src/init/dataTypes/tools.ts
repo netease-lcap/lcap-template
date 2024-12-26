@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import momentTZ from "moment-timezone";
 import moment from "moment";
-import { xor } from "lodash";
+import { sortBy, xor } from "lodash";
 
 import { getAppTimezone, safeNewDate } from "../utils";
 import Config from "../../config";
@@ -414,22 +414,59 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
   return false;
 }
 
+type TypeAnnotation =
+  | {
+      typeKind: "primitive";
+      typeNamespace: string;
+      typeName: string;
+      concept: "TypeAnnotation";
+    }
+  | { typeKind: "reference"; typeName: string; typeNamespace: string; concept: "TypeAnnotation" }
+  | {
+      typeKind: "union";
+      typeArguments: TypeAnnotation[];
+      typeName: string;
+      typeNamespace: string;
+      concept: "TypeAnnotation";
+    }
+  | {
+      typeKind: "generic";
+      typeArguments: TypeAnnotation[];
+      typeName: string;
+      typeNamespace: string;
+      concept: "TypeAnnotation";
+    };
+
+function getTypeDefinition(typeKey: string): TypeAnnotation | { concept: "Enum" } | undefined {
+  return typeDefinitionMap[typeKey];
+}
+
 function inferTypeConstructorAgainstTypeKey(value, typeKey) {
-  const def = typeDefinitionMap[typeKey];
+  const def = getTypeDefinition(typeKey);
   if (!def) {
     return undefined;
   }
-  if (def.typeKind === "primitive" || def.concept === "Enum") {
+
+  if (def.concept === "Enum" || def.typeKind === "primitive") {
     // 视作没有Constructor
     return undefined;
   }
   if (def.typeKind === "union") {
-    // Union的所有分支对应的类型构造器，从左到右匹配：
+    // Union的所有分支对应的类型构造器，按照优先级排序后，从左到右匹配：
     // 1. 对当前类型构造器，看它有无定义tag字段：有tag字段且值和value对应字段相同，直接输出当前类型构造器而无需结构一致；否则，跳过。
     // 2. 先判断结构是否一致（复合类型递归看properties属性；Primitive类型直接判断即可）。结构相同的时候，当前类型构造器作为候选；否则，跳过。
     // 输出：第一个候选，或者无匹配
     let candidate = undefined;
-    for (const ty of def.typeArguments) {
+    // 类型的优先级排序规则：Enum > Primitives > Tagged References > Entity >
+    if (!def.typeArguments || !Array.isArray(def.typeArguments) || def.typeArguments.length === 0) {
+      return undefined;
+    }
+
+    const typeArguments: TypeAnnotation[] = def.typeArguments;
+    const sortedTypeArguments = sortBy(typeArguments, (arg) => {
+      return -1;
+    });
+    for (const ty of sortedTypeArguments) {
       const curTypeKey = `${ty.typeNamespace}.${ty.typeName}`;
       const curDef = typeDefinitionMap[curTypeKey];
       if (ty.typeKind === "primitive" && exactMatchShapeAgainstDef(value, curDef)) {
