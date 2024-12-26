@@ -833,7 +833,13 @@ class MetaUnionTypeAnnotation implements MetaClass {
     });
   }
   toTypeAnnotation() {
-    return this.toSchema();
+    return {
+      concept: "TypeAnnotation",
+      typeKind: "union",
+      typeArguments: this.typeArguments.map((x) => {
+        return x.toTypeAnnotation();
+      }),
+    };
   }
   typeName = "nasl.core.Union";
   sample() {
@@ -841,13 +847,8 @@ class MetaUnionTypeAnnotation implements MetaClass {
   }
   toSchema() {
     const res = {
-      sortedKey: {
-        concept: "TypeAnnotation",
-        typeKind: "union",
-        typeArguments: this.typeArguments.map((x) => {
-          return x.toTypeAnnotation();
-        }),
-      },
+      // FIXME replaceSortedKey
+      sortedKey: this.toTypeAnnotation(),
     };
     for (const arg of this.typeArguments) {
       // toSchema recursively
@@ -918,8 +919,7 @@ describe.only("genInitFromSchema 支持基础类型的内容感知匹配", () =>
     for (let index = 0; index < times; index++) {
       const { meta, dataTypesMap } = chooseValueMetaUnion();
       const value = meta.sample();
-      test(`${JSON.stringify(value)}`, () => {
-        console.log(JSON.stringify(meta.toSchema(), undefined, 2));
+      test(`${JSON.stringify(value)}: ${JSON.stringify(meta.toTypeAnnotation())}`, () => {
         expect(dataTypesMap).not.toBeUndefined();
         initDataTypes({ dataTypesMap });
         const result = genInitFromSchema(meta.typeName, value);
