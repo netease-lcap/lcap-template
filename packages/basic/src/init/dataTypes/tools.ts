@@ -178,11 +178,13 @@ export function initApplicationConstructor(dataTypesMap, genInitFromSchema) {
 }
 
 // 判断字符串的具体类型
-function judgeStrType(str) {
-  const regMap = {
+export function judgeStrType(str: string): string | undefined {
+  const regMap: Record<string, RegExp> = {
     "nasl.core.Date": /^\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2}$/,
     "nasl.core.Time": /^(\d{1,2})(:\d{1,2})?:(\d{1,2})$/,
-    "nasl.core.DateTime": /^\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2}T(\d{1,2})(:\d{1,2})?:(\d{1,2})Z$/,
+    // 2021-01-01T05:11:22.010Z 或 2021-01-01 05:11:22
+    "nasl.core.DateTime":
+      /^(\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2}T(\d{1,2})(:\d{1,2})?:(\d{1,2})\.\d{3}Z)|(\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2} (\d{1,2})(:\d{1,2})?:(\d{1,2}))$/,
   };
   for (const key in regMap) {
     const reg = regMap[key];
@@ -430,18 +432,36 @@ type TypeAnnotation =
       concept: "TypeAnnotation";
     }
   | {
+      typeKind: "anonymous";
+      properties: TypeAnnotation[];
+      typeName: undefined;
+      typeNamespace: undefined;
+      concept: "TypeAnnotation";
+    }
+  | {
       typeKind: "generic";
       typeArguments: TypeAnnotation[];
       typeName: string;
       typeNamespace: string;
       concept: "TypeAnnotation";
     };
+type DefaultValue = {
+  expression: { concept: "StringLiteral"; value: string | null | undefined } | {} | null;
+};
 
-function getTypeDefinition(typeKey: string): TypeAnnotation | { concept: "Enum" } | undefined {
+function getTypeDefinition(typeKey: string):
+  | TypeAnnotation
+  | { concept: "Enum" }
+  // FIXME 若这里添加了Entity就会报错，看看实际情况如何，写得严密一点
+  // | { concept: "Entity"; properties: { typeAnnotation: TypeAnnotation; name: string; defaultValue: DefaultValue }[] }
+  | undefined {
   return typeDefinitionMap[typeKey];
 }
 
-function inferTypeConstructorAgainstTypeKey(value, typeKey) {
+function inferTypeConstructorAgainstTypeKey(
+  value,
+  typeKey,
+): new (options: { defaultValue: unknown; level: number }) => unknown | undefined {
   const def = getTypeDefinition(typeKey);
   if (!def) {
     return undefined;
@@ -457,18 +477,28 @@ function inferTypeConstructorAgainstTypeKey(value, typeKey) {
     // 2. 先判断结构是否一致（复合类型递归看properties属性；Primitive类型直接判断即可）。结构相同的时候，当前类型构造器作为候选；否则，跳过。
     // 输出：第一个候选，或者无匹配
     let candidate = undefined;
-    // 类型的优先级排序规则：Enum > Primitives > Tagged References > Entity >
+
     if (!def.typeArguments || !Array.isArray(def.typeArguments) || def.typeArguments.length === 0) {
       return undefined;
     }
 
     const typeArguments: TypeAnnotation[] = def.typeArguments;
-    const sortedTypeArguments = sortBy(typeArguments, (arg) => {
-      return -1;
+    const sortedTypeArguments = sortBy(typeArguments, (arg, index) => {
+      if (arg.typeKind === "union") {
+        throw new Error("Union类型的typeArguments不能再为union");
+      }
+      const typeKindList = ["primitive", "reference", "anonymous", "generic"] as const;
+      const argTypeDef = getTypeDefinition(genSortedTypeKey(arg));
+      // 类型的优先级排序规则：Enum Reference > Primitives > Tagged References > Entity > Structure > AnonymousStructure > Map > List
+      // 让指向Enum类型优先匹配
+      if (arg.typeKind === "reference" && argTypeDef.concept === "Enum") {
+        return [-2, index];
+      }
+      return [typeKindList.indexOf(arg.typeKind), index];
     });
     for (const ty of sortedTypeArguments) {
       const curTypeKey = `${ty.typeNamespace}.${ty.typeName}`;
-      const curDef = typeDefinitionMap[curTypeKey];
+      const curDef = getTypeDefinition(curTypeKey);
       if (ty.typeKind === "primitive" && exactMatchShapeAgainstDef(value, curDef)) {
         // 匹配上了Primitve类型
         return typeMap[curTypeKey];
@@ -476,7 +506,8 @@ function inferTypeConstructorAgainstTypeKey(value, typeKey) {
         // 不可以出现嵌套union类型
         return undefined;
       } else if (ty.typeKind === "reference") {
-        const properties = typeDefinitionMap[curTypeKey]?.properties;
+        // @ts-expect-error FIXME curDef上没有properties
+        const properties = curDef?.properties;
         if (properties) {
           // 如果存在字段定义，那么尝试获取第一个tag字段
           const tagProperty = properties
