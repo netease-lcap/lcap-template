@@ -1535,11 +1535,19 @@ export const utils = {
   Ceil(x: number): number {
     x = +x;
 
+    if (isNaN(x)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
     return Math.ceil(x);
   },
 
   Floor(x: number): number {
     x = +x;
+
+    if (isNaN(x)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
 
     return Math.floor(x);
   },
@@ -1547,12 +1555,24 @@ export const utils = {
   Trunc(x: number): number {
     x = +x;
 
+    if (isNaN(x)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
     return Math.trunc(x);
   },
 
   TruncDivide(x: number, y: number): number {
     x = +x;
     y = +y;
+
+    if (isNaN(x) || isNaN(y)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
+    if (y === 0) {
+      throw new Error("SystemArithmeticError");
+    }
 
     // 余数
     const rest = x % y;
@@ -1563,6 +1583,10 @@ export const utils = {
   Abs(x: number): number {
     x = +x;
 
+    if (isNaN(x)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
     return Math.abs(x);
   },
 
@@ -1570,11 +1594,19 @@ export const utils = {
     x = +x;
     y = +y;
 
+    if (isNaN(x) || isNaN(y)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
     return Math.pow(x, y);
   },
 
   Sqrt(x: number): number {
     x = +x;
+
+    if (isNaN(x)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
 
     return Math.sqrt(x);
   },
@@ -1582,11 +1614,19 @@ export const utils = {
   Cbrt(x: number): number {
     x = +x;
 
+    if (isNaN(x)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
     return Math.cbrt(x);
   },
 
   Log(x: number): number {
     x = +x;
+
+    if (isNaN(x)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
 
     return Math.log(x);
   },
