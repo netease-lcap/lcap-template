@@ -1,5 +1,5 @@
 import { genInitFromSchema, global, initDataTypes } from "../../../src";
-import { typeDefinitionMap } from "../../../src/init/dataTypes/tools";
+import { genSortedTypeKey, typeDefinitionMap } from "../../../src/init/dataTypes/tools";
 
 describe("genInitFromSchema支持tagged-union", () => {
   let sandbox: { singlyTypedDatabaseError: any; unionTypedDatabaseError: any };
@@ -797,11 +797,10 @@ class MetaMap implements MetaClass {
       typeKind: "generic",
       typeNamespace: "nasl.collection",
       typeName: this.typeName,
-      typeArguments: [this.MetaKey.toSchema(), this.MetaValue.toSchema()],
+      typeArguments: [this.MetaKey.toTypeAnnotation(), this.MetaValue.toTypeAnnotation()],
     };
   }
   typeName: string = "Map";
-  concept: "unknown!!!";
   private MetaKey = chooseSingleMeta({ noObjects: true });
   private MetaValue = chooseSingleMeta();
   private size = _.random(0, 10);
@@ -847,11 +846,9 @@ class MetaUnionTypeAnnotation implements MetaClass {
   }
   toSchema() {
     const res = {
-      // FIXME replaceSortedKey
-      sortedKey: this.toTypeAnnotation(),
+      [genSortedTypeKey(this)]: this.toTypeAnnotation(),
     };
     for (const arg of this.typeArguments) {
-      // toSchema recursively
       res[arg.typeName] = arg.toSchema();
     }
     return res;
@@ -919,7 +916,8 @@ describe.only("genInitFromSchema 支持基础类型的内容感知匹配", () =>
     for (let index = 0; index < times; index++) {
       const { meta, dataTypesMap } = chooseValueMetaUnion();
       const value = meta.sample();
-      test(`${JSON.stringify(value)}: ${JSON.stringify(meta.toTypeAnnotation())}`, () => {
+      const typeKey = genSortedTypeKey(meta.toTypeAnnotation());
+      test(`${JSON.stringify(value)}: ${typeKey}`, () => {
         expect(dataTypesMap).not.toBeUndefined();
         initDataTypes({ dataTypesMap });
         const result = genInitFromSchema(meta.typeName, value);
