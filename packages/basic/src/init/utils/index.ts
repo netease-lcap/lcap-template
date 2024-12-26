@@ -819,8 +819,11 @@ export const utils = {
     return moment(localDate).format("HH:mm:ss");
   },
   CurrDateTime(tz) {
-    // 函数签名用的是 Date 原生对象不是 string，所以先这样就行
-    return new Date();
+    if (!tz) {
+      return this.CurrTime("global");
+    }
+    const localDate = convertJSDateInTargetTimeZone(new Date(), tz);
+    return JSON.stringify(localDate);
   },
   AddDays(date = new Date(), amount = 1, converter = "json") {
     return toValue(addDays(safeNewDate(date), amount), converter);
