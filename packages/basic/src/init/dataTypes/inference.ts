@@ -7,18 +7,14 @@ import { genSortedTypeKey, getTypeDefinition } from "./tools";
  * @returns
  */
 export function sortTypeArgumentsBasedOnTypePriority(typeArguments: TypeAnnotation[]): TypeAnnotation[] {
-  // 先应用优先级排序规则 Primitives > Tagged References > Entity > Structure > AnonymousStructure > Map > List
   const firstPass = sortBy(typeArguments, (arg) => {
+    // 应用优先级排序规则 Primitives > Tagged References > Entity > Structure > AnonymousStructure > Map > List
     const typeKindListOrderedByPriority = ["primitive", "reference", "anonymous", "generic"] as const;
     if (arg.typeKind === "union") {
       throw new Error("Union类型的typeArguments不能再为union");
     }
-    const isNotTaggedReference =
-      arg.typeKind !== "reference" ||
-      // @ts-expect-error
-      !getTypeDefinition(genSortedTypeKey(arg))?.properties?.some((prop) => prop.name === "errorType");
     const priority = typeKindListOrderedByPriority.indexOf(arg.typeKind);
-    if (isNotTaggedReference) {
+    if (isTaggedReferenceType(arg)) {
       return [1, priority];
     } else {
       return [0, priority];
@@ -33,4 +29,12 @@ export function sortTypeArgumentsBasedOnTypePriority(typeArguments: TypeAnnotati
     return 1;
   });
   return secondPass;
+
+  function isTaggedReferenceType(typeAnnotation: TypeAnnotation): boolean {
+    return (
+      typeAnnotation.typeKind === "reference" &&
+      // @ts-expect-error
+      getTypeDefinition(genSortedTypeKey(typeAnnotation))?.properties?.some((prop) => prop.name === "errorType")
+    );
+  }
 }
