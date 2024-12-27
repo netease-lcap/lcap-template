@@ -1,11 +1,12 @@
 import { format } from "date-fns";
 import momentTZ from "moment-timezone";
 import moment from "moment";
-import { sortBy, xor } from "lodash";
+import { xor } from "lodash";
 
 import BigNumber from "bignumber.js";
 import { getAppTimezone, safeNewDate } from "../utils";
 import Config from "../../config";
+import { sortTypeArgumentsBasedOnTypePriority } from "./inference";
 
 function tryJSONParse(str) {
   let result;
@@ -443,40 +444,7 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
   return false;
 }
 
-type TypeAnnotation =
-  | {
-      typeKind: "primitive";
-      typeNamespace: string;
-      typeName: string;
-      concept: "TypeAnnotation";
-    }
-  | { typeKind: "reference"; typeName: string; typeNamespace: string; concept: "TypeAnnotation" }
-  | {
-      typeKind: "union";
-      typeArguments: TypeAnnotation[];
-      typeName: string;
-      typeNamespace: string;
-      concept: "TypeAnnotation";
-    }
-  | {
-      typeKind: "anonymous";
-      properties: TypeAnnotation[];
-      typeName: undefined;
-      typeNamespace: undefined;
-      concept: "TypeAnnotation";
-    }
-  | {
-      typeKind: "generic";
-      typeArguments: TypeAnnotation[];
-      typeName: string;
-      typeNamespace: string;
-      concept: "TypeAnnotation";
-    };
-type DefaultValue = {
-  expression: { concept: "StringLiteral"; value: string | null | undefined } | {} | null;
-};
-
-function getTypeDefinition(typeKey: string):
+export function getTypeDefinition(typeKey: string):
   | TypeAnnotation
   | { concept: "Enum" }
   // FIXME 若这里添加了Entity就会报错，看看实际情况如何，写得严密一点
@@ -509,21 +477,7 @@ function inferTypeConstructorAgainstTypeKey(
       return undefined;
     }
 
-    const typeArguments: TypeAnnotation[] = def.typeArguments;
-    const sortedTypeArguments = sortBy(typeArguments, (arg, index) => {
-      if (arg.typeKind === "union") {
-        throw new Error("Union类型的typeArguments不能再为union");
-      }
-      const typeKindList = ["primitive", "reference", "anonymous", "generic"] as const;
-      const argTypeDef = getTypeDefinition(genSortedTypeKey(arg));
-      // 类型的优先级排序规则：Enum Reference > Primitives > Tagged References > Entity > Structure > AnonymousStructure > Map > List
-      // 让指向Enum类型优先匹配
-      if (arg.typeKind === "reference" && argTypeDef.concept === "Enum") {
-        return [-2, index];
-      }
-      return [typeKindList.indexOf(arg.typeKind), index];
-    });
-    for (const ty of sortedTypeArguments) {
+    for (const ty of sortTypeArgumentsBasedOnTypePriority(def.typeArguments)) {
       const curTypeKey = `${ty.typeNamespace}.${ty.typeName}`;
       const curDef = getTypeDefinition(curTypeKey);
       if (ty.typeKind === "primitive" && exactMatchShapeAgainstDef(value, curDef)) {
