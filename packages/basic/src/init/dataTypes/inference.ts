@@ -1,5 +1,5 @@
 import { sortBy } from "lodash";
-import { genSortedTypeKey } from "./tools";
+import { genSortedTypeKey, getTypeDefinition } from "./tools";
 
 // 类型的优先级如下：Enum Reference > Primitives > Tagged References > Entity > Structure > AnonymousStructure > Map > List
 export function sortTypeArgumentsBasedOnTypePriority(typeArguments: TypeAnnotation[]): TypeAnnotation[] {
@@ -11,8 +11,14 @@ export function sortTypeArgumentsBasedOnTypePriority(typeArguments: TypeAnnotati
     }
     const isNotTaggedReference =
       arg.typeKind !== "reference" ||
+      // @ts-expect-error
       !getTypeDefinition(genSortedTypeKey(arg))?.properties?.some((prop) => prop.name === "errorType");
-    return typeKindList.indexOf(arg.typeKind);
+    const index = typeKindList.indexOf(arg.typeKind);
+    if (isNotTaggedReference) {
+      return [1, index];
+    } else {
+      return [0, index];
+    }
   });
   const secondPass = sortBy(firstPass, (arg) => {
     // 应用优先级排序规则：Enum Reference > Others
