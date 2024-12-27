@@ -169,6 +169,14 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
           }
           this[item.propertyName] = value;
         });
+
+        this.toJSON = function () {
+          const res = {};
+          properties.forEach(({ propertyName }) => {
+            res[propertyName] = this[propertyName] === undefined ? null : this[propertyName];
+          });
+          return JSON.stringify(res);
+        };
       }
       // ctor设置name
       Object.defineProperty(ctor, "name", {
