@@ -19,7 +19,7 @@ export function sortTypeArgumentsBasedOnTypePriority(typeArguments: TypeAnnotati
   const secondPass = sortBy(firstPass, (arg) => {
     // 应用优先级排序规则：Enum Reference > Others
     const argTypeDef = getTypeDefinition(genSortedTypeKey(arg));
-    if (argTypeDef.concept === "Enum") {
+    if (argTypeDef?.concept === "Enum") {
       return 0;
     }
     return 1;

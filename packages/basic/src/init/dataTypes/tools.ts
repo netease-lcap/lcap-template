@@ -480,6 +480,9 @@ function inferTypeConstructorAgainstTypeKey(
     for (const ty of sortTypeArgumentsBasedOnTypePriority(def.typeArguments)) {
       const curTypeKey = `${ty.typeNamespace}.${ty.typeName}`;
       const curDef = getTypeDefinition(curTypeKey);
+      if (!curDef) {
+        continue;
+      }
       if (curDef.concept === "Enum" && exactMatchShapeAgainstDef(value, curDef)) {
         return typeMap[curTypeKey];
       } else if (ty.typeKind === "primitive" && exactMatchShapeAgainstDef(value, curDef)) {
