@@ -170,12 +170,8 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
           this[item.propertyName] = value;
         });
 
-        this.toJSON = function () {
-          const res = {};
-          properties.forEach(({ propertyName }) => {
-            res[propertyName] = this[propertyName] === undefined ? null : this[propertyName];
-          });
-          return JSON.stringify(res);
+        this.__getTypeKey = function () {
+          return typeKey;
         };
       }
       // ctor设置name
