@@ -1,7 +1,11 @@
 import { sortBy } from "lodash";
 import { genSortedTypeKey, getTypeDefinition } from "./tools";
 
-// 类型的优先级如下：Enum Reference > Primitives > Tagged References > Entity > Structure > AnonymousStructure > Map > List
+/**
+ * 根据如下优先级排序类型：Enum Reference > Primitives > Tagged References > Entity > Structure > AnonymousStructure > Map > List
+ * @param typeArguments 待排序的types
+ * @returns
+ */
 export function sortTypeArgumentsBasedOnTypePriority(typeArguments: TypeAnnotation[]): TypeAnnotation[] {
   // 先应用优先级排序规则 Primitives > Tagged References > Entity > Structure > AnonymousStructure > Map > List
   const firstPass = sortBy(typeArguments, (arg) => {
