@@ -5,7 +5,7 @@ import { genSortedTypeKey, getTypeDefinition } from "./tools";
 export function sortTypeArgumentsBasedOnTypePriority(typeArguments: TypeAnnotation[]): TypeAnnotation[] {
   // 先应用优先级排序规则 Primitives > Tagged References > Entity > Structure > AnonymousStructure > Map > List
   const firstPass = sortBy(typeArguments, (arg) => {
-    const typeKindList = ["primitive", "reference", "anonymous", "generic"] as const;
+    const typeKindListOrderedByPriority = ["primitive", "reference", "anonymous", "generic"] as const;
     if (arg.typeKind === "union") {
       throw new Error("Union类型的typeArguments不能再为union");
     }
@@ -13,11 +13,11 @@ export function sortTypeArgumentsBasedOnTypePriority(typeArguments: TypeAnnotati
       arg.typeKind !== "reference" ||
       // @ts-expect-error
       !getTypeDefinition(genSortedTypeKey(arg))?.properties?.some((prop) => prop.name === "errorType");
-    const index = typeKindList.indexOf(arg.typeKind);
+    const priority = typeKindListOrderedByPriority.indexOf(arg.typeKind);
     if (isNotTaggedReference) {
-      return [1, index];
+      return [1, priority];
     } else {
-      return [0, index];
+      return [0, priority];
     }
   });
   const secondPass = sortBy(firstPass, (arg) => {
