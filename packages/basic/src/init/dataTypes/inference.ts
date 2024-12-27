@@ -14,11 +14,7 @@ export function sortTypeArgumentsBasedOnTypePriority(typeArguments: TypeAnnotati
       throw new Error("Union类型的typeArguments不能再为union");
     }
     const priority = typeKindListOrderedByPriority.indexOf(arg.typeKind);
-    if (isTaggedReferenceType(arg)) {
-      return [1, priority];
-    } else {
-      return [0, priority];
-    }
+    return [priority, isTaggedReferenceType(arg) ? 0 : 1, isEntityReferenceType(arg) ? 0 : 1];
   });
   const secondPass = sortBy(firstPass, (arg) => {
     // 应用优先级排序规则：Enum Reference > Others
@@ -31,10 +27,19 @@ export function sortTypeArgumentsBasedOnTypePriority(typeArguments: TypeAnnotati
   return secondPass;
 
   function isTaggedReferenceType(typeAnnotation: TypeAnnotation): boolean {
+    // @ts-expect-error FIXME
+    const properties = getTypeDefinition(genSortedTypeKey(typeAnnotation))?.properties;
     return (
       typeAnnotation.typeKind === "reference" &&
-      // @ts-expect-error
-      getTypeDefinition(genSortedTypeKey(typeAnnotation))?.properties?.some((prop) => prop.name === "errorType")
+      properties?.filter((prop) => prop.name === "errorType" && prop.expression?.concept === "StringLiteral")
+    );
+  }
+
+  function isEntityReferenceType(typeAnnotation: TypeAnnotation): boolean {
+    return (
+      typeAnnotation.typeKind === "reference" &&
+      // @ts-expect-error FIXME
+      getTypeDefinition(genSortedTypeKey(typeAnnotation))?.concept === "Entity"
     );
   }
 }

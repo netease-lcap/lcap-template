@@ -454,8 +454,8 @@ export function getTypeDefinition(typeKey: string):
 }
 
 function inferTypeConstructorAgainstTypeKey(
-  value,
-  typeKey,
+  value: unknown,
+  typeKey: string,
 ): new (options: { defaultValue: unknown; level: number }) => unknown | undefined {
   const def = getTypeDefinition(typeKey);
   if (!def) {
@@ -480,13 +480,14 @@ function inferTypeConstructorAgainstTypeKey(
     for (const ty of sortTypeArgumentsBasedOnTypePriority(def.typeArguments)) {
       const curTypeKey = `${ty.typeNamespace}.${ty.typeName}`;
       const curDef = getTypeDefinition(curTypeKey);
-      if (ty.typeKind === "primitive" && exactMatchShapeAgainstDef(value, curDef)) {
-        // 匹配上了Primitve类型
+      if (curDef.concept === "Enum" && exactMatchShapeAgainstDef(value, curDef)) {
+        return typeMap[curTypeKey];
+      } else if (ty.typeKind === "primitive" && exactMatchShapeAgainstDef(value, curDef)) {
         return typeMap[curTypeKey];
       } else if (ty.typeKind === "union") {
-        // 不可以出现嵌套union类型
-        return undefined;
+        throw new Error("Union类型的typeArguments不能再为union");
       } else if (ty.typeKind === "reference") {
+        // Entity | Structure | AnonymousStructure
         // @ts-expect-error FIXME curDef上没有properties
         const properties = curDef?.properties;
         if (properties) {
@@ -497,7 +498,7 @@ function inferTypeConstructorAgainstTypeKey(
               const hardcodedPropertyName = "errorType";
               if (prop.name === hardcodedPropertyName && defaultValue?.expression?.concept === "StringLiteral") {
                 return [
-                  // 注意：允许tagValue为undefined
+                  // 允许tagValue为undefined
                   { name: prop.name, tagValue: defaultValue.expression.value },
                 ];
               }
@@ -549,7 +550,7 @@ export const genInitData = (typeKey, defaultValue, parentLevel?) => {
     !["union"].includes(typeKind)
   ) {
     // 一些特殊情况，特殊处理成undefined
-    // 1.defaultValue在nasl节点上错误得赋值给了空制符串
+    // 1.defaultValue在nasl节点上错误得赋值给了空字符串
     if ([""].includes(defaultValue)) {
       parsedValue = undefined;
     } else {
@@ -874,11 +875,8 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
 // yyyy/MM/dd HH:mm:ss
 // yyyy.MM.dd HH:mm:ss
 
-const DateReg =
-  /(^[1-9]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$)|(^[1-9]\d{3}\/(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])$)|(^[1-9]\d{3}\.(0[1-9]|1[0-2])\.(0[1-9]|[1-2][0-9]|3[0-1])$)/;
 const TimeReg = /^(20|21|22|23|[0-1]\d):[0-5]\d:[0-5]\d$/;
-const DateTimeReg =
-  /(^[1-9]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])\s+(20|21|22|23|[0-1]\d):[0-5]\d:[0-5]\d$)|^[1-9]\d{3}\/(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])\s+(20|21|22|23|[0-1]\d):[0-5]\d:[0-5]\d$|^[1-9]\d{3}\.(0[1-9]|1[0-2])\.(0[1-9]|[1-2][0-9]|3[0-1])\s+(20|21|22|23|[0-1]\d):[0-5]\d:[0-5]\d$/;
+
 const FloatNumberReg = /^(-?\d+)(\.\d+)?$/;
 // (长)整型
 const IntegerReg = /^-?\d+$/;
