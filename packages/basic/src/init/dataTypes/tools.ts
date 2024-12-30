@@ -167,7 +167,7 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
           if (item.needGenInitFromSchema) {
             value = genInitFromSchema(item.sortedTypeKey, value, level);
           }
-          this[item.propertyName] = value;
+          this[item.propertyName] = value ?? null;
         });
 
         this.__getTypeKey = function () {
