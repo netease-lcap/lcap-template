@@ -460,7 +460,7 @@ export function getTypeDefinition(typeKey: string):
 function inferTypeConstructorAgainstTypeKey(
   value: unknown,
   typeKey: string,
-): new (options: { defaultValue: unknown; level: number }) => unknown | undefined {
+): (new (options: { defaultValue: unknown; level: number }) => unknown) | undefined {
   const def = getTypeDefinition(typeKey);
   if (!def) {
     return undefined;
