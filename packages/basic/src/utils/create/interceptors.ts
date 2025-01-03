@@ -1,5 +1,5 @@
-import isPlainObject from 'lodash/isPlainObject';
-import { stringifyWithLoopProtection } from './utils';
+import isPlainObject from "lodash/isPlainObject";
+import { stringifyWithLoopProtection } from "./utils";
 
 const interceptors: Array<{
   request?: {
@@ -20,12 +20,12 @@ const loopProtection = (config) => {
         config.data = JSON.parse(result);
       }
     }
-  } catch(e) {
-    console.warn('loopProtection json control error');
+  } catch (e) {
+    console.warn("loopProtection json control error");
   }
 
   return config;
-}
+};
 
 interceptors.push({
   request: {
