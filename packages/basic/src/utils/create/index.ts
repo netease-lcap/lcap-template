@@ -3,9 +3,6 @@ import { stringify } from "qs";
 import JSONbig from "json-bigint";
 import BigNumber from "bignumber.js";
 import get from "lodash/get";
-import JSONbig from "json-bigint";
-import BigNumber from "bignumber.js";
-import get from "lodash/get";
 
 import Service from "../request-pre";
 import { formatMicroFrontUrl } from "../../init/router/microFrontUrl"; // 微前端路由方法
