@@ -1,10 +1,10 @@
-const upload = require('lcap/lib/upload');
-const fs = require('fs');
-const path = require('path');
-const getDeployConfig = require('./getDeployConfig');
+const upload = require("lcap/lib/upload");
+const fs = require("fs");
+const path = require("path");
+const getDeployConfig = require("./getDeployConfig");
 
 /**
- * 
+ *
  * @param {*} options
  * @param {string} options.target
  * @param {string} options.root
@@ -44,10 +44,12 @@ function deployTgz(options = {}) {
 
   // 开始上传流程
   const prefix = `packages/${name}@${version}`;
-  let formFiles = [{
-    name: path.posix.join(prefix, source),
-    path: sourcePath,
-  }];
+  let formFiles = [
+    {
+      name: path.posix.join(prefix, source),
+      path: sourcePath,
+    },
+  ];
 
   return upload(formFiles, {
     platform: platform || defaultConfig.platform,
@@ -61,7 +63,6 @@ function deployTgz(options = {}) {
       throw new Error("上传失败");
     })
     .finally(() => {
-      fs.unlinkSync(sourcePath);
       fs.unlinkSync(targetPath);
     });
 }

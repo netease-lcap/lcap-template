@@ -5,6 +5,8 @@ import Global from "../../global";
 
 import { initApplicationConstructor, genInitData, isInstanceOf, genSortedTypeKey } from "./tools";
 import * as Utils from "./utils";
+import * as Tools from "./tools";
+import * as wx from "./wx";
 
 function initDataTypes(options) {
   const dataTypesMap = options.dataTypesMap || {};
@@ -164,8 +166,7 @@ function resolveRequestData(root) {
 function parseRequestDataType(root, _prop) {
   let value;
   try {
-    // eslint-disable-next-line no-eval
-    value = eval(root[_prop]);
+    value = new Function("return " + root[_prop])();
   } catch (err) {
     value = root.value;
   }
@@ -206,8 +207,6 @@ export {
   resolveRequestData,
   parseRequestDataType,
   Utils,
+  Tools,
+  wx,
 };
-
-export * as Tools from "./tools";
-
-export * as wx from "./wx";
