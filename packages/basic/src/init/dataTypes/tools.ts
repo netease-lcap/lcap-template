@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import momentTZ from "moment-timezone";
 import moment from "moment";
-import { xor } from "lodash";
+import { flatMap, xor } from "lodash";
 
 import BigNumber from "bignumber.js";
 import { getAppTimezone, safeNewDate } from "../utils";
@@ -470,19 +470,17 @@ function inferTypeConstructorAgainstTypeKey(value, typeKey) {
         const properties = typeDefinitionMap[curTypeKey]?.properties;
         if (properties) {
           // 如果存在字段定义，那么尝试获取第一个tag字段
-          const tagProperty = properties
-            .flatMap((prop) => {
-              const defaultValue = prop.defaultValue;
-              const hardcodedPropertyName = "errorType";
-              if (prop.name === hardcodedPropertyName && defaultValue?.expression?.concept === "StringLiteral") {
-                return [
-                  // 注意：允许tagValue为undefined
-                  { name: prop.name, tagValue: defaultValue.expression.value },
-                ];
-              }
-              return [];
-            })
-            .at(0);
+          const tagProperty = flatMap(properties, (prop) => {
+            const defaultValue = prop.defaultValue;
+            const hardcodedPropertyName = "errorType";
+            if (prop.name === hardcodedPropertyName && defaultValue?.expression?.concept === "StringLiteral") {
+              return [
+                // 注意：允许tagValue为undefined
+                { name: prop.name, tagValue: defaultValue.expression.value },
+              ];
+            }
+            return [];
+          })?.[0];
           if (tagProperty && tagProperty.tagValue === value?.[tagProperty.name]) {
             return typeMap[curTypeKey];
           } else if (candidate === undefined && exactMatchShapeAgainstDef(value, curDef)) {
