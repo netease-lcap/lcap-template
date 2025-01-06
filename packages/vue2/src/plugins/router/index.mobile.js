@@ -23,6 +23,22 @@ export function destination(url, target = "_self", replace = false) {
     if (url?.startsWith("http")) {
       location.href = encodeUrl(url);
     } else {
+      const beforeHashUrl = url.slice(0, url.indexOf("#"));
+      if (url.indexOf("#") !== -1 && beforeHashUrl.indexOf(location.pathname) !== -1) {
+        const hash = url.slice(url.indexOf("#"))?.replace("#", "");
+        if (document.getElementById(hash)) {
+          document.getElementById(hash).scrollIntoView();
+        }
+
+        if (replace) {
+          window.VueRouterInstance?.replace(url);
+        } else {
+          window.VueRouterInstance?.push(url);
+        }
+
+        return;
+      }
+
       if (replace) {
         window.VueRouterInstance?.replace(url);
       } else {
