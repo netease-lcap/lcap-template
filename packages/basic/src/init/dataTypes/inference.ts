@@ -9,7 +9,7 @@ import { genSortedTypeKey, getTypeDefinition } from "./tools";
 export function sortTypeArgumentsBasedOnTypePriority(typeArguments: TypeAnnotation[]): TypeAnnotation[] {
   const firstPass = sortBy(typeArguments, (arg) => {
     // 应用优先级排序规则 Primitives > Tagged References > Entity > Structure > AnonymousStructure > Map > List
-    const typeKindListOrderedByPriority = ["primitive", "reference", "anonymous", "generic"] as const;
+    const typeKindListOrderedByPriority = ["primitive", "reference", "anonymousStructure", "generic"] as const;
     if (arg.typeKind === "union") {
       throw new Error("Union类型的typeArguments不能再为union");
     }
