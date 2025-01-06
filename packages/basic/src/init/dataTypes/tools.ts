@@ -494,7 +494,7 @@ function inferTypeConstructorAgainstTypeKey(
       } else if (ty.typeKind === "union") {
         throw new Error("Union类型的typeArguments不能再为union");
       } else if (ty.typeKind === "reference") {
-        // Entity | Structure | AnonymousStructure
+        // Entity | Structure
         // @ts-expect-error FIXME curDef上没有properties
         const properties = curDef?.properties;
         if (properties) {

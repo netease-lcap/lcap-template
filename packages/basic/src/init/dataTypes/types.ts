@@ -14,7 +14,7 @@ type TypeAnnotation =
       concept: "TypeAnnotation";
     }
   | {
-      typeKind: "anonymous";
+      typeKind: "anonymousStructure";
       properties: TypeAnnotation[];
       typeName: undefined;
       typeNamespace: undefined;
