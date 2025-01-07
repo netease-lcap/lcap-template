@@ -170,9 +170,10 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
           this[item.propertyName] = value ?? null;
         });
 
-        this.__getTypeKey = function () {
-          return typeKey;
-        };
+        Object.defineProperty(this, "$type", {
+          value: typeKey,
+          enumerable: false,
+        });
       }
       // ctor设置name
       Object.defineProperty(ctor, "name", {
