@@ -332,7 +332,14 @@ export const createService = function createService(apiSchemaList, serviceConfig
         const err = response;
         const { config } = requestInfo;
 
-        overwriteErrorMsgFieldIfSpecified(response.response.data?.Data, requestInfo?.config?.errorMessage);
+        if (!response.response) {
+          // 非服务端包裹后的异常，无法处理
+          throw response;
+        }
+
+        if (response.response?.data?.Data) {
+          overwriteErrorMsgFieldIfSpecified(response.response.data.Data, requestInfo?.config?.errorMessage);
+        }
 
         const HttpResponse = {
           status: response.response.status + "",
@@ -507,7 +514,14 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           throw Error("程序中止");
         }
 
-        overwriteErrorMsgFieldIfSpecified(response.response.data?.Data, requestInfo?.config?.errorMessage);
+        if (!response.response) {
+          // 非服务端包裹后的异常，无法处理
+          throw response;
+        }
+
+        if (response.response?.data?.Data) {
+          overwriteErrorMsgFieldIfSpecified(response.response.data.Data, requestInfo?.config?.errorMessage);
+        }
 
         const HttpResponse = {
           status: response.response.status + "",
