@@ -456,8 +456,7 @@ export function getTypeDefinition(typeKey: string):
   // | { concept: "Entity"; properties: { typeAnnotation: TypeAnnotation; name: string; defaultValue: DefaultValue }[] }
   | undefined {
   // 对依赖库的extensions.${libname}.errors.${ErrorName}需要映射为extensions.${libname}.structures.${ErrorName}
-  const normalizedKey = typeKey.startsWith("extensions.") ? typeKey.replace(".errors.", ".structures.") : typeKey;
-  return typeDefinitionMap[normalizedKey];
+  return typeDefinitionMap[typeKey];
 }
 
 function inferTypeConstructorAgainstTypeKey(
@@ -486,7 +485,10 @@ function inferTypeConstructorAgainstTypeKey(
 
     for (const ty of sortTypeArgumentsBasedOnTypePriority(def.typeArguments)) {
       const curTypeKey = `${ty.typeNamespace}.${ty.typeName}`;
-      const curDef = getTypeDefinition(curTypeKey);
+      const normalizedTypeKey = curTypeKey.startsWith("extensions.")
+        ? typeKey.replace(".errors.", ".structures.")
+        : typeKey;
+      const curDef = getTypeDefinition(normalizedTypeKey);
       if (!curDef) {
         continue;
       }
