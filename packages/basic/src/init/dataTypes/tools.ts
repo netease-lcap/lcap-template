@@ -484,7 +484,11 @@ function inferTypeConstructorAgainstTypeKey(
 
     for (const ty of sortTypeArgumentsBasedOnTypePriority(def.typeArguments)) {
       const curTypeKey = `${ty.typeNamespace}.${ty.typeName}`;
-      const curDef = getTypeDefinition(curTypeKey);
+      // 对依赖库的extensions.${libname}.errors.${ErrorName}需要映射为extensions.${libname}.structures.${ErrorName}
+      const normalizedTypeKey = curTypeKey.startsWith("extensions.")
+        ? curTypeKey.replace(".errors.", ".structures.")
+        : curTypeKey;
+      const curDef = getTypeDefinition(normalizedTypeKey);
       if (!curDef) {
         continue;
       }
