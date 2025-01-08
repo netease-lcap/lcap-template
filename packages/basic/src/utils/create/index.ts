@@ -333,7 +333,6 @@ export const createService = function createService(apiSchemaList, serviceConfig
         const { config } = requestInfo;
 
         if (!response.response) {
-          // 非服务端包裹后的异常，无法处理
           throw response;
         }
 
@@ -515,7 +514,6 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
         }
 
         if (!response.response) {
-          // 非服务端包裹后的异常，无法处理
           throw response;
         }
 
