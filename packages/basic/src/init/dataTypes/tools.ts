@@ -455,7 +455,9 @@ export function getTypeDefinition(typeKey: string):
   // FIXME 若这里添加了Entity就会报错，看看实际情况如何，写得严密一点
   // | { concept: "Entity"; properties: { typeAnnotation: TypeAnnotation; name: string; defaultValue: DefaultValue }[] }
   | undefined {
-  return typeDefinitionMap[typeKey];
+  // 对依赖库的extensions.${libname}.errors.${ErrorName}需要映射为extensions.${libname}.structures.${ErrorName}
+  const normalizedKey = typeKey.startsWith("extensions.") ? typeKey.replace(".errors.", ".structures.") : typeKey;
+  return typeDefinitionMap[normalizedKey];
 }
 
 function inferTypeConstructorAgainstTypeKey(
