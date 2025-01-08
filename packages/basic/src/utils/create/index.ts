@@ -254,22 +254,24 @@ const requester = function (requestInfo) {
   });
 
   // 依赖库定义的响应拦截器
-  const requestHooks = window.$axiosHookManager.requestHooks.sort((a, b) => a?.order - b?.order);
-  requestHooks.forEach((hook) => {
-    if (hook && hook.onSuccess && !hook.registered) {
-      axios.interceptors.request.use(hook.onSuccess, hook.onError || defaultErrorHandler);
-      hook.registered = true;
-    }
-  });
+  if (window.$axiosHookManager) {
+    const requestHooks = window.$axiosHookManager.requestHooks.sort((a, b) => a?.order - b?.order);
+    requestHooks.forEach((hook) => {
+      if (hook && hook.onSuccess && !hook.registered) {
+        axios.interceptors.request.use(hook.onSuccess, hook.onError || defaultErrorHandler);
+        hook.registered = true;
+      }
+    });
 
-  // 依赖库定义的响应拦截器
-  const responseHooks = window.$axiosHookManager.responseHooks.sort((a, b) => a?.order - b?.order);
-  responseHooks.forEach((hook) => {
-    if (hook && hook.onSuccess && !hook.registered) {
-      axios.interceptors.response.use(hook.onSuccess, hook.onError || defaultErrorHandler);
-      hook.registered = true;
-    }
-  });
+    // 依赖库定义的响应拦截器
+    const responseHooks = window.$axiosHookManager.responseHooks.sort((a, b) => a?.order - b?.order);
+    responseHooks.forEach((hook) => {
+      if (hook && hook.onSuccess && !hook.registered) {
+        axios.interceptors.response.use(hook.onSuccess, hook.onError || defaultErrorHandler);
+        hook.registered = true;
+      }
+    });
+  }
 
   const options = genBaseOptions(requestInfo);
 
