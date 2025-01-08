@@ -5,7 +5,7 @@ type Nil = null | undefined;
  * @param errorMessage
  */
 export function overwriteErrorMsgFieldIfSpecified(
-  data: Record<string, unknown> & { errorMsg?: string | Nil } | Nil,
+  data: (Record<string, unknown> & { errorMsg?: string | Nil }) | Nil,
   errorMessage: string | Nil,
 ) {
   if (typeof errorMessage === "string" && data) {
@@ -21,22 +21,26 @@ export function overwriteErrorMsgFieldIfSpecified(
 export function stringifyWithLoopProtection(obj, replacer?, space?) {
   const seen = new WeakSet();
   let hasCircleProp = false;
-  const result = JSON.stringify(obj, function(key, value) {
-    if (typeof value === 'object' && value !== null) {
-      if (seen.has(value)) {
-        hasCircleProp = true;
-        // 如果已经见过该对象，则返回undefined;
-        return undefined;
+  const result = JSON.stringify(
+    obj,
+    function (key, value) {
+      if (typeof value === "object" && value !== null) {
+        if (seen.has(value)) {
+          hasCircleProp = true;
+          // 如果已经见过该对象，则返回undefined;
+          return undefined;
+        }
+        seen.add(value);
       }
-      seen.add(value);
-    }
-    // 使用用户提供的replacer函数（如果有的话）
-    if (replacer) {
-      return replacer(key, value);
-    } else {
-      return value;
-    }
-  }, space);
+      // 使用用户提供的replacer函数（如果有的话）
+      if (replacer) {
+        return replacer(key, value);
+      } else {
+        return value;
+      }
+    },
+    space,
+  );
 
   return {
     result,

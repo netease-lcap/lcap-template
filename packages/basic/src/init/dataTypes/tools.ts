@@ -1,11 +1,12 @@
 import { format } from "date-fns";
 import momentTZ from "moment-timezone";
 import moment from "moment";
-import { xor } from "lodash";
+import { flatMap, xor } from "lodash";
 
 import BigNumber from "bignumber.js";
 import { getAppTimezone, safeNewDate } from "../utils";
 import Config from "../../config";
+import { sortTypeArgumentsBasedOnTypePriority } from "./inference";
 
 function tryJSONParse(str) {
   let result;
@@ -166,7 +167,12 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
           if (item.needGenInitFromSchema) {
             value = genInitFromSchema(item.sortedTypeKey, value, level);
           }
-          this[item.propertyName] = value;
+          this[item.propertyName] = value ?? null;
+        });
+
+        Object.defineProperty(this, "$type", {
+          value: typeKey,
+          enumerable: false,
         });
       }
       // ctor设置name
@@ -199,12 +205,13 @@ export function initApplicationConstructor(dataTypesMap, genInitFromSchema) {
 }
 
 // 判断字符串的具体类型
-function judgeStrType(str) {
-  const regMap = {
+export function judgeStrType(str: string): string | undefined {
+  const regMap: Record<string, RegExp> = {
     "nasl.core.Date": /^\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2}$/,
     "nasl.core.Time": /^(\d{1,2})(:\d{1,2})?:(\d{1,2})$/,
-    "nasl.core.DateTimeReg": /^\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2}\s(\d{1,2})(:\d{1,2})?:(\d{1,2})$/,
-    "nasl.core.Email": /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
+    // 2021-01-01T05:11:22.010Z 或 2021-01-01 05:11:22
+    "nasl.core.DateTime":
+      /^(\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2}T(\d{1,2})(:\d{1,2})?:(\d{1,2})\.\d{3}Z)|(\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2} (\d{1,2})(:\d{1,2})?:(\d{1,2}))$/,
   };
   for (const key in regMap) {
     const reg = regMap[key];
@@ -442,47 +449,68 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
   return false;
 }
 
-function inferTypeConstructorAgainstTypeKey(value, typeKey) {
-  const def = typeDefinitionMap[typeKey];
+export function getTypeDefinition(typeKey: string):
+  | TypeAnnotation
+  | { concept: "Enum" }
+  // FIXME 若这里添加了Entity就会报错，看看实际情况如何，写得严密一点
+  // | { concept: "Entity"; properties: { typeAnnotation: TypeAnnotation; name: string; defaultValue: DefaultValue }[] }
+  | undefined {
+  return typeDefinitionMap[typeKey];
+}
+
+function inferTypeConstructorAgainstTypeKey(
+  value: unknown,
+  typeKey: string,
+): (new (options: { defaultValue: unknown; level: number }) => unknown) | undefined {
+  const def = getTypeDefinition(typeKey);
   if (!def) {
     return undefined;
   }
-  if (def.typeKind === "primitive" || def.concept === "Enum") {
+
+  if (def.concept === "Enum" || def.typeKind === "primitive") {
     // 视作没有Constructor
     return undefined;
   }
   if (def.typeKind === "union") {
-    // Union的所有分支对应的类型构造器，从左到右匹配：
+    // Union的所有分支对应的类型构造器，按照优先级排序后，从左到右匹配：
     // 1. 对当前类型构造器，看它有无定义tag字段：有tag字段且值和value对应字段相同，直接输出当前类型构造器而无需结构一致；否则，跳过。
     // 2. 先判断结构是否一致（复合类型递归看properties属性；Primitive类型直接判断即可）。结构相同的时候，当前类型构造器作为候选；否则，跳过。
     // 输出：第一个候选，或者无匹配
     let candidate = undefined;
-    for (const ty of def.typeArguments) {
+
+    if (!def.typeArguments || !Array.isArray(def.typeArguments) || def.typeArguments.length === 0) {
+      return undefined;
+    }
+
+    for (const ty of sortTypeArgumentsBasedOnTypePriority(def.typeArguments)) {
       const curTypeKey = `${ty.typeNamespace}.${ty.typeName}`;
-      const curDef = typeDefinitionMap[curTypeKey];
-      if (ty.typeKind === "primitive" && exactMatchShapeAgainstDef(value, curDef)) {
-        // 匹配上了Primitve类型
+      const curDef = getTypeDefinition(curTypeKey);
+      if (!curDef) {
+        continue;
+      }
+      if (curDef.concept === "Enum" && exactMatchShapeAgainstDef(value, curDef)) {
+        return typeMap[curTypeKey];
+      } else if (ty.typeKind === "primitive" && exactMatchShapeAgainstDef(value, curDef)) {
         return typeMap[curTypeKey];
       } else if (ty.typeKind === "union") {
-        // 不可以出现嵌套union类型
-        return undefined;
+        throw new Error("Union类型的typeArguments不能再为union");
       } else if (ty.typeKind === "reference") {
-        const properties = typeDefinitionMap[curTypeKey]?.properties;
+        // Entity | Structure
+        // @ts-expect-error FIXME curDef上没有properties
+        const properties = curDef?.properties;
         if (properties) {
           // 如果存在字段定义，那么尝试获取第一个tag字段
-          const tagProperty = properties
-            .flatMap((prop) => {
-              const defaultValue = prop.defaultValue;
-              const hardcodedPropertyName = "errorType";
-              if (prop.name === hardcodedPropertyName && defaultValue?.expression?.concept === "StringLiteral") {
-                return [
-                  // 注意：允许tagValue为undefined
-                  { name: prop.name, tagValue: defaultValue.expression.value },
-                ];
-              }
-              return [];
-            })
-            .at(0);
+          const tagProperty = flatMap(properties, (prop) => {
+            const defaultValue = prop.defaultValue;
+            const hardcodedPropertyName = "errorType";
+            if (prop.name === hardcodedPropertyName && defaultValue?.expression?.concept === "StringLiteral") {
+              return [
+                // 允许tagValue为undefined
+                { name: prop.name, tagValue: defaultValue.expression.value },
+              ];
+            }
+            return [];
+          })?.[0];
           if (tagProperty && tagProperty.tagValue === value?.[tagProperty.name]) {
             return typeMap[curTypeKey];
           } else if (candidate === undefined && exactMatchShapeAgainstDef(value, curDef)) {
@@ -528,7 +556,7 @@ export const genInitData = (typeKey, defaultValue, parentLevel?) => {
     !["union"].includes(typeKind)
   ) {
     // 一些特殊情况，特殊处理成undefined
-    // 1.defaultValue在nasl节点上错误得赋值给了空制符串
+    // 1.defaultValue在nasl节点上错误得赋值给了空字符串
     if ([""].includes(defaultValue)) {
       parsedValue = undefined;
     } else {
@@ -853,11 +881,8 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
 // yyyy/MM/dd HH:mm:ss
 // yyyy.MM.dd HH:mm:ss
 
-const DateReg =
-  /(^[1-9]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$)|(^[1-9]\d{3}\/(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])$)|(^[1-9]\d{3}\.(0[1-9]|1[0-2])\.(0[1-9]|[1-2][0-9]|3[0-1])$)/;
 const TimeReg = /^(20|21|22|23|[0-1]\d):[0-5]\d:[0-5]\d$/;
-const DateTimeReg =
-  /(^[1-9]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])\s+(20|21|22|23|[0-1]\d):[0-5]\d:[0-5]\d$)|^[1-9]\d{3}\/(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])\s+(20|21|22|23|[0-1]\d):[0-5]\d:[0-5]\d$|^[1-9]\d{3}\.(0[1-9]|1[0-2])\.(0[1-9]|[1-2][0-9]|3[0-1])\s+(20|21|22|23|[0-1]\d):[0-5]\d:[0-5]\d$/;
+
 const FloatNumberReg = /^(-?\d+)(\.\d+)?$/;
 // (长)整型
 const IntegerReg = /^-?\d+$/;
