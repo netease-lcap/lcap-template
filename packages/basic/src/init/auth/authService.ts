@@ -84,7 +84,7 @@ const Service: IService = {
           userInfo.UserId = userInfo.userId;
           userInfo.UserName = userInfo.userName;
         }
-        if (!userInfo.DisplayName) {
+        if (userInfo && !userInfo?.DisplayName && userInfo?.UserName) {
           userInfo.DisplayName = userInfo.UserName;
         }
 
