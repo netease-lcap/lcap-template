@@ -15,6 +15,7 @@ export default {
   data() {
     return {
       url: "",
+      detailUrl: '',
     };
   },
   onLoad(options) {
@@ -84,7 +85,9 @@ export default {
   mounted() {
   },
   onShareAppMessage() {
-
+    return {
+      path: `/pages/index/index?detailUrl=${encodeURIComponent(this.detailUrl)}`,
+    };
   },
   methods: {
     async init(options) {
@@ -98,12 +101,12 @@ export default {
         } else {
           titleList =  getGlobalData("titleList")
         }
-        // console.log(options, "options");
         const {
           detailUrl = baseUrl+basePath.slice(1),
         } = options;
 
         let decodeUrl = decodeURIComponent(detailUrl);
+        this.detailUrl = decodeUrl;
         if (isFirst) {
           const userInfo = await this.getOpenid();
           decodeUrl = this.getUrl(decodeUrl, `_wx_openid=${userInfo?.openid}`);
@@ -119,7 +122,7 @@ export default {
         /* 获取路由
          **  examble aa aa/bb
          */
-        this.setBarTitle(Array.isArray(titleList) ? titleList : [], decodeUrl);
+         this.setBarTitle(Array.isArray(titleList) ? titleList : [], decodeUrl);
       } catch (error) {
         console.log(error);
       }
