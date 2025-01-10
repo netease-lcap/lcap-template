@@ -1266,7 +1266,7 @@ export const utils = {
    */
   FormatPercent(value, digits, omit, showGroup) {
     if (!value) return value;
-    if (parseFloat(value) === 0) return "0";
+    if (parseFloat(value) === 0) return "0%";
     if (isNaN(parseFloat(value)) || isNaN(parseInt(digits))) return;
     value = value * 100;
     if (digits !== undefined) {
