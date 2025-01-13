@@ -166,7 +166,7 @@ function resolveRequestData(root) {
 function parseRequestDataType(root, _prop) {
   let value;
   try {
-    value = new Function("return " + root[_prop])();
+    value = new Function("return " + root[_prop]).call(this); // 3042436782510848: 设置行列权限by接口报500
   } catch (err) {
     value = root.value;
   }
