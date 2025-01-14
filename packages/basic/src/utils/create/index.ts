@@ -18,20 +18,6 @@ import Config from "../../config";
 import { overwriteErrorMsgFieldIfSpecified } from "./utils";
 import { default as builtInInterceptors } from "./interceptors";
 
-// 全局对象，用于存储钩子函数
-window.$axiosHookManager = {
-  requestHooks: [],
-  responseHooks: [],
-};
-
-window.$registerAxiosHook = function (type: "request" | "response", hook: Function) {
-  if (type === "request") {
-    window.$axiosHookManager.requestHooks.push(hook);
-  } else if (type === "response") {
-    window.$axiosHookManager.responseHooks.push(hook);
-  }
-};
-
 const getData = (str) => new Function("return " + str)();
 function getJsonParse() {
   let hasSource = false;
@@ -268,20 +254,24 @@ const requester = function (requestInfo) {
   });
 
   // 依赖库定义的响应拦截器
-  const requestHooks = window.$axiosHookManager.requestHooks.sort((a, b) => a?.order - b?.order);
-  requestHooks.forEach((hook) => {
-    if (hook && hook.onSuccess) {
-      axios.interceptors.request.use(hook.onSuccess, hook.onError || defaultErrorHandler);
-    }
-  });
+  if (window.$axiosHookManager) {
+    const requestHooks = window.$axiosHookManager.requestHooks.sort((a, b) => a?.order - b?.order);
+    requestHooks.forEach((hook) => {
+      if (hook && hook.onSuccess && !hook.registered) {
+        axios.interceptors.request.use(hook.onSuccess, hook.onError || defaultErrorHandler);
+        hook.registered = true;
+      }
+    });
 
-  // 依赖库定义的响应拦截器
-  const responseHooks = window.$axiosHookManager.responseHooks.sort((a, b) => a?.order - b?.order);
-  responseHooks.forEach((hook) => {
-    if (hook && hook.onSuccess) {
-      axios.interceptors.response.use(hook.onSuccess, hook.onError || defaultErrorHandler);
-    }
-  });
+    // 依赖库定义的响应拦截器
+    const responseHooks = window.$axiosHookManager.responseHooks.sort((a, b) => a?.order - b?.order);
+    responseHooks.forEach((hook) => {
+      if (hook && hook.onSuccess && !hook.registered) {
+        axios.interceptors.response.use(hook.onSuccess, hook.onError || defaultErrorHandler);
+        hook.registered = true;
+      }
+    });
+  }
 
   const options = genBaseOptions(requestInfo);
 
@@ -344,7 +334,13 @@ export const createService = function createService(apiSchemaList, serviceConfig
         const err = response;
         const { config } = requestInfo;
 
-        overwriteErrorMsgFieldIfSpecified(response.response.data?.Data, requestInfo?.config?.errorMessage);
+        if (!response.response) {
+          throw response;
+        }
+
+        if (response.response?.data?.Data) {
+          overwriteErrorMsgFieldIfSpecified(response.response.data.Data, requestInfo?.config?.errorMessage);
+        }
 
         const HttpResponse = {
           status: response.response.status + "",
@@ -519,7 +515,13 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           throw Error("程序中止");
         }
 
-        overwriteErrorMsgFieldIfSpecified(response.response.data?.Data, requestInfo?.config?.errorMessage);
+        if (!response.response) {
+          throw response;
+        }
+
+        if (response.response?.data?.Data) {
+          overwriteErrorMsgFieldIfSpecified(response.response.data.Data, requestInfo?.config?.errorMessage);
+        }
 
         const HttpResponse = {
           status: response.response.status + "",
