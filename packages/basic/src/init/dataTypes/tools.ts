@@ -514,8 +514,10 @@ function inferTypeConstructorAgainstTypeKey(
             }
             return [];
           })?.[0];
-          if (tagProperty && tagProperty.tagValue === value?.[tagProperty.name]) {
-            return typeMap[curTypeKey];
+          if (tagProperty) {
+            if (tagProperty.tagValue === value?.[tagProperty.name]) {
+              return typeMap[curTypeKey];
+            }
           } else if (candidate === undefined && exactMatchShapeAgainstDef(value, curDef)) {
             candidate = typeMap[curTypeKey];
           }
