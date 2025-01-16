@@ -389,8 +389,7 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
     }
     return false;
   } else if (def.typeKind === "generic") {
-    const typeKey = `${def.typeNamespace}.${def.typeName}`;
-    return isInstanceOf(value, typeKey);
+    return isInstanceOf(value, genSortedTypeKey(def));
   } else if (def.properties) {
     const properties = def.properties;
     if (properties) {
