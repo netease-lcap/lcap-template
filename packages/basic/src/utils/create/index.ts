@@ -2,6 +2,10 @@ import axios from 'axios';
 import Service from 'request-pre';
 import { stringify } from 'qs';
 
+import JSONbig from "json-bigint";
+import BigNumber from "bignumber.js";
+import get from "lodash/get";
+
 import { formatMicroFrontUrl } from "../../init/router/microFrontUrl"; // 微前端路由方法
 
 import cookie from "../cookie";
@@ -14,6 +18,24 @@ import { sseRequester } from './sseRequester';
 import Config from "../../config";
 
 const getData = (str)=> (new Function('return ' + str))();
+
+function getJsonParse() {
+  let hasSource = false;
+  const jsonStr = `{"myBigInt":6028792033986383748 }`;
+  JSON.parse(jsonStr, (...arg) => {
+    if (get(arg, "2")) hasSource = true;
+    return arg[1];
+  });
+  const warpJsonParse = (jsonStr) =>
+    JSON.parse(jsonStr, (...arg) => {
+      if (typeof arg[1] === "number" && Number.isInteger(arg[1]) && !Number.isSafeInteger(arg[1])) {
+        return new BigNumber(get(arg, "2.source"));
+      }
+      return arg[1];
+    });
+  return hasSource ? warpJsonParse : JSONbig.parse;
+}
+const jsonParse = getJsonParse();
 
 const formatContentType = function (contentType, data) {
   const map = {
@@ -161,6 +183,26 @@ export function genBaseOptions(requestInfo) {
     paramsSerializer,
     baseURL,
     method: method2,
+    transformRequest: [
+      function (data) {
+        try {
+          const request = JSONbig.stringify(data);
+          return request;
+        } catch (error) {
+          return data;
+        }
+      },
+    ],
+    transformResponse: [
+      function (data) {
+        try {
+          const response = jsonParse(data);
+          return response;
+        } catch (error) {
+          return data;
+        }
+      },
+    ],
     url: path,
     data,
     headers,
