@@ -1268,8 +1268,8 @@ export const utils = {
    * @param {showGroup} 是否显示千位分割（默认逗号分隔）
    */
   FormatPercent(value, digits, omit, showGroup) {
-    if (!value) return value;
     if (parseFloat(value) === 0) return "0%";
+    if (!value) return value;
     if (isNaN(parseFloat(value)) || isNaN(parseInt(digits))) return;
     value = value * 100;
     if (digits !== undefined) {
