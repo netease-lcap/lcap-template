@@ -84,6 +84,9 @@ const Service: IService = {
           userInfo.UserId = userInfo.userId;
           userInfo.UserName = userInfo.userName;
         }
+        if (userInfo && !userInfo?.DisplayName && userInfo?.UserName) {
+          userInfo.DisplayName = userInfo.UserName;
+        }
 
         const $global = Global.prototype.$global || {};
         const frontendVariables = $global.frontendVariables || {};

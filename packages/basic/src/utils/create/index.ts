@@ -1,7 +1,10 @@
 import axios from "axios";
-import Service from "request-pre";
 import { stringify } from "qs";
+import JSONbig from "json-bigint";
+import BigNumber from "bignumber.js";
+import get from "lodash/get";
 
+import Service from "../request-pre";
 import { formatMicroFrontUrl } from "../../init/router/microFrontUrl"; // 微前端路由方法
 
 import cookie from "../cookie";
@@ -13,8 +16,26 @@ import { sseRequester } from "./sseRequester";
 
 import Config from "../../config";
 import { overwriteErrorMsgFieldIfSpecified } from "./utils";
+import { default as builtInInterceptors } from "./interceptors";
 
 const getData = (str) => new Function("return " + str)();
+function getJsonParse() {
+  let hasSource = false;
+  const jsonStr = `{"myBigInt":6028792033986383748 }`;
+  JSON.parse(jsonStr, (...arg) => {
+    if (get(arg, "2")) hasSource = true;
+    return arg[1];
+  });
+  const warpJsonParse = (jsonStr) =>
+    JSON.parse(jsonStr, (...arg) => {
+      if (typeof arg[1] === "number" && Number.isInteger(arg[1]) && !Number.isSafeInteger(arg[1])) {
+        return new BigNumber(get(arg, "2.source"));
+      }
+      return arg[1];
+    });
+  return hasSource ? warpJsonParse : JSONbig.parse;
+}
+const jsonParse = getJsonParse();
 
 const formatContentType = function (contentType, data) {
   const map = {
@@ -50,7 +71,7 @@ const parseCookie = (str) => {
     }, {});
 };
 
-const foramtCookie = (cookieStr) => {
+const formatCookie = (cookieStr) => {
   const result = {};
   if (document.cookie.length <= 0) {
     return result;
@@ -171,6 +192,26 @@ export function genBaseOptions(requestInfo) {
     paramsSerializer,
     baseURL,
     method: method2,
+    transformRequest: [
+      function (data) {
+        try {
+          const request = JSONbig.stringify(data);
+          return request;
+        } catch (error) {
+          return data;
+        }
+      },
+    ],
+    transformResponse: [
+      function (data) {
+        try {
+          const response = jsonParse(data);
+          return response;
+        } catch (error) {
+          return data;
+        }
+      },
+    ],
     url: path,
     data,
     headers,
@@ -199,14 +240,41 @@ const requester = function (requestInfo) {
     return sseRequester(requestInfo);
   }
 
-  if (Config.axios?.interceptors?.length) {
-    Config.axios?.interceptors.forEach((interceptor) => {
-      const { onSuccess, onError } = interceptor;
-      axios.interceptors.response.use(onSuccess, onError);
+  const defaultErrorHandler = (error) => Promise.reject(error);
+
+  // 内置拦截器
+  builtInInterceptors.forEach((interceptor) => {
+    const { request, response } = interceptor;
+    if (request) {
+      axios.interceptors.request.use(request.onSuccess, request.onError || defaultErrorHandler);
+    }
+    if (response) {
+      axios.interceptors.response.use(response.onSuccess, response.onError || defaultErrorHandler);
+    }
+  });
+
+  // 依赖库定义的响应拦截器
+  if (window.$axiosHookManager) {
+    const requestHooks = window.$axiosHookManager.requestHooks.sort((a, b) => a?.order - b?.order);
+    requestHooks.forEach((hook) => {
+      if (hook && hook.onSuccess && !hook.registered) {
+        axios.interceptors.request.use(hook.onSuccess, hook.onError || defaultErrorHandler);
+        hook.registered = true;
+      }
+    });
+
+    // 依赖库定义的响应拦截器
+    const responseHooks = window.$axiosHookManager.responseHooks.sort((a, b) => a?.order - b?.order);
+    responseHooks.forEach((hook) => {
+      if (hook && hook.onSuccess && !hook.registered) {
+        axios.interceptors.response.use(hook.onSuccess, hook.onError || defaultErrorHandler);
+        hook.registered = true;
+      }
     });
   }
 
   const options = genBaseOptions(requestInfo);
+
   if (typeof window.axiosOptionsSetup === "function") {
     window.axiosOptionsSetup(options);
   }
@@ -266,13 +334,19 @@ export const createService = function createService(apiSchemaList, serviceConfig
         const err = response;
         const { config } = requestInfo;
 
-        overwriteErrorMsgFieldIfSpecified(response.response.data?.Data, requestInfo?.config?.errorMessage);
+        if (!response.response) {
+          throw response;
+        }
+
+        if (response.response?.data?.Data) {
+          overwriteErrorMsgFieldIfSpecified(response.response.data.Data, requestInfo?.config?.errorMessage);
+        }
 
         const HttpResponse = {
           status: response.response.status + "",
           body: JSON.stringify(response.response.data),
           headers: response.response.headers,
-          cookies: foramtCookie(document.cookie),
+          cookies: formatCookie(document.cookie),
         };
 
         let event = {
@@ -356,7 +430,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           body: JSON.stringify(requestInfo.url.body),
           headers: requestInfo.url.headers,
           querys: JSON.stringify(requestInfo.url.query),
-          cookies: foramtCookie(document.cookie),
+          cookies: formatCookie(document.cookie),
           requestInfo,
         };
 
@@ -387,7 +461,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           status: response.status + "",
           body: JSON.stringify(response.data),
           headers: response.headers,
-          cookies: foramtCookie(document.cookie),
+          cookies: formatCookie(document.cookie),
         };
         let event = {
           response: HttpResponse,
@@ -441,13 +515,19 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           throw Error("程序中止");
         }
 
-        overwriteErrorMsgFieldIfSpecified(response.response.data?.Data, requestInfo?.config?.errorMessage);
+        if (!response.response) {
+          throw response;
+        }
+
+        if (response.response?.data?.Data) {
+          overwriteErrorMsgFieldIfSpecified(response.response.data.Data, requestInfo?.config?.errorMessage);
+        }
 
         const HttpResponse = {
           status: response.response.status + "",
           body: JSON.stringify(response.response.data),
           headers: response.response.headers,
-          cookies: foramtCookie(document.cookie),
+          cookies: formatCookie(document.cookie),
         };
 
         let event = {

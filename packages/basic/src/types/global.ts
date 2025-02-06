@@ -13,6 +13,8 @@ interface Window {
   LcapMicro: any;
   $services: any;
   $utils: any;
+  $axiosHookManager: any;
+  $registerAxiosHook: any;
   allMockData: any;
   preRequest: any;
   postRequest: any;

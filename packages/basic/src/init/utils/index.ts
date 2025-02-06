@@ -819,8 +819,11 @@ export const utils = {
     return moment(localDate).format("HH:mm:ss");
   },
   CurrDateTime(tz) {
-    // 函数签名用的是 Date 原生对象不是 string，所以先这样就行
-    return new Date();
+    if (!tz) {
+      return this.CurrDateTime("global");
+    }
+    const localDate = convertJSDateInTargetTimeZone(new Date(), tz);
+    return JSON.stringify(localDate);
   },
   AddDays(date = new Date(), amount = 1, converter = "json") {
     return toValue(addDays(safeNewDate(date), amount), converter);
@@ -1265,8 +1268,8 @@ export const utils = {
    * @param {showGroup} 是否显示千位分割（默认逗号分隔）
    */
   FormatPercent(value, digits, omit, showGroup) {
+    if (parseFloat(value) === 0) return "0%";
     if (!value) return value;
-    if (parseFloat(value) === 0) return "0";
     if (isNaN(parseFloat(value)) || isNaN(parseInt(digits))) return;
     value = value * 100;
     if (digits !== undefined) {
@@ -1530,6 +1533,137 @@ export const utils = {
     }
 
     return isValid;
+  },
+
+  Ceil(x: number): number {
+    x = +x;
+
+    if (isNaN(x)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
+    return Math.ceil(x);
+  },
+
+  Floor(x: number): number {
+    x = +x;
+
+    if (isNaN(x)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
+    return Math.floor(x);
+  },
+
+  Trunc(x: number): number {
+    x = +x;
+
+    if (isNaN(x)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
+    return Math.trunc(x);
+  },
+
+  TruncDivide(x: number, y: number): number {
+    x = +x;
+    y = +y;
+
+    if (isNaN(x) || isNaN(y)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
+    if (y === 0) {
+      throw new Error("SystemArithmeticError");
+    }
+
+    // 余数
+    const rest = x % y;
+
+    return (x - rest) / y;
+  },
+
+  Abs(x: number): number {
+    x = +x;
+
+    if (isNaN(x)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
+    return Math.abs(x);
+  },
+
+  Pow(x: number, y: number): number {
+    x = +x;
+    y = +y;
+
+    if (isNaN(x) || isNaN(y)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
+    return Math.pow(x, y);
+  },
+
+  Sqrt(x: number): number {
+    x = +x;
+
+    if (isNaN(x)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
+    return Math.sqrt(x);
+  },
+
+  Cbrt(x: number): number {
+    x = +x;
+
+    if (isNaN(x)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
+    return Math.cbrt(x);
+  },
+
+  Log(x: number): number {
+    x = +x;
+
+    if (isNaN(x)) {
+      throw new Error("SystemIllegalArgumentError");
+    }
+
+    return Math.log(x);
+  },
+
+  PadStart(str: string, targetLength: number, padString: string) {
+    if (typeof str !== "string") {
+      return str;
+    }
+
+    return str.padStart(targetLength, padString);
+  },
+
+  PadEnd(str: string, targetLength: number, padString: string) {
+    if (typeof str !== "string") {
+      return str;
+    }
+
+    return str.padEnd(targetLength, padString);
+  },
+
+  TrimStart(str: string) {
+    if (typeof str !== "string") {
+      return str;
+    }
+
+    return str.trimStart();
+  },
+
+  TrimEnd(str: string) {
+    if (typeof str !== "string") {
+      return str;
+    }
+
+    return str.trimEnd();
   },
 };
 

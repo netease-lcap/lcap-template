@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "description": "低代码应用模板",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "scripts": {
     "doc": "pnpm --filter=@lcap/basic-template run doc",
     "prepare": "husky",
