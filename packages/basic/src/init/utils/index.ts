@@ -47,6 +47,7 @@ import Decimal from "decimal.js";
 
 import { dateFormatter } from "../../Formatters";
 import Global from "../../global";
+import Config from "../../config";
 
 import { genInitFromSchema } from "../dataTypes";
 import {
@@ -1677,7 +1678,7 @@ function initUtils(
   dataTypesMap = options.dataTypesMap;
 
   window.$utils = utils;
-  Global.prototype.$utils = utils;
+  Config.globalProperties.set("$utils", utils);
 
   return {
     utils: utils,

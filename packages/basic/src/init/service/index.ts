@@ -2,6 +2,7 @@ import isPlainObject from "lodash/isPlainObject";
 
 import { createService } from "../../utils";
 import Global from "../../global";
+import Config from "../../config";
 
 let $services;
 
@@ -26,10 +27,10 @@ function initService(
   });
 
   if (keys.length) {
-    $services = Object.assign({}, Global.prototype.$services, services);
+    $services = Object.assign({}, Config.globalProperties.get("$services"), services);
 
     window.$services = $services;
-    Global.prototype.$services = $services;
+    Config.globalProperties.set("$services", $services);
   }
 
   return {

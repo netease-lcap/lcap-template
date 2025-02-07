@@ -30,13 +30,13 @@ function initRouter() {
     return query.length > 0 ? `?${query}` : "";
   }
 
-  Global.prototype.$destination = $destination;
-  Global.prototype.$link = $link;
+  Config.globalProperties.set("$destination", $destination);
+  Config.globalProperties.set("$link", $link);
 
-  Global.prototype.$formatMicroFrontUrl = formatMicroFrontUrl;
-  Global.prototype.$formatMicroFrontRouterPath = formatMicroFrontRouterPath;
+  Config.globalProperties.set("$formatMicroFrontUrl", formatMicroFrontUrl);
+  Config.globalProperties.set("$formatMicroFrontRouterPath", formatMicroFrontRouterPath);
 
-  Global.prototype.$toQueryString = $toQueryString;
+  Config.globalProperties.set("$toQueryString", $toQueryString);
 
   return {
     formatMicroFrontUrl: formatMicroFrontUrl,
