@@ -1,6 +1,6 @@
 {
   "name": "@lcap/vue-template",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "base on vue",
   "scripts": {
     "dev": "webpack-dev-server --config build/webpack.dev.config.js",
