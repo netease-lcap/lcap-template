@@ -57,5 +57,6 @@ export const sseRequester = function (requestInfo) {
     data: {
       __close: close,
     },
+    status: 200,
   });
 };
