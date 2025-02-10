@@ -1,14 +1,16 @@
 <template>
-  <div class="lcap-verror-item-root" v-show="show">
-    <div class="lcap-verror-item">
-      <div>初始化异常</div>
-      <div class="copy" @click="onCopy">复制异常信息</div>
-    </div>
+  <div style="height: 100%;">
     <slot 
       :error="err$"
       :info="info$"
       v-bind="params"
     ></slot>
+    <div class="lcap-verror-item-root" v-if="show">
+      <div class="lcap-verror-item">
+        <div>初始化异常</div>
+        <div class="copy" @click="onCopy">复制异常信息</div>
+      </div>
+    </div>
   </div>
 </template>
 
