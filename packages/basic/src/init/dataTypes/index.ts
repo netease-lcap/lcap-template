@@ -36,7 +36,7 @@ function initDataTypes(options) {
 
   // Vue版本需要响应式
   try {
-    if (Config.reactive) {
+    if (typeof Config.reactive === "function") {
       Config.reactive($global);
     }
   } catch (error) {

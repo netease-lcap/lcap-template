@@ -16,7 +16,6 @@ type ConfigType = {
     interceptors: Array<any>;
   };
   configureRequest?: (options: any, axios: any) => void;
-  app?: any;
   reactive?: (obj: any) => void;
   globalProperties: {
     set: (key: string, value: any) => void;
