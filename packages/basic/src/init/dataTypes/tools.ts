@@ -164,9 +164,9 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
           //   defaultValue?.[item.propertyName] === null || defaultValue?.[item.propertyName] === undefined
           //     ? item.parsedValue
           //     : defaultValue?.[item.propertyName];
-          const code = `return defaultValue?.[${item.propertyName}] === null || defaultValue?.[${item.propertyName}] === undefined
+          const code = `return (defaultValue && defaultValue.[${item.propertyName}] === null) || (defaultValue && defaultValue.[${item.propertyName}] === undefined)
               ? ${item.parsedValue}
-              : defaultValue?.[${item.propertyName}]`;
+              : (defaultValue && defaultValue.[${item.propertyName}])`;
           // parsedValue是字符串，例如： '(() => { \nconst arr = [\n`a`\n];\nreturn arr;\n})()'，所以只能用new Function...
           let value = new Function("defaultValue", code)(defaultValue);
 
