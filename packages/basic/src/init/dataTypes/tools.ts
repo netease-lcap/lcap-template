@@ -160,13 +160,15 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
         }
 
         properties.forEach((item) => {
-          // let value =
-          //   defaultValue?.[item.propertyName] === null || defaultValue?.[item.propertyName] === undefined
-          //     ? item.parsedValue
-          //     : defaultValue?.[item.propertyName];
-          const code = `return (defaultValue && defaultValue.[${item.propertyName}] === null) || (defaultValue && defaultValue.[${item.propertyName}] === undefined)
-              ? ${item.parsedValue}
-              : (defaultValue && defaultValue.[${item.propertyName}])`;
+          // const code = `return defaultValue?.${item.propertyName} ?? ${item.parsedValue};`;
+          // 👇
+          const code = `var _defaultValue$p, _defaultValue;
+            return (_defaultValue$p =
+              (_defaultValue = defaultValue) === null || _defaultValue === void 0
+                ? void 0
+                : _defaultValue.${item.propertyName}) !== null && _defaultValue$p !== void 0
+              ? _defaultValue$p
+              : ${item.parsedValue};`;
           // parsedValue是字符串，例如： '(() => { \nconst arr = [\n`a`\n];\nreturn arr;\n})()'，所以只能用new Function...
           let value = new Function("defaultValue", code)(defaultValue);
 
