@@ -57,5 +57,7 @@ export const sseRequester = function (requestInfo) {
     data: {
       __close: close,
     },
+    // FIXME SSE目前没有接入异常处理机制。因此视作返回200，代表请求成功。
+    status: 200,
   });
 };
