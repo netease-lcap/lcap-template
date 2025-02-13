@@ -27,6 +27,21 @@ setConfig({
   utils: {
     ...utils,
   },
+  reactive: (obj) => {
+    return new Vue({
+      data: {
+        obj,
+      },
+    });
+  },
+  globalProperties: {
+    set(key, value) {
+      Vue.prototype[key] = value;
+    },
+    get(key) {
+      return Vue.prototype[key];
+    },
+  },
   configureRequest(options) {
     /**
      * options配置参考

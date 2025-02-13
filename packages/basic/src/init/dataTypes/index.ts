@@ -15,7 +15,7 @@ function initDataTypes(options) {
 
   // 一定要放在getFrontendVariables之前，因为Vue应用翻译的代码会用到这个
   window.$genInitFromSchema = genInitFromSchema;
-  Global.prototype.$genInitFromSchema = genInitFromSchema;
+  Config.globalProperties.set("$genInitFromSchema", genInitFromSchema);
   const { frontendVariables, localCacheVariableSet } = getFrontendVariables(options);
 
   const $global = {
@@ -36,34 +36,33 @@ function initDataTypes(options) {
 
   // Vue版本需要响应式
   try {
-    new Global({
-      data: {
-        $global,
-      },
-    });
+    if (typeof Config.reactive === "function") {
+      Config.reactive($global);
+    }
   } catch (error) {
     console.error("Vue版本给$global创建响应式失败", error);
   }
 
   window.$global = $global;
 
-  Global.prototype.$global = $global;
-  Global.prototype.$localCacheVariableSet = localCacheVariableSet;
+  Config.globalProperties.set("$global", $global);
+  Config.globalProperties.set("$localCacheVariableSet", localCacheVariableSet);
   window.$isInstanceOf = isInstanceOf;
-  Global.prototype.$isInstanceOf = isInstanceOf;
+
+  Config.globalProperties.set("$isInstanceOf", isInstanceOf);
   // 判断两个对象是否相等，不需要引用完全一致
-  Global.prototype.$isLooseEqualFn = isLooseEqualFn;
-  Global.prototype.$resolveRequestData = resolveRequestData;
+  Config.globalProperties.set("$isLooseEqualFn", isLooseEqualFn);
+  Config.globalProperties.set("$resolveRequestData", resolveRequestData);
 
   const enumsMap = options.enumsMap || {};
-  Global.prototype.$enums = (key, value) => {
+  Config.globalProperties.set("$enums", (key, value) => {
     if (!key || !value) return "";
     if (enumsMap[key]) {
       return enumsMap[key][value];
     } else {
       return "";
     }
-  };
+  });
 
   return {
     $global,

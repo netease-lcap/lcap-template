@@ -3,6 +3,7 @@ import qs from "qs";
 import { initAuthService, initLowauthService } from "../../apis";
 import { getBasePath, cookie } from "../../utils";
 import Global from "../../global";
+import Config from "../../config";
 
 export const getBaseHeaders = () => {
   type Headers = {
@@ -88,7 +89,7 @@ const Service: IService = {
           userInfo.DisplayName = userInfo.UserName;
         }
 
-        const $global = Global.prototype.$global || {};
+        const $global = Config.globalProperties.get("$global") || {};
         const frontendVariables = $global.frontendVariables || {};
         frontendVariables.userInfo = userInfo;
         $global.userInfo = userInfo;
