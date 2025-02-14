@@ -161,7 +161,7 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
 
         properties.forEach((item) => {
           // const code = `return defaultValue?.${item.propertyName} ?? ${item.parsedValue};`;
-          // 👇
+          // 为了兼容低版本浏览器，改写为👇
           const code = `var _defaultValue$p, _defaultValue;
             return (_defaultValue$p =
               (_defaultValue = defaultValue) === null || _defaultValue === void 0
