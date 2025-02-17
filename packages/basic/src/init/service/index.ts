@@ -29,7 +29,6 @@ function initService(
   if (keys.length) {
     $services = Object.assign({}, Config.globalProperties.get("$services"), services);
 
-    window.$services = $services;
     Config.globalProperties.set("$services", $services);
   }
 

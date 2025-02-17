@@ -28,7 +28,6 @@ function initLogic(
 
   const logics = createLogicService(logicsMap);
 
-  window.$logics = logics;
   Config.globalProperties.set("$logics", logics);
 
   return {

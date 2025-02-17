@@ -37,6 +37,7 @@ setConfig({
   },
   globalProperties: {
     set(key, value) {
+      window[key] = value;
       Vue.prototype[key] = value;
     },
     get(key) {

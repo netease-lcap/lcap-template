@@ -32,7 +32,6 @@ function initAuth(
   /**
    * 账号与权限中心
    */
-  window.$auth = authService;
   Config.globalProperties.set("$auth", authService);
 
   return {
