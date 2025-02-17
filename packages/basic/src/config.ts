@@ -51,6 +51,7 @@ const Config: ConfigType = {
   },
   globalProperties: {
     set(key, value) {
+      window[key] = value;
       Global.prototype[key] = value;
     },
     get(key) {

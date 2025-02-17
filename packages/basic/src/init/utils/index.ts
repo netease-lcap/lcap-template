@@ -1677,7 +1677,6 @@ function initUtils(
   enumsMap = options.enumsMap;
   dataTypesMap = options.dataTypesMap;
 
-  window.$utils = utils;
   Config.globalProperties.set("$utils", utils);
 
   return {

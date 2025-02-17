@@ -14,7 +14,6 @@ function initDataTypes(options) {
   initApplicationConstructor(dataTypesMap, genInitFromSchema);
 
   // 一定要放在getFrontendVariables之前，因为Vue应用翻译的代码会用到这个
-  window.$genInitFromSchema = genInitFromSchema;
   Config.globalProperties.set("$genInitFromSchema", genInitFromSchema);
   const { frontendVariables, localCacheVariableSet } = getFrontendVariables(options);
 
@@ -43,11 +42,8 @@ function initDataTypes(options) {
     console.error("Vue版本给$global创建响应式失败", error);
   }
 
-  window.$global = $global;
-
   Config.globalProperties.set("$global", $global);
   Config.globalProperties.set("$localCacheVariableSet", localCacheVariableSet);
-  window.$isInstanceOf = isInstanceOf;
 
   Config.globalProperties.set("$isInstanceOf", isInstanceOf);
   // 判断两个对象是否相等，不需要引用完全一致
