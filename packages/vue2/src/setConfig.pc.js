@@ -26,6 +26,11 @@ setConfig({
   },
   utils: {
     ...utils,
+    showMessage:
+      Vue.prototype?.$toast?.show ||
+      (() => {
+        console.warn("请在Vue.prototype上挂载$toast.show方法");
+      }),
   },
   reactive: (obj) => {
     return new Vue({
