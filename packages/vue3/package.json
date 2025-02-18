@@ -1,0 +1,18 @@
+{
+  "name": "@lcap/vue3-template",
+  "version": "1.7.1",
+  "description": "base on vue3",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "node ./scripts/build.js",
+    "deploy": "node ./scripts/deploy.js"
+  },
+  "keywords": [
+    "lcap",
+    "lcap-template"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "fs-extra": "^9.0.0"
+  }
+}
