@@ -8,6 +8,9 @@ module.exports = function ({ target }) {
     {
       type: "pc",
     },
+    {
+      type: "mobile",
+    },
   ].forEach(({ type }) => {
     const t = target[type];
     execSync(`cp -r ${root}/dist/${type}/* ${t}`);
