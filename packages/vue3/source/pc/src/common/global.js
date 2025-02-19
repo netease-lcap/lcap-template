@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import Vue from "vue";
 
-window.appVue = Vue
-window.Vue = Vue
+window.appVue = Vue;
+window.Vue = Vue;

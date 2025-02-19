@@ -1,7 +1,7 @@
-import { initUtils } from '@lcap/basic-template'
+import { initUtils } from "@lcap/basic-template";
 
 export default {
   install(vm, options) {
-    initUtils(options)
+    initUtils(options);
   },
-}
+};

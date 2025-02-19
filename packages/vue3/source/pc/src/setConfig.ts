@@ -1,28 +1,28 @@
-import { setConfig as setCommonConfig } from '@/common'
+import { setConfig as setCommonConfig } from "@/common";
 
-import { utils } from './plugins/dataTypes/index'
-import { destination, back, go } from './plugins/router'
+import { utils } from "./plugins/dataTypes/index";
+import { destination, back, go } from "./plugins/router";
 
 export function setConfig(options = {}) {
-  const { app } = options
+  const { app } = options;
 
   return setCommonConfig({
     app,
     globalProperties: {
       set(key, value) {
-        window[key] = value
-        app.config.globalProperties[key] = value
+        window[key] = value;
+        app.config.globalProperties[key] = value;
       },
       get(key) {
-        return app.config.globalProperties[key]
-      },
+        return app.config.globalProperties[key];
+      }
     },
     toast: {
       show(msg) {
-        console.log(msg)
+        console.log(msg);
       },
       error(msg) {
-        console.error(msg)
+        console.error(msg);
       },
     },
     router: {
@@ -56,5 +56,7 @@ export function setConfig(options = {}) {
       //     key3: 'value3',
       // }
     },
-  })
+  });
 }
+
+

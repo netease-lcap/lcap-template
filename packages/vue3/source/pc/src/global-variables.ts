@@ -1,6 +1,6 @@
 import type { ComponentOptions } from 'vue'
 import { mapWritableState, mapState } from 'pinia'
-import { storage } from '@/common'
+import { storage } from "@/common";
 import { useGlobalStore } from '@/store'
 
 export const useProvideGlobalMixin: () => ComponentOptions = () => {
@@ -18,7 +18,7 @@ export const useProvideGlobalMixin: () => ComponentOptions = () => {
       }),
       ...mapState(useGlobalStore, {
         $userInfo: 'userInfo',
-      }),
+      })
     },
 
     beforeMount() {
@@ -26,16 +26,21 @@ export const useProvideGlobalMixin: () => ComponentOptions = () => {
       const frontendVariables = this.$frontendVariables
 
       for (const key of variableSet) {
-        const value = storage.get(key, true)
+        const value = storage.get(key, true);
         // 若存在 value 则同步到 frontendVariables
-        if (value || typeof value === 'boolean' || typeof value === 'number' || value === '') {
-          frontendVariables[key] = value
+        if (
+          value ||
+          typeof value === "boolean" ||
+          typeof value === "number" ||
+          value === ""
+        ) {
+          frontendVariables[key] = value;
         }
       }
     },
     mounted() {
       // 监听数据变化
-      const variableSet = this.$localCacheVariableSet
+      const variableSet = this.$localCacheVariableSet;
 
       if (variableSet) {
         for (const key of variableSet) {
@@ -43,12 +48,12 @@ export const useProvideGlobalMixin: () => ComponentOptions = () => {
             this.$watch(
               `$frontendVariables.${key}`,
               (newValue) => {
-                storage.set(key, newValue, true)
+                storage.set(key, newValue, true);
               },
-              { deep: true },
-            )
+              { deep: true }
+            );
           } catch (error) {
-            console.warn('error: ', error)
+            console.warn("error: ", error);
           }
         }
       }
@@ -59,6 +64,9 @@ export const useProvideGlobalMixin: () => ComponentOptions = () => {
 // 翻译时插入页面
 export const useInjectGlobalMixin: () => ComponentOptions = () => {
   return {
-    inject: ['$frontendVariables', '$userInfo'],
+    inject: [
+      '$frontendVariables',
+      '$userInfo',
+    ],
   }
 }

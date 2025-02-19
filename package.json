@@ -31,7 +31,7 @@
     "**/*.json": [
       "prettier --write"
     ],
-    "**/*.{ts,tsx,jsx,js}": [
+    "!(**/source/**/*).{ts,tsx,jsx,js}": [
       "prettier --write"
     ]
   }
