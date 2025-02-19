@@ -41,3 +41,18 @@ const miniRoot = path.resolve(__dirname, "../mini-folder/build");
 require(`${miniRoot}/scripts/copy-assets.js`)({
   root: tempDir,
 });
+
+// 复制vue3
+{
+  const pcTargetDir = path.resolve(tempDir, `pc-template-vue3@${version}`);
+  const mobileTargetDir = path.resolve(tempDir, `mobile-template-vue3@${version}`);
+  fs.mkdirSync(mobileTargetDir);
+  fs.mkdirSync(pcTargetDir);
+  const root = path.resolve(__dirname, "../packages/vue3");
+  require(`${root}/scripts/copy-assets.js`)({
+    target: {
+      pc: pcTargetDir,
+      mobile: mobileTargetDir,
+    },
+  });
+}

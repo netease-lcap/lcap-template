@@ -55,6 +55,9 @@ const distDir = path.resolve(__dirname, "../dist");
   {
     type: "pc",
   },
+  {
+    type: "mobile",
+  },
 ].forEach((item) => {
   fs.ensureDirSync(`${distDir}/${item.type}`);
 

@@ -19,6 +19,9 @@ Promise.all(
     {
       type: "pc",
     },
+    {
+      type: "mobile",
+    },
   ].map(({ type }) => {
     return deploy({
       ...config,
