@@ -54,7 +54,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   }
 
   // 微前端相关
-  if (window.LcapMicro?.container) {
+  if (window.LcapMicro?.container && window.ICESTARK && window.ICESTARK.root) {
     if (
       document.currentScript &&
       (!document.head.contains(document.currentScript) || document.currentScript.active === false)
@@ -101,6 +101,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   app.config.globalProperties.hasLoadedAuth = false;
   app.config.globalProperties.logined = true;
   if (window.LcapMicro?.container) {
+    !app.config.globalProperties.$auth && (app.config.globalProperties.$auth = {});
     app.config.globalProperties.$auth._map = undefined;
   }
 
@@ -191,8 +192,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   if (window.LcapMicro?.container) {
     const container = window.LcapMicro.container;
     container.innerHTML = "";
-    app.mount();
-    container.appendChild(app.$el);
+    app.mount(container);
   } else {
     app.mount("#app");
   }
