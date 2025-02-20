@@ -5,7 +5,9 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "node ./scripts/build.js",
-    "deploy": "node ./scripts/deploy.js"
+    "deploy": "node ./scripts/deploy.js",
+    "postbuild": "npm run zip",
+    "zip": "node ./scripts/zip.js"
   },
   "keywords": [
     "lcap",
