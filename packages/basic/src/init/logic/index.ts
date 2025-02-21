@@ -2,6 +2,7 @@ import pick from "lodash/pick";
 import { createLogicService } from "../../utils";
 
 import Global from "../../global";
+import Config from "../../config";
 
 function initLogic(
   options: {
@@ -27,8 +28,7 @@ function initLogic(
 
   const logics = createLogicService(logicsMap);
 
-  window.$logics = logics;
-  Global.prototype.$logics = logics;
+  Config.globalProperties.set("$logics", logics);
 
   return {
     logics: logics,

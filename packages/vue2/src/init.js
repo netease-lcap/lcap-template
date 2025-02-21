@@ -63,11 +63,19 @@ const init = (appConfig, platformConfig, routes, metaData) => {
     link.href = platformConfig?.documentIcon;
   }
 
-  // 应用初始化之前 不能访问应用中的任何逻辑
-  evalWrap.bind(window)(metaData, "rendered");
-  ["preRequest", "postRequest"].forEach((fnName) => {
-    evalWrap.bind(window)(metaData, fnName);
-  });
+  // 注册端事件
+  const endEventLists = ["rendered", "beforeRouter", "afterRouter", "preRequest", "postRequest"];
+  if (metaData && metaData.frontendEvents) {
+    for (let index = 0; index < endEventLists.length; index++) {
+      const name = endEventLists[index];
+      if (name && metaData.frontendEvents[name]) {
+        // 确保事件函数中的this指向vm
+        evalWrap.bind(Vue.prototype)(metaData, name);
+        Vue.prototype[name] = window[name];
+      }
+    }
+  }
+
   if (window.LcapMicro?.container) {
     if (
       document.currentScript &&
@@ -136,11 +144,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   const router = createRouter(baseRoutes);
   // FIXME: 来点骚操作
   window.VueRouterInstance = router;
-  const fnName = "beforeRouter";
-  if (fnName && metaData.frontendEvents[fnName]) {
-    evalWrap.bind(window)(metaData, fnName);
-    Vue.prototype[fnName] = window[fnName];
-  }
+
   const beforeRouter = Vue.prototype.beforeRouter;
   const getAuthGuard =
     (router, routes, authResourcePaths, appConfig, baseResourcePaths, beforeRouter) => async (to, from, next) => {
@@ -184,15 +188,6 @@ const init = (appConfig, platformConfig, routes, metaData) => {
     ...App,
   });
 
-  if (metaData && metaData.frontendEvents) {
-    for (let index = 0; index < fnList.length; index++) {
-      const fnName = fnList[index];
-      if (fnName && metaData.frontendEvents[fnName]) {
-        evalWrap.bind(app)(metaData, fnName);
-        Vue.prototype[fnName] = window[fnName];
-      }
-    }
-  }
   const afterRouter = Vue.prototype.afterRouter;
 
   afterRouter &&

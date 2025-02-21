@@ -1,6 +1,7 @@
 import authService from "./authService";
 import type { NASLUserInfo } from "./authService";
 import Global from "../../global";
+import Config from "../../config";
 
 function initAuth(
   options: {
@@ -31,8 +32,7 @@ function initAuth(
   /**
    * 账号与权限中心
    */
-  window.$auth = authService;
-  Global.prototype.$auth = authService;
+  Config.globalProperties.set("$auth", authService);
 
   return {
     auth: authService,

@@ -1,4 +1,5 @@
 import { encodeUrl } from "./utils";
+import Global from "./global";
 
 type ConfigType = {
   toast: {
@@ -10,12 +11,16 @@ type ConfigType = {
     destination?: (url: string, target: string) => void;
     back?: () => void;
     go?: (delta?: number) => void;
-    createRouter?: (options: any) => any;
   };
   axios: {
     interceptors: Array<any>;
   };
   configureRequest?: (options: any, axios: any) => void;
+  reactive?: (obj: any) => void;
+  globalProperties: {
+    set: (key: string, value: any) => void;
+    get: (key: string) => any;
+  };
 };
 
 // 差异性配置，由H5、PC端启动时 传入覆盖
@@ -43,6 +48,15 @@ const Config: ConfigType = {
   },
   axios: {
     interceptors: [],
+  },
+  globalProperties: {
+    set(key, value) {
+      window[key] = value;
+      Global.prototype[key] = value;
+    },
+    get(key) {
+      return Global.prototype[key];
+    },
   },
 };
 
