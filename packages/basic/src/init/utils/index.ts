@@ -823,7 +823,7 @@ export const utils = {
       return this.CurrDateTime("global");
     }
     const localDate = convertJSDateInTargetTimeZone(new Date(), tz);
-    return JSON.stringify(localDate);
+    return localDate.toJSON();
   },
   AddDays(date = new Date(), amount = 1, converter = "json") {
     return toValue(addDays(safeNewDate(date), amount), converter);
