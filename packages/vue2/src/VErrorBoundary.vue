@@ -1,9 +1,9 @@
 <template>
   <div style="height: 100%;">
-    <slot 
+    <slot
+      v-bind="params"
       :error="err$"
       :info="info$"
-      v-bind="params"
     ></slot>
     <div class="lcap-verror-item-root" v-if="show">
       <div class="lcap-verror-item">
