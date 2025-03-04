@@ -81,7 +81,7 @@ export const useGlobalVariables = () => {
   const $userInfo = globalStore.userInfo
 
   onBeforeMount(() => {
-    const variableSet = $frontendVariables.$localCacheVariableSet
+    const variableSet = window.$localCacheVariableSet
 
     for (const key of variableSet) {
       const value = storage.get(key, true);
@@ -99,7 +99,7 @@ export const useGlobalVariables = () => {
 
   onMounted(() => {
     // 监听数据变化
-    const variableSet = $frontendVariables.$localCacheVariableSet;
+    const variableSet = window.$localCacheVariableSet;
 
     if (variableSet) {
       for (const key of variableSet) {
