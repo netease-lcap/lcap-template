@@ -1,4 +1,4 @@
-import { createApp, configureCompat } from "vue";
+import { createApp } from "vue";
 import { createPinia } from 'pinia';
 import * as Components from "@/components";
 import * as Libraries from "@/libraries";
@@ -26,10 +26,6 @@ import App from "./App.vue";
 import { setConfig } from "./setConfig";
 
 import "./index.css";
-
-configureCompat({
-  MODE: 3,
-})
 
 const evalWrap = function (metaData, fnName) {
   metaData && fnName && metaData?.frontendEvents[fnName] && eval(metaData.frontendEvents[fnName]);
