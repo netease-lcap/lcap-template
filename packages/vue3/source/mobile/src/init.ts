@@ -1,7 +1,7 @@
-import { createApp } from "vue";
-import { createPinia } from "pinia";
-import * as Components from "@/components";
-import * as Libraries from "@/libraries";
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import * as Components from '@/components';
+import * as Libraries from '@/libraries';
 import {
   directives,
   AuthPlugin,
@@ -18,14 +18,14 @@ import {
   getBasePath,
   filterAuthResources,
   findNoAuthView,
-} from "@/common";
-import { installComponents, installDirectives, installLibraries } from "@/common/utils";
-import { getTitleGuard } from "@/guards";
+} from '@/common';
+import { installComponents, installDirectives, installLibraries } from '@/common/utils';
+import { getTitleGuard } from '@/guards';
 
-import App from "./App.vue";
-import { setConfig } from "./setConfig";
+import App from './App.vue';
+import { setConfig } from './setConfig';
 
-import "./index.css";
+import './index.css';
 
 const evalWrap = function (metaData, fnName) {
   metaData && fnName && metaData?.frontendEvents[fnName] && eval(metaData.frontendEvents[fnName]);
@@ -42,8 +42,8 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   if (platformConfig?.documentIcon) {
     let link = document.querySelector("link[rel='icon']");
     if (!link) {
-      link = document.createElement("link");
-      link.rel = "icon";
+      link = document.createElement('link');
+      link.rel = 'icon';
       document.head.appendChild(link);
     }
     link.href = platformConfig?.documentIcon;
@@ -69,8 +69,8 @@ const init = (appConfig, platformConfig, routes, metaData) => {
 
   // 全局catch error，主要来处理中止组件,的错误不想暴露给用户，其余的还是在控制台提示出来
   app.config.errorHandler = (err, vm, info) => {
-    if (err.name === "Error" && err.message === "程序中止") {
-      console.warn("程序中止");
+    if (err.name === 'Error' && err.message === '程序中止') {
+      console.warn('程序中止');
     } else {
       // err，错误对象
       // vm，发生错误的组件实例
@@ -80,7 +80,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   };
 
   // 注册端事件
-  const endEventLists = ["rendered", "beforeRouter", "afterRouter", "preRequest", "postRequest"];
+  const endEventLists = ['rendered', 'beforeRouter', 'afterRouter', 'preRequest', 'postRequest'];
   if (metaData && metaData.frontendEvents) {
     for (let index = 0; index < endEventLists.length; index++) {
       const name = endEventLists[index];
@@ -118,7 +118,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   app.use(pinia);
 
   // rendered 事件
-  if (typeof window?.rendered === "function") {
+  if (typeof window?.rendered === 'function') {
     window.rendered();
   }
 
@@ -127,11 +127,11 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   const authResourcePaths = platformConfig.authResourcePaths || [];
   const baseRoutes = filterRoutes(routes, null, (route, ancestorPaths) => {
     const routePath = route.path;
-    const completePath = [...ancestorPaths, routePath].join("/");
-    let completeRedirectPath = "";
+    const completePath = [...ancestorPaths, routePath].join('/');
+    let completeRedirectPath = '';
     const redirectPath = route.redirect;
     if (redirectPath) {
-      completeRedirectPath = [...ancestorPaths, redirectPath].join("/");
+      completeRedirectPath = [...ancestorPaths, redirectPath].join('/');
     }
     return baseResourcePaths.includes(completePath) || completeRedirectPath;
   });
@@ -187,10 +187,10 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   // 挂载
   if (window.LcapMicro?.container) {
     const container = window.LcapMicro.container;
-    container.innerHTML = "";
+    container.innerHTML = '';
     app.mount(container);
   } else {
-    app.mount("#app");
+    app.mount('#app');
   }
 
   return app;

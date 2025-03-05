@@ -1,6 +1,5 @@
 import './index.css';
 
-function init(){
-}
+function init() {}
 
 init();

@@ -1,7 +1,7 @@
 import { useRequest } from 'ahooks';
-import { nasl } from '../Hooks'
-import { useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { nasl } from '../Hooks';
+import { useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export function useUserInfo() {
   const { data, error, loading } = useRequest(nasl.auth.getUserInfo);
@@ -10,14 +10,14 @@ export function useUserInfo() {
     userInfo: data,
     userInfoError: error,
     userInfoLoading: loading,
-  }
+  };
 }
 
-export function useUserResources(){
+export function useUserResources() {
   const appConfig = window.appInfo.appConfig;
   const fetchUerResources = () => {
     return nasl.auth.getUserResources(appConfig.domain);
-  }
+  };
 
   const { data, error, loading } = useRequest(fetchUerResources);
 
@@ -28,20 +28,22 @@ export function useUserResources(){
   };
 }
 
-
-export const useHandlePageNavigationEvent = ()=>{
+export const useHandlePageNavigationEvent = () => {
   const navigate = useNavigate();
-  const useHandler = useCallback((e)=>{
+  const useHandler = useCallback(
+    (e) => {
       const url = e?.detail?.url;
-      if(url){
+      if (url) {
         navigate(url);
       }
-  },[navigate]);
+    },
+    [navigate],
+  );
   useEffect(() => {
     // 监听全局跳转事件
     window.addEventListener('pageNavigation', useHandler);
     return () => {
       window.removeEventListener('pageNavigation', useHandler);
-    }
+    };
   });
-}
+};

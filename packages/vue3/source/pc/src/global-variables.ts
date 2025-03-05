@@ -1,6 +1,6 @@
-import { onBeforeMount, onMounted } from "vue";
-import { storage } from "@/common";
-import { useGlobalStore } from "@/store";
+import { onBeforeMount, onMounted } from 'vue';
+import { storage } from '@/common';
+import { useGlobalStore } from '@/store';
 
 export const useGlobalVariables = () => {
   const globalStore = useGlobalStore();
@@ -14,7 +14,7 @@ export const useGlobalVariables = () => {
     for (const key of variableSet) {
       const value = storage.get(key, true);
       // 若存在 value 则同步到 frontendVariables
-      if (value || typeof value === "boolean" || typeof value === "number" || value === "") {
+      if (value || typeof value === 'boolean' || typeof value === 'number' || value === '') {
         $frontendVariables[key] = value;
       }
     }
@@ -35,7 +35,7 @@ export const useGlobalVariables = () => {
             { deep: true },
           );
         } catch (error) {
-          console.warn("error: ", error);
+          console.warn('error: ', error);
         }
       }
     }

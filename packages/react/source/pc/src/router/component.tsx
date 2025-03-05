@@ -3,19 +3,12 @@ import { NASLUserInfo } from '@lcap/basic-template';
 import { getBasePath } from '@lcap/basic-template';
 import { Skeleton } from 'antd';
 import React, { Suspense } from 'react';
-import {
-  Navigate,
-  RouteObject,
-  RouteProps,
-  createBrowserRouter,
-  useMatches,
-  useNavigate,
-} from 'react-router-dom';
+import { Navigate, RouteObject, RouteProps, createBrowserRouter, useMatches, useNavigate } from 'react-router-dom';
 import { useAppConfig } from '../nasl';
 import { nasl } from '../Hooks';
 import { useHandlePageNavigationEvent } from './hooks';
 
-export type RouteObjectMeta = {crumb: string; title: string;};
+export type RouteObjectMeta = { crumb: string; title: string };
 
 export type RouterHookFunc = (x: {
   navigate: ReturnType<typeof useNavigate>;
@@ -63,7 +56,7 @@ export const Guarded: React.FC<
     }
   }
 
-  beforeEach?.({meta});
+  beforeEach?.({ meta });
 
   return <>{children}</>;
 };

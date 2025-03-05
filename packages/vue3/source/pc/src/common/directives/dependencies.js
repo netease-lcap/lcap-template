@@ -14,8 +14,8 @@ function dependencies(el, binding, vnode) {
   }
 
   const vm = binding.instance;
-  const action = binding.modifiers["reload"] ? "reload" : "";
-  if (!action || !vm || typeof vm[action] !== "function") {
+  const action = binding.modifiers['reload'] ? 'reload' : '';
+  if (!action || !vm || typeof vm[action] !== 'function') {
     return;
   }
 
@@ -33,6 +33,6 @@ function dependencies(el, binding, vnode) {
 }
 
 export default {
-  name: "dependencies",
+  name: 'dependencies',
   updated: dependencies,
 };

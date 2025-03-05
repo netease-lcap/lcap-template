@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref } from 'vue';
 export function useDataSourceUtils() {
   const cache = ref(new Map());
 
@@ -7,9 +7,9 @@ export function useDataSourceUtils() {
     return arr1.every((current, i) => {
       const other = arr2[i];
       if (typeof current !== typeof other) return false;
-      if (typeof current === "string") return current === other;
-      if (typeof current === "object") {
-        return ["item", "index", "rowIndex", "columnIndex", "value"].every((key) => current[key] === other[key]);
+      if (typeof current === 'string') return current === other;
+      if (typeof current === 'object') {
+        return ['item', 'index', 'rowIndex', 'columnIndex', 'value'].every((key) => current[key] === other[key]);
       }
       return false;
     });

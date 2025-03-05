@@ -10,7 +10,8 @@
     "change:version": "node ./scripts/version",
     "build": "pnpm --filter \"./packages/*\" --filter \"./mini-folder/*\" run build",
     "deploy": "pnpm --filter \"./packages/*\" --filter \"./mini-folder/*\" run deploy",
-    "format:vue3": "prettier --write \"packages/**/vue3/**/*.{vue,ts,tsx,jsx,js}\""
+    "format:vue3": "prettier --write \"packages/**/vue3/**/*.{vue,ts,tsx,jsx,js}\"",
+    "format:react": "prettier --write \"packages/**/react/**/*.{vue,ts,tsx,jsx,js}\""
   },
   "keywords": [],
   "author": "",

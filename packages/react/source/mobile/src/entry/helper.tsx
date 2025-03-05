@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from "../Router";
+import App from '../Router';
 
 let root: any = null;
 
@@ -18,7 +18,7 @@ export function renderApp() {
   root.render(<App />);
 }
 
-export function unmountApp(){
+export function unmountApp() {
   // @ts-expect-error
   window.appVM = null;
   // @ts-expect-error
@@ -27,6 +27,6 @@ export function unmountApp(){
   root = null;
 }
 
-export function loadAssets(){
+export function loadAssets() {
   return renderApp();
 }

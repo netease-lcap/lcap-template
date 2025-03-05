@@ -1,15 +1,15 @@
-const path = require("path");
-const { execSync } = require("child_process");
+const path = require('path');
+const { execSync } = require('child_process');
 
-const root = path.resolve(__dirname, "../");
+const root = path.resolve(__dirname, '../');
 
 module.exports = function ({ target }) {
   [
     {
-      type: "pc",
+      type: 'pc',
     },
     {
-      type: "mobile",
+      type: 'mobile',
     },
   ].forEach(({ type }) => {
     const t = target[type];

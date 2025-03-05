@@ -1,15 +1,15 @@
-const { execSync } = require("child_process");
-const path = require("path");
+const { execSync } = require('child_process');
+const path = require('path');
 
-const packageRoot = path.resolve(__dirname, "..");
-const distPath = path.resolve(__dirname, "../dist");
+const packageRoot = path.resolve(__dirname, '..');
+const distPath = path.resolve(__dirname, '../dist');
 
 [
   {
-    type: "pc",
+    type: 'pc',
   },
   {
-    type: "mobile",
+    type: 'mobile',
   },
 ].forEach(({ type }) => {
   // 输出目录

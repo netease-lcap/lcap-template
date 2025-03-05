@@ -1,3 +1,3 @@
-import {startApp} from './entry/index';
+import { startApp } from './entry/index';
 
 startApp();

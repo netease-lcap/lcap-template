@@ -1,10 +1,10 @@
-import { cookie } from "@/common";
+import { cookie } from '@/common';
 
 export const utils = (app) => ({
   logout() {
     return app.config.globalProperties.$auth.logout().then(() => {
-      cookie.erase("authorization");
-      cookie.erase("username");
+      cookie.erase('authorization');
+      cookie.erase('username');
 
       location.reload();
     });

@@ -1,7 +1,6 @@
-
 import '../init';
-import {renderApp, unmountApp} from './helper';
+import { renderApp, unmountApp } from './helper';
 
-export function startApp(){
+export function startApp() {
   // StartAppBody
 }

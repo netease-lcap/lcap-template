@@ -128,7 +128,7 @@ module.exports = {
           inject: false,
           template: './client-lazyload-template.js',
           filename: 'client.js',
-          minify: false
+          minify: false,
         })
       : null,
   ].filter(Boolean),
