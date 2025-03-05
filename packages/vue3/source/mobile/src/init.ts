@@ -35,7 +35,7 @@ const evalWrap = function (metaData, fnName) {
   metaData && fnName && metaData?.frontendEvents[fnName] && eval(metaData.frontendEvents[fnName]);
 };
 
-const $sleep = function () {
+window.$sleep = function () {
   return new Promise((resolve) => {
     this.$nextTick(resolve);
   });
@@ -97,7 +97,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   }
 
   // properties
-  app.config.globalProperties.$sleep = $sleep;
+  app.config.globalProperties.$sleep = window.$sleep;
   app.config.globalProperties.hasLoadedAuth = false;
   app.config.globalProperties.logined = true;
   if (window.LcapMicro?.container) {

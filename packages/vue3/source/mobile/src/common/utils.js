@@ -25,7 +25,6 @@ export function installDirectives(vm, directives) {
 }
 
 export function installLibraries(vm, libraries) {
-
     Object.keys(libraries).forEach((key) => {
       const lib = libraries[key]?.default || libraries[key];
       vm.use(lib);
