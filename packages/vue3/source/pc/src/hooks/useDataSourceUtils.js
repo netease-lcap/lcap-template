@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref } from "vue";
 export function useDataSourceUtils() {
   const cache = ref(new Map());
 
@@ -7,13 +7,13 @@ export function useDataSourceUtils() {
     return arr1.every((current, i) => {
       const other = arr2[i];
       if (typeof current !== typeof other) return false;
-      if (typeof current === 'string') return current === other;
-      if (typeof current === 'object') {
-        return ['item', 'index', 'rowIndex', 'columnIndex', 'value'].every((key) => current[key] === other[key]);
+      if (typeof current === "string") return current === other;
+      if (typeof current === "object") {
+        return ["item", "index", "rowIndex", "columnIndex", "value"].every((key) => current[key] === other[key]);
       }
       return false;
     });
-  };
+  }
 
   function __getDataSourceCacheFn(methodName, currentArray = []) {
     if (!currentArray.length) {
@@ -24,7 +24,7 @@ export function useDataSourceUtils() {
         return value;
       }
     }
-  };
+  }
 
   function __setDataSourceCacheFn(methodName, currentArray = [], fn) {
     if (!currentArray.length) {
@@ -32,7 +32,7 @@ export function useDataSourceUtils() {
       return;
     }
     cache.value.set([methodName, ...currentArray], fn);
-  };
+  }
 
   function __getOrCreateDataSource(methodName, currentArray = [], newFn) {
     let fn = __getDataSourceCacheFn(methodName, currentArray);
@@ -41,10 +41,10 @@ export function useDataSourceUtils() {
       __setDataSourceCacheFn(methodName, currentArray, fn);
     }
     return fn;
-  };
+  }
 
   return {
     __getOrCreateDataSource,
     private_data_source_cache: cache.value,
-  }
+  };
 }

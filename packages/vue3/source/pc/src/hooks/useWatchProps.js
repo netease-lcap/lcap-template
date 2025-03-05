@@ -1,13 +1,19 @@
-import { watch } from 'vue';
+import { watch } from "vue";
 
 export function useWatchProps(props, state, keys = [], $emit) {
   keys.forEach((key) => {
-    watch(() => props[key], (value) => {
-      state[key] = value;
-    });
+    watch(
+      () => props[key],
+      (value) => {
+        state[key] = value;
+      },
+    );
 
-    watch(() => state[key], (value) => {
-      $emit(`update:${key}`, value);
-    });
+    watch(
+      () => state[key],
+      (value) => {
+        $emit(`update:${key}`, value);
+      },
+    );
   });
 }

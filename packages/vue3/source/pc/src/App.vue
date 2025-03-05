@@ -5,5 +5,5 @@
 </template>
 
 <script setup>
-import VErrorBoundary from './VErrorBoundary.vue';
+import VErrorBoundary from "./VErrorBoundary.vue";
 </script>

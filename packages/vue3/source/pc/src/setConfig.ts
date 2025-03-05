@@ -15,7 +15,7 @@ export function setConfig(options = {}) {
       },
       get(key) {
         return app.config.globalProperties[key];
-      }
+      },
     },
     toast: {
       show(msg) {
@@ -33,8 +33,8 @@ export function setConfig(options = {}) {
     utils: {
       ...utils(app),
       showMessage(msg) {
-        console.log('弹出消息：', msg);
-      }
+        console.log("弹出消息：", msg);
+      },
     },
     configureRequest(options) {
       /**
@@ -61,5 +61,3 @@ export function setConfig(options = {}) {
     },
   });
 }
-
-

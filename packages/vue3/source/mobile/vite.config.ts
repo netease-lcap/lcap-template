@@ -1,13 +1,13 @@
-import path from 'path'
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import html from '@rollup/plugin-html';
-import genClient from './client-lazyload-template.ts';
+import path from "path";
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import html from "@rollup/plugin-html";
+import genClient from "./client-lazyload-template.ts";
 
 // 会被替换成真实服务端地址，形如 http://dev.pagetest.defaulttenant.lcap.hatest.163yun.com
-const backendUrl = '';
+const backendUrl = "";
 // 会被替换成真实publicPath，形如 '//minio-api.codewave-test.163yun.com/lowcode-static/defaulttenant/48bab4da-9671-4e27-9411-bcdb41cd16e4/dev'
-const publicPath = '';
+const publicPath = "";
 // 是否是开发环境
 const isDev = false;
 
@@ -24,11 +24,11 @@ export default defineConfig({
       },
     }),
     html({
-      fileName: 'client.js',
+      fileName: "client.js",
       template: (templateParameters) => genClient(templateParameters, publicPath),
     }),
   ],
-  optimizeDeps: { include: [], },
+  optimizeDeps: { include: [] },
   build: {
     sourcemap: isDev,
     commonjsOptions: {
@@ -36,11 +36,11 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        format: 'umd',
-        entryFileNames: '[name].[hash].js',
-        chunkFileNames: '[name].[hash].js',
-        assetFileNames: 'assets/[name].[hash].[ext]',
-        hashCharacters: 'hex',
+        format: "umd",
+        entryFileNames: "[name].[hash].js",
+        chunkFileNames: "[name].[hash].js",
+        assetFileNames: "assets/[name].[hash].[ext]",
+        hashCharacters: "hex",
       },
     },
   },
@@ -50,39 +50,39 @@ export default defineConfig({
   server: {
     port: 8810,
     proxy: {
-      '/assets': {
+      "/assets": {
         target: backendUrl,
         changeOrigin: true,
         autoRewrite: true,
       },
-      '/api': {
+      "/api": {
         target: backendUrl,
         changeOrigin: true,
         autoRewrite: true,
       },
-      '/rest': {
+      "/rest": {
         target: backendUrl,
         changeOrigin: true,
         autoRewrite: true,
       },
-      '^/gateway/': {
+      "^/gateway/": {
         target: backendUrl,
         changeOrigin: true,
         autoRewrite: true,
       },
-      '^/gw/': {
+      "^/gw/": {
         target: backendUrl,
         changeOrigin: true,
         autoRewrite: true,
       },
-      '^/upload': {
+      "^/upload": {
         target: backendUrl,
         changeOrigin: true,
         autoRewrite: true,
       },
     },
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      "Access-Control-Allow-Origin": "*",
     },
   },
 });

@@ -1,5 +1,5 @@
 import { createApp } from "vue";
-import { createPinia } from 'pinia';
+import { createPinia } from "pinia";
 import * as Components from "@/components";
 import * as Libraries from "@/libraries";
 import {
@@ -20,7 +20,7 @@ import {
   findNoAuthView,
 } from "@/common";
 import { installComponents, installDirectives, installLibraries } from "@/common/utils";
-import { getTitleGuard } from '@/guards'
+import { getTitleGuard } from "@/guards";
 
 import App from "./App.vue";
 import { setConfig } from "./setConfig";
@@ -62,7 +62,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   window.appInfo = Object.assign(appConfig, platformConfig);
 
   const pinia = createPinia();
-  const app = createApp(App)
+  const app = createApp(App);
 
   // 给basic设置配置
   setConfig({ app });
@@ -80,7 +80,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   };
 
   // 注册端事件
-  const endEventLists = ['rendered', 'beforeRouter', "afterRouter", "preRequest", "postRequest"];
+  const endEventLists = ["rendered", "beforeRouter", "afterRouter", "preRequest", "postRequest"];
   if (metaData && metaData.frontendEvents) {
     for (let index = 0; index < endEventLists.length; index++) {
       const name = endEventLists[index];
@@ -181,7 +181,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
     });
   }
 
-  app.use(router)
+  app.use(router);
   // ------ router end ------
 
   // 挂载
