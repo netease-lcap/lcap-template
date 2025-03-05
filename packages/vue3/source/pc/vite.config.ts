@@ -14,15 +14,7 @@ const isDev = false;
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    vue({
-      template: {
-        compilerOptions: {
-          compatConfig: {
-            MODE: 2,
-          },
-        },
-      },
-    }),
+    vue(),
     html({
       fileName: 'client.js',
       template: (templateParameters) => genClient(templateParameters, publicPath),
