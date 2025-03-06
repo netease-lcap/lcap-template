@@ -362,6 +362,11 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           if (!response) {
               return Promise.reject();
           }
+
+          if (requestInfo?.config?.serviceType === 'sse') {
+            return response;
+          }
+          
           const status = 'success';
           const { config } = requestInfo;
           const serviceType = config?.serviceType;
