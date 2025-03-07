@@ -23,9 +23,6 @@ export default defineConfig({
   optimizeDeps: { include: [] },
   build: {
     sourcemap: isDev,
-    commonjsOptions: {
-      include: [/\@lcap\/element\-plus/, /node_modules/],
-    },
     rollupOptions: {
       output: {
         format: 'amd',
@@ -38,6 +35,7 @@ export default defineConfig({
         hashCharacters: 'hex',
         manualChunks: {
           'element-plus': ['@lcap/element-plus'],
+          'vue-vendor': ['vue', 'vue-router', 'pinia'],
         }
       },
     },
