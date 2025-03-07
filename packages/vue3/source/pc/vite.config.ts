@@ -28,11 +28,17 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        format: 'umd',
+        format: 'amd',
+        amd: {
+          autoId: true
+        },
         entryFileNames: '[name].[hash].js',
         chunkFileNames: '[name].[hash].js',
         assetFileNames: 'assets/[name].[hash].[ext]',
         hashCharacters: 'hex',
+        manualChunks: {
+          'element-plus': ['@lcap/element-plus'],
+        }
       },
     },
   },
