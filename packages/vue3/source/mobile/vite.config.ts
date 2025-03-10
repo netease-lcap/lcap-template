@@ -14,15 +14,7 @@ const isDev = false;
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    vue({
-      template: {
-        compilerOptions: {
-          compatConfig: {
-            MODE: 2,
-          },
-        },
-      },
-    }),
+    vue(),
     html({
       fileName: 'client.js',
       template: (templateParameters) => genClient(templateParameters, publicPath),
@@ -31,16 +23,20 @@ export default defineConfig({
   optimizeDeps: { include: [] },
   build: {
     sourcemap: isDev,
-    commonjsOptions: {
-      include: [/\@lcap\/element\-plus/, /node_modules/],
-    },
     rollupOptions: {
       output: {
-        format: 'umd',
+        format: 'amd',
+        amd: {
+          autoId: true
+        },
         entryFileNames: '[name].[hash].js',
         chunkFileNames: '[name].[hash].js',
         assetFileNames: 'assets/[name].[hash].[ext]',
         hashCharacters: 'hex',
+        manualChunks: {
+          'element-plus': ['@lcap/element-plus'],
+          'vue-vendor': ['vue', 'vue-router', 'pinia'],
+        }
       },
     },
   },
