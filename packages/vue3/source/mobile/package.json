@@ -7,7 +7,7 @@
     "dev": "vite",
     "build-full": "run-p type-check \"build {@}\" --",
     "preview": "vite preview",
-    "build": "vite build",
+    "build": "sh build.sh",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
     "format": "prettier --write src/"
