@@ -15,19 +15,19 @@ importers:
         specifier: http://minio-api.codewave-test.163yun.com/lowcode-static/packages/%40lcap/basic-template%401.7.1/zip.tgz
         version: http://minio-api.codewave-test.163yun.com/lowcode-static/packages/%40lcap/basic-template%401.7.1/zip.tgz
       date-fns:
-        specifier: ^2.6.0
+        specifier: 2.30.0
         version: 2.30.0
       lodash:
-        specifier: ^4.17.15
+        specifier: 4.17.21
         version: 4.17.21
       pinia:
-        specifier: ^2.3.1
+        specifier: 2.3.1
         version: 2.3.1(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
       vue:
         specifier: 3.5.13
         version: 3.5.13(typescript@5.7.3)
       vue-i18n:
-        specifier: ^11.1.0
+        specifier: 11.1.2
         version: 11.1.2(vue@3.5.13(typescript@5.7.3))
       vue-router:
         specifier: 4.5.0
@@ -55,7 +55,7 @@ importers:
         specifier: 0.7.0
         version: 0.7.0(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
       cross-env:
-        specifier: ^7.0.3
+        specifier: 7.0.3
         version: 7.0.3
       eslint:
         specifier: 9.14.0
