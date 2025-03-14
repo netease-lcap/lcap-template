@@ -27,10 +27,6 @@ import { setConfig } from "./setConfig";
 
 import "./index.css";
 
-configureCompat({
-  MODE: 3,
-})
-
 const evalWrap = function (metaData, fnName) {
   metaData && fnName && metaData?.frontendEvents[fnName] && eval(metaData.frontendEvents[fnName]);
 };
