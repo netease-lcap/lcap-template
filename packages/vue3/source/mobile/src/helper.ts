@@ -1,3 +1,4 @@
+import './compat';
 import metaData from './metaData.js';
 import platformConfig from './platform.config.js';
 import { routes } from './router.js';

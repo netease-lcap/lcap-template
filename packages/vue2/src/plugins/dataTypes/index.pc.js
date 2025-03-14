@@ -1,19 +1,19 @@
-import Vue from "vue";
-import { cookie } from "@/common";
+import Vue from 'vue';
+import { cookie } from '@/common';
 
 export const utils = {
   logout() {
     // FIXME 从全局变量中获取
-    Vue.prototype
-      .$confirm({
-        title: "提示",
-        content: "确定退出登录吗？",
-        message: "确定退出登录吗?",
-      })
+    const $confirm = typeof Vue.prototype.$confirm === 'function' ? Vue.prototype.$confirm : () => Promise.resolve();
+    $confirm({
+      title: '提示',
+      content: '确定退出登录吗？',
+      message: '确定退出登录吗?',
+    })
       .then(() => Vue.prototype.$auth.logout())
       .then(() => {
-        cookie.erase("authorization");
-        cookie.erase("username");
+        cookie.erase('authorization');
+        cookie.erase('username');
         location.reload();
       });
   },
