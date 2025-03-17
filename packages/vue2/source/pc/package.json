@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "format": "prettier --write src/"
   },
   "dependencies": {
     "@vusion/utils": "^0.4.10",
@@ -26,6 +27,7 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "mockjs": "^1.1.0",
+    "prettier": "3.5.3",
     "vue-template-compiler": "2.6.12",
     "webpack": "^4.47.0"
   }

@@ -6,7 +6,8 @@
     "dev": "rspack serve -c ./rspack.config.js",
     "start": "npm run dev",
     "build": "rspack build -c ./rspack.config.js",
-    "postyalc": "pnpm i"
+    "postyalc": "pnpm i",
+    "format": "prettier --write src/"
   },
   "dependencies": {
     "@lcap/basic-template": "http://minio-api.codewave-test.163yun.com/lowcode-static/packages/%40lcap/basic-template%401.5.0/zip.tgz",
@@ -30,6 +31,7 @@
     "@types/react": "18.2.64",
     "@types/react-dom": "18.2.18",
     "html-webpack-plugin": "5.6.0",
+    "prettier": "3.5.3",
     "react-refresh": "0.14.0",
     "typescript": "5.4.4"
   }
