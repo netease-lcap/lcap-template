@@ -20,7 +20,6 @@ export default defineConfig({
       template: (templateParameters) => genClient(templateParameters, publicPath),
     }),
   ],
-  optimizeDeps: { include: [] },
   build: {
     sourcemap: isDev,
     rollupOptions: {
