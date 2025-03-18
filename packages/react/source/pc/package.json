@@ -4,9 +4,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "rspack serve -c ./rspack.config.js",
-    "start": "npm run dev",
     "build": "rspack build -c ./rspack.config.js",
-    "postyalc": "pnpm i",
+    "lint": "eslint \"src/**/*.{vue,ts,tsx,js,jsx}\" --fix",
     "format": "prettier --write src/"
   },
   "dependencies": {
