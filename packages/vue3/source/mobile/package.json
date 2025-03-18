@@ -1,5 +1,5 @@
 {
-  "name": "@lcap/mobile-template-vue3",
+  "name": "vue3-template",
   "version": "0.0.0",
   "private": true,
   "scripts": {
