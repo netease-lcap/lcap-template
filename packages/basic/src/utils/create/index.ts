@@ -195,7 +195,8 @@ export function genBaseOptions(requestInfo) {
     transformRequest: [
       function (data) {
         try {
-          const request = JSONbig.stringify(data);
+          // FIXME: 临时解决方案，后续需要songrui确认
+          const request = typeof data === "string" ? data : JSONbig.stringify(data);
           return request;
         } catch (error) {
           return data;
@@ -452,10 +453,10 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           return Promise.reject();
         }
 
-        if (requestInfo?.config?.serviceType === 'sse') {
+        if (requestInfo?.config?.serviceType === "sse") {
           return response;
         }
-        
+
         const status = "success";
         const { config } = requestInfo;
         const serviceType = config?.serviceType;
@@ -491,8 +492,8 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
     });
     service.postConfig.set("postRequestError", {
       async reject(response, params, requestInfo) {
-        if (requestInfo?.config?.serviceType === 'sse') {
-          throw Error('远端调用异常');
+        if (requestInfo?.config?.serviceType === "sse") {
+          throw Error("远端调用异常");
         }
         response.Code = response.code || response.status;
         const status = "error";
