@@ -193,11 +193,13 @@ export function genBaseOptions(requestInfo) {
     baseURL,
     method: method2,
     transformRequest: [
-      function (data) {
+      function (data, headers) {
         try {
-          // FIXME: 临时解决方案，后续需要songrui确认
-          const request = typeof data === "string" ? data : JSONbig.stringify(data);
-          return request;
+          if (headers["Content-Type"] !== "application/x-www-form-urlencoded") {
+            const request = JSONbig.stringify(data);
+            return request;
+          }
+          return data;
         } catch (error) {
           return data;
         }
