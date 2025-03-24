@@ -19,10 +19,10 @@ export function setConfig(options = {}) {
     },
     toast: {
       show(msg) {
-        console.log(msg);
+        app.config.globalProperties.$message.info(msg);
       },
       error(msg) {
-        console.error(msg);
+        app.config.globalProperties.$message.error(msg);
       },
     },
     router: {
