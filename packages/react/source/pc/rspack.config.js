@@ -36,6 +36,7 @@ module.exports = {
     extensions: ['...', '.ts', '.tsx', '.jsx'],
     alias: {},
   },
+  externals: {},
   devServer: {
     port: 8810,
     historyApiFallback: true,
@@ -120,6 +121,7 @@ module.exports = {
     // 构建标准的index.html
     new rspack.HtmlRspackPlugin({
       template: './index.html',
+      scripts: []
     }),
     isDev ? new refreshPlugin() : null,
     // 构建Codewave使用的client.js入口
