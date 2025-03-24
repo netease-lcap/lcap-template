@@ -1,9 +1,9 @@
-import Vue from "vue";
-import { installOptions, installFilters, installComponents, installDirectives, install } from "@vusion/utils";
+import Vue from 'vue';
+import { installOptions, installFilters, installComponents, installDirectives, install } from '@vusion/utils';
 
-import * as Components from "@/components";
+import * as Components from '@/components';
 
-import "./setConfig";
+import './setConfig';
 
 import {
   filters,
@@ -23,12 +23,12 @@ import {
   filterAuthResources,
   findNoAuthView,
   createService,
-} from "@/common";
+} from '@/common';
 
-import { getTitleGuard } from "./router";
+import { getTitleGuard } from './router';
 
-import App from "./App.vue";
-import { setI18nLocale } from "./i18n";
+import App from './App.vue';
+import { setI18nLocale } from './i18n';
 
 Vue.config.productionTip = false;
 
@@ -45,7 +45,7 @@ window.LcapInstall = install;
 installOptions(Vue);
 installDirectives(Vue, directives);
 
-const fnList = ["afterRouter"];
+const fnList = ['afterRouter'];
 const evalWrap = function (metaData, fnName) {
   // eslint-disable-next-line no-eval
   metaData && fnName && metaData?.frontendEvents[fnName] && eval(metaData.frontendEvents[fnName]);
@@ -57,15 +57,15 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   if (platformConfig?.documentIcon) {
     let link = document.querySelector("link[rel='icon']");
     if (!link) {
-      link = document.createElement("link");
-      link.rel = "icon";
+      link = document.createElement('link');
+      link.rel = 'icon';
       document.head.appendChild(link);
     }
     link.href = platformConfig?.documentIcon;
   }
 
   // 注册端事件
-  const endEventLists = ["rendered", "beforeRouter", "afterRouter", "preRequest", "postRequest"];
+  const endEventLists = ['rendered', 'beforeRouter', 'afterRouter', 'preRequest', 'postRequest'];
   if (metaData && metaData.frontendEvents) {
     for (let index = 0; index < endEventLists.length; index++) {
       const name = endEventLists[index];
@@ -111,8 +111,8 @@ const init = (appConfig, platformConfig, routes, metaData) => {
 
   // 全局catch error，主要来处理中止组件,的错误不想暴露给用户，其余的还是在控制台提示出来
   Vue.config.errorHandler = (err, vm, info) => {
-    if (err.name === "Error" && err.message === "程序中止") {
-      console.warn("程序中止");
+    if (err.name === 'Error' && err.message === '程序中止') {
+      console.warn('程序中止');
     } else {
       // err，错误对象
       // vm，发生错误的组件实例
@@ -133,17 +133,17 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   const authResourcePaths = platformConfig.authResourcePaths || [];
   const baseRoutes = filterRoutes(routes, null, (route, ancestorPaths) => {
     const routePath = route.path;
-    const completePath = [...ancestorPaths, routePath].join("/");
-    let completeRedirectPath = "";
+    const completePath = [...ancestorPaths, routePath].join('/');
+    let completeRedirectPath = '';
     const redirectPath = route.redirect;
     if (redirectPath) {
-      completeRedirectPath = [...ancestorPaths, redirectPath].join("/");
+      completeRedirectPath = [...ancestorPaths, redirectPath].join('/');
     }
     return baseResourcePaths.includes(completePath) || completeRedirectPath;
   });
 
   const router = createRouter(baseRoutes);
-  // FIXME: 来点骚操作
+
   window.VueRouterInstance = router;
 
   const beforeRouter = Vue.prototype.beforeRouter;
@@ -183,7 +183,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   router.beforeEach(microFrontend);
 
   const app = new Vue({
-    name: "app",
+    name: 'app',
     router,
     i18n,
     ...App,
@@ -202,10 +202,10 @@ const init = (appConfig, platformConfig, routes, metaData) => {
 
   if (window.LcapMicro?.container) {
     const container = window.LcapMicro.container;
-    container.innerHTML = "";
+    container.innerHTML = '';
     app.$mount();
     container.appendChild(app.$el);
-  } else app.$mount("#app");
+  } else app.$mount('#app');
 
   return app;
 };

@@ -3,7 +3,6 @@ import { cookie } from '@/common';
 
 export const utils = {
   logout() {
-    // FIXME 从全局变量中获取
     const $confirm = typeof Vue.prototype.$confirm === 'function' ? Vue.prototype.$confirm : () => Promise.resolve();
     $confirm({
       title: '提示',

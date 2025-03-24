@@ -137,7 +137,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   });
 
   const router = createRouterInstance(baseRoutes);
-  // FIXME: 来点骚操作
+
   window.VueRouterInstance = router;
 
   const beforeRouter = window.beforeRouter;
