@@ -23,11 +23,13 @@ export default defineConfig({
   build: {
     sourcemap: isDev,
     rollupOptions: {
+      external: [],
       output: {
         format: 'amd',
         amd: {
           autoId: true
         },
+        path: {},
         entryFileNames: '[name].[hash].js',
         chunkFileNames: '[name].[hash].js',
         assetFileNames: 'assets/[name].[hash].[ext]',
