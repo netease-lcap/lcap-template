@@ -1,4 +1,4 @@
-import { initService } from "@lcap/basic-template";
+import { initService } from '@lcap/basic-template';
 
 export default {
   install(vm, options = {}) {

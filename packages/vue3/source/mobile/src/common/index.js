@@ -1,9 +1,9 @@
-import "./global";
-import * as directives from "./directives";
+import './global';
+import * as directives from './directives';
 
-export * from "./plugins";
-export * from "./router";
+export * from './plugins';
+export * from './router';
 
 export { directives };
 
-export * from "@lcap/basic-template";
+export * from '@lcap/basic-template';

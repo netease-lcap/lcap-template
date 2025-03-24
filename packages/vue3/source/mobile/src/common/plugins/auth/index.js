@@ -1,10 +1,10 @@
-import { initAuth, authService } from "@lcap/basic-template";
+import { initAuth, authService } from '@lcap/basic-template';
 
 export default {
   install(vm, options = {}) {
     initAuth(options);
 
-    const base = (options.base || "").replace(/\/$/, "");
+    const base = (options.base || '').replace(/\/$/, '');
     /**
      * - 组件权限项功能
      * - 自动隐藏路由组件功能
@@ -23,12 +23,12 @@ export default {
       async handle(el, binding) {
         const vm = binding.instance;
         // 初始化操作，防止先出现后消失
-        if (vm && vm.$options.name === "u-table-view-column") vm.currentHidden = false;
+        if (vm && vm.$options.name === 'u-table-view-column') vm.currentHidden = false;
         else {
-          el && (el.style.display = "none");
+          el && (el.style.display = 'none');
         }
         const data = {
-          value: binding.value || "",
+          value: binding.value || '',
           actions: Object.keys(binding.modifiers),
         };
 
@@ -37,9 +37,9 @@ export default {
         const visible = await authService.has(authPath);
 
         // 表格列不起作用，特殊处理
-        if (vm && vm.$options.name === "u-table-view-column") vm.currentHidden = !visible;
+        if (vm && vm.$options.name === 'u-table-view-column') vm.currentHidden = !visible;
         else {
-          el && (el.style.display = visible ? "" : "none");
+          el && (el.style.display = visible ? '' : 'none');
         }
       },
       beforeMount(el, binding, vnode, oldVnode) {
@@ -49,7 +49,7 @@ export default {
         vAuth.handle(el, binding, vnode, oldVnode);
       },
     };
-    vm.directive("auth", vAuth);
+    vm.directive('auth', vAuth);
 
     vm.mixin({
       mounted() {
@@ -63,21 +63,21 @@ export default {
         _updateVisibleByAuth() {
           if (!(options.autoHide && this.to)) return;
           // 有 v-auth 了就不处理 to 的了。
-          if (this.$vnode.data.directives && this.$vnode.data.directives.some((directive) => directive.name === "auth"))
+          if (this.$vnode.data.directives && this.$vnode.data.directives.some((directive) => directive.name === 'auth'))
             return;
           if (!authService.isInit()) return;
 
           let visible = true;
           if (options.autoHide && this.to) {
             let toPath;
-            if (typeof this.to === "object") toPath = this.to.path;
-            else if (typeof this.to === "string") toPath = this.to.split("?")[0];
+            if (typeof this.to === 'object') toPath = this.to.path;
+            else if (typeof this.to === 'string') toPath = this.to.split('?')[0];
             // 去掉末尾的 / 导致的权限不匹配
-            const fullPath = (base + toPath).replace(/\/+$/, "");
+            const fullPath = (base + toPath).replace(/\/+$/, '');
             visible = visible && authService.has(fullPath);
           }
 
-          this.$el && (this.$el.style.display = visible ? "" : "none");
+          this.$el && (this.$el.style.display = visible ? '' : 'none');
         },
       },
     });

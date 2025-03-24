@@ -1,0 +1,42 @@
+{
+  "name": "react-template",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "rspack serve -c ./rspack.config.js",
+    "build": "rspack build -c ./rspack.config.js",
+    "lint": "eslint . --fix",
+    "format": "prettier --write src/"
+  },
+  "dependencies": {
+    "@lcap/basic-template": "http://minio-api.codewave-test.163yun.com/lowcode-static/packages/%40lcap/basic-template%401.5.0/zip.tgz",
+    "ahooks": "3.7.10",
+    "antd": "5.14.0",
+    "i18next": "23.11.5",
+    "lodash": "4.17.21",
+    "mobx": "6.12.0",
+    "mobx-react-lite": "4.0.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-router-dom": "6.20.1"
+  },
+  "resolutions": {
+    "commander": "11.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.22.0",
+    "@rspack/cli": "0.5.3",
+    "@rspack/core": "0.5.3",
+    "@rspack/plugin-react-refresh": "0.5.3",
+    "@types/react": "18.2.64",
+    "@types/react-dom": "18.2.18",
+    "eslint": "9.22.0",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "eslint-plugin-react-refresh": "0.4.19",
+    "html-webpack-plugin": "5.6.0",
+    "prettier": "3.5.3",
+    "react-refresh": "0.14.0",
+    "typescript": "5.4.4",
+    "typescript-eslint": "8.26.1"
+  }
+}

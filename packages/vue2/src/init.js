@@ -32,11 +32,12 @@ import { setI18nLocale } from "./i18n";
 
 Vue.config.productionTip = false;
 
-Vue.prototype.$sleep = function () {
+window.$sleep = function () {
   return new Promise((resolve) => {
     this.$nextTick(resolve);
   });
 };
+Vue.prototype.$sleep = window.$sleep;
 
 window._lcapCreateService = createService;
 window.LcapInstall = install;

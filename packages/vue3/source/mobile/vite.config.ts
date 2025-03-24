@@ -1,6 +1,6 @@
-import path from 'path'
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import path from 'path';
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 import html from '@rollup/plugin-html';
 import genClient from './client-lazyload-template.ts';
 
@@ -14,33 +14,30 @@ const isDev = false;
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    vue({
-      template: {
-        compilerOptions: {
-          compatConfig: {
-            MODE: 2,
-          },
-        },
-      },
-    }),
+    vue(),
     html({
       fileName: 'client.js',
       template: (templateParameters) => genClient(templateParameters, publicPath),
     }),
   ],
-  optimizeDeps: { include: [], },
   build: {
     sourcemap: isDev,
-    commonjsOptions: {
-      include: [/\@lcap\/element\-plus/, /node_modules/],
-    },
     rollupOptions: {
+      external: [],
       output: {
-        format: 'umd',
+        format: 'amd',
+        amd: {
+          autoId: true
+        },
+        path: {},
         entryFileNames: '[name].[hash].js',
         chunkFileNames: '[name].[hash].js',
         assetFileNames: 'assets/[name].[hash].[ext]',
         hashCharacters: 'hex',
+        manualChunks: {
+          'element-plus': ['@lcap/element-plus'],
+          'vue-vendor': ['vue', 'vue-router', 'pinia'],
+        }
       },
     },
   },

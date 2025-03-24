@@ -1,0 +1,20 @@
+{
+  "name": "@lcap/react-template",
+  "version": "1.7.2",
+  "description": "base on react",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "node ./scripts/build.js",
+    "deploy": "node ./scripts/deploy.js",
+    "postbuild": "npm run zip",
+    "zip": "node ./scripts/zip.js"
+  },
+  "keywords": [
+    "lcap",
+    "lcap-template"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "fs-extra": "^9.0.0"
+  }
+}

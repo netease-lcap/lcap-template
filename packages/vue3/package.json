@@ -1,6 +1,6 @@
 {
   "name": "@lcap/vue3-template",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "base on vue3",
   "scripts": {
     "prebuild": "rm -rf dist",

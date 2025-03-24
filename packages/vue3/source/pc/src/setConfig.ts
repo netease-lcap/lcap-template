@@ -1,7 +1,7 @@
-import { setConfig as setCommonConfig } from "@/common";
+import { setConfig as setCommonConfig } from '@/common';
 
-import { utils } from "./plugins/dataTypes/index";
-import { destination, back, go } from "./plugins/router";
+import { utils } from './plugins/dataTypes/index';
+import { destination, back, go } from './plugins/router';
 
 export function setConfig(options = {}) {
   const { app } = options;
@@ -15,14 +15,14 @@ export function setConfig(options = {}) {
       },
       get(key) {
         return app.config.globalProperties[key];
-      }
+      },
     },
     toast: {
       show(msg) {
-        console.log(msg);
+        app.config.globalProperties.$message?.info?.(msg);
       },
       error(msg) {
-        console.error(msg);
+        app.config.globalProperties.$message?.error?.(msg);
       },
     },
     router: {
@@ -34,7 +34,7 @@ export function setConfig(options = {}) {
       ...utils(app),
       showMessage(msg) {
         console.log('弹出消息：', msg);
-      }
+      },
     },
     configureRequest(options) {
       /**
@@ -61,5 +61,3 @@ export function setConfig(options = {}) {
     },
   });
 }
-
-
