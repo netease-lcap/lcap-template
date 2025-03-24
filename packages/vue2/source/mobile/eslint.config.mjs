@@ -18,10 +18,7 @@ export default [
     rules: {
       'vue/no-useless-template-attributes': 'off',
       'vue/multi-word-component-names': 'off',
-      'vue/valid-v-slot': 'off',
-      '@typescript-eslint/no-unused-expressions': 'off',
-      '@typescript-eslint/ban-ts-comment': 'off',
-      '@typescript-eslint/no-explicit-any': 'off'
+      'vue/valid-v-slot': 'off'
     }
 }
 ];
