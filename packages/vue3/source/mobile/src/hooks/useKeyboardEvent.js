@@ -1,6 +1,6 @@
 import { onMounted, onUnmounted } from 'vue';
 
-export const onKeyUp = (fn) => {
+export const useKeyUp = (fn) => {
   onMounted(() => {
     document.addEventListener('keyup', fn);
   });
@@ -10,7 +10,7 @@ export const onKeyUp = (fn) => {
   });
 };
 
-export const onKeyDown = (fn) => {
+export const useKeyDown = (fn) => {
   onMounted(() => {
     document.addEventListener('keydown', fn);
   });
