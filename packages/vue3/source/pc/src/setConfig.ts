@@ -33,7 +33,7 @@ export function setConfig(options = {}) {
     utils: {
       ...utils(app),
       showMessage(msg) {
-        console.log('弹出消息：', msg);
+        app.config.globalProperties.$message?.info?.(msg);
       },
     },
     configureRequest(options) {
