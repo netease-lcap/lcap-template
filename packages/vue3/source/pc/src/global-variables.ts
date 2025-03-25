@@ -22,23 +22,15 @@ export const useGlobalVariables = () => {
 
   onMounted(() => {
     // 监听数据变化
-    const variableSet = window.$localCacheVariableSet;
+    globalStore.$subscribe((mutation, state) => {
+      const { frontendVariables } = state;
+      const variableSet = window.$localCacheVariableSet;
 
-    if (variableSet) {
       for (const key of variableSet) {
-        try {
-          globalStore.$watch(
-            `$frontendVariables.${key}`,
-            (newValue) => {
-              storage.set(key, newValue, true);
-            },
-            { deep: true },
-          );
-        } catch (error) {
-          console.warn('error: ', error);
-        }
+        const newValue = frontendVariables[key];
+        storage.set(key, newValue, true);
       }
-    }
+    }, { detached: true })
   });
 
   return {
