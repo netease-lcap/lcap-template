@@ -86,7 +86,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
       const name = endEventLists[index];
       if (name && metaData.frontendEvents[name]) {
         // 确保事件函数中的this指向app
-        evalWrap.bind(app.prototype)(metaData, name);
+        evalWrap.bind(app.config.globalProperties)(metaData, name);
         app.config.globalProperties[name] = window[name];
       }
     }
@@ -114,6 +114,9 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   app.use(UtilsPlugin, metaData);
   app.use(DataTypesPlugin, { ...metaData, i18nInfo: appConfig.i18nInfo });
   app.use(ProcessPlugin);
+
+  // 兼容$frontendVariables
+  app.config.globalProperties.$frontendVariables = window.$global.frontendVariables;
 
   app.use(pinia);
 
