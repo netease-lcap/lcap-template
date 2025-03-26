@@ -414,7 +414,6 @@ function resolveTypeReference(typeAnnotation: TypeAnnotation) {
   return undefined;
 }
 
-//
 function exactMatchShapeAgainstDef(value, def: any): boolean {
   function isMatchForPrimitive(value, ty) {
     const valueTypeStr = Object.prototype.toString.call(value);
