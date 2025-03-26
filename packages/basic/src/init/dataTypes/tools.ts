@@ -447,6 +447,17 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
     }
     return false;
   } else if (def.typeKind === "generic") {
+    if (def.typeName === "List" && def.typeNamespace === "nasl.collection") {
+      const targetTy: TypeAnnotation = def.typeArguments[0];
+      if (!targetTy || !Array.isArray(value)) {
+        return false;
+      }
+      return value.every((item) => exactMatchShapeAgainstDef(item, targetTy));
+    }
+    // TODO 处理 Map的情形
+    // FIXME 实现一个只看形状的collection匹配函数
+    // 在exactMatchShapeAgainstDef中，不应该去调用isInstanceOf。
+    // 此时Value未被绑定构造器，因此它会返回错误的值。
     return isInstanceOf(value, genSortedTypeKey(def));
   } else if (def.properties) {
     // 此时 def 既可以为 anonymousStructure 也可以为 Structure/Entity 等等
