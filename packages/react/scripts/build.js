@@ -25,7 +25,7 @@ function fileWriter(inputPath, outputPath) {
   }
 
   function dirTree(_path, info) {
-    if (_path.includes('/node_modules') || _path.includes('/.')) {
+    if (_path.includes('/node_modules') || _path.includes('.DS_Store') || _path.includes('/.yalc')) {
       return;
     }
     const stats = fs.lstatSync(_path);
