@@ -1,12 +1,12 @@
-import { format } from "date-fns";
-import momentTZ from "moment-timezone";
-import moment from "moment";
-import { flatMap, xor } from "lodash";
+import { format } from 'date-fns';
+import momentTZ from 'moment-timezone';
+import moment from 'moment';
+import { flatMap, xor } from 'lodash';
 
-import BigNumber from "bignumber.js";
-import { getAppTimezone, safeNewDate } from "../utils";
-import Config from "../../config";
-import { sortTypeArgumentsBasedOnTypePriority } from "./inference";
+import BigNumber from 'bignumber.js';
+import { getAppTimezone, safeNewDate } from '../utils';
+import Config from '../../config';
+import { sortTypeArgumentsBasedOnTypePriority } from './inference';
 
 function tryJSONParse(str) {
   let result;
@@ -25,18 +25,18 @@ const typeMap = new Map();
 export function genSortedTypeKey(typeAnnotation) {
   const { typeKind, typeNamespace, typeName, typeArguments, properties } = typeAnnotation || {};
   const typeKeyArr = [];
-  if (typeKind === "union") {
+  if (typeKind === 'union') {
     // 联合类型
     if (Array.isArray(typeArguments)) {
       // 按返回的每个具体项排序
       const childTypeArgs = typeArguments
         .map((typeArg) => genSortedTypeKey(typeArg))
         .sort((name1, name2) => (name1 > name2 ? 1 : -1));
-      typeKeyArr.push(childTypeArgs.join(" | "));
+      typeKeyArr.push(childTypeArgs.join(' | '));
     }
-  } else if (typeKind === "anonymousStructure") {
+  } else if (typeKind === 'anonymousStructure') {
     // 匿名数据结构
-    typeKeyArr.push("{");
+    typeKeyArr.push('{');
     if (Array.isArray(properties)) {
       // 按匿名数据结构的key排序
       const childTypeArgs = properties
@@ -45,26 +45,26 @@ export function genSortedTypeKey(typeAnnotation) {
           const { name: typeArgName, typeAnnotation: typeArgTypeAnnotation } = typeArg || {};
           return `${typeArgName}: ${genSortedTypeKey(typeArgTypeAnnotation)}`;
         });
-      typeKeyArr.push(childTypeArgs.join(", "));
+      typeKeyArr.push(childTypeArgs.join(', '));
     }
-    typeKeyArr.push("}");
+    typeKeyArr.push('}');
   } else {
     const typeArr = [];
     typeNamespace && typeArr.push(typeNamespace);
     typeName && typeArr.push(typeName);
-    const typeKey = typeArr.join(".");
+    const typeKey = typeArr.join('.');
     typeKey && typeKeyArr.push(typeKey);
-    if (typeKind === "generic") {
-      typeKeyArr.push("<");
+    if (typeKind === 'generic') {
+      typeKeyArr.push('<');
       if (Array.isArray(typeArguments)) {
         // 必须按typeArguments定义的顺序，否则实参位置不对
         const childTypeArgs = typeArguments.map((typeArg) => genSortedTypeKey(typeArg));
-        typeKeyArr.push(childTypeArgs.join(", "));
+        typeKeyArr.push(childTypeArgs.join(', '));
       }
-      typeKeyArr.push(">");
+      typeKeyArr.push('>');
     }
   }
-  return typeKeyArr.join("");
+  return typeKeyArr.join('');
 }
 
 // 生成构造函数
@@ -75,15 +75,15 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
     typeDefinitionMap[typeKey] = definition;
     const { typeKind, typeNamespace, typeName, typeArguments, properties } = definition || {};
     let propList = properties;
-    if (typeKind === "generic") {
+    if (typeKind === 'generic') {
       // List和Map属于特殊范型
-      if (typeNamespace === "nasl.collection" && ["List", "Map"].includes(typeName)) {
+      if (typeNamespace === 'nasl.collection' && ['List', 'Map'].includes(typeName)) {
         return;
       }
       const typeArr = [];
       typeNamespace && typeArr.push(typeNamespace);
       typeName && typeArr.push(typeName);
-      const genericTypeKey = typeArr.join(".");
+      const genericTypeKey = typeArr.join('.');
       // 范型定义
       const genericDefinition = typeDefinitionMap[genericTypeKey];
       if (genericDefinition) {
@@ -119,27 +119,27 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
           const { concept } = typeDefinition || {};
           let parsedValue = defaultValue;
           // 设置成null，才能同步给后端清除该值，但是null对checkbox组件是一种特殊状态
-          if (typeKey === "nasl.core.Boolean") {
+          if (typeKey === 'nasl.core.Boolean') {
             parsedValue = defaultValue ?? undefined;
           }
           if (
-            defaultValueType === "[object String]" &&
-            !["nasl.core.String", "nasl.core.Text", "nasl.core.Email"].includes(typeKey) &&
-            concept !== "Enum" &&
-            !["union"].includes(typeKind)
+            defaultValueType === '[object String]' &&
+            !['nasl.core.String', 'nasl.core.Text', 'nasl.core.Email'].includes(typeKey) &&
+            concept !== 'Enum' &&
+            !['union'].includes(typeKind)
           ) {
             // 一些特殊情况，特殊处理成undefined
             // 1.defaultValue在nasl节点上错误得赋值给了空制符串
-            if ([""].includes(defaultValue)) {
+            if ([''].includes(defaultValue)) {
               parsedValue = undefined;
             } else {
               parsedValue = tryJSONParse(defaultValue) ?? defaultValue;
             }
           }
-          if (Object.prototype.toString.call(parsedValue) === "[object String]" && !defaultCode?.executeCode) {
+          if (Object.prototype.toString.call(parsedValue) === '[object String]' && !defaultCode?.executeCode) {
             parsedValue = `\`${parsedValue.replace(/['"`\\]/g, (m) => `\\${m}`)}\``;
           }
-          const needGenInitFromSchema = typeAnnotation && !["primitive"].includes(typeAnnotation.typeKind);
+          const needGenInitFromSchema = typeAnnotation && !['primitive'].includes(typeAnnotation.typeKind);
           const sortedTypeKey = genSortedTypeKey(typeAnnotation);
 
           const item = {
@@ -155,7 +155,7 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
       function ctor(params) {
         const level = params.level;
         const defaultValue = params.defaultValue;
-        if (defaultValue && Object.prototype.toString.call(defaultValue) === "[object Object]") {
+        if (defaultValue && Object.prototype.toString.call(defaultValue) === '[object Object]') {
           Object.assign(this, defaultValue);
         }
 
@@ -170,7 +170,7 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
               ? _defaultValue$p
               : ${item.parsedValue};`;
           // parsedValue是字符串，例如： '(() => { \nconst arr = [\n`a`\n];\nreturn arr;\n})()'，所以只能用new Function...
-          let value = new Function("defaultValue", code)(defaultValue);
+          let value = new Function('defaultValue', code)(defaultValue);
 
           if (item.needGenInitFromSchema) {
             value = genInitFromSchema(item.sortedTypeKey, value, level);
@@ -178,14 +178,14 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
           this[item.propertyName] = value ?? null;
         });
 
-        Object.defineProperty(this, "$type", {
+        Object.defineProperty(this, '$type', {
           value: typeKey,
           enumerable: false,
         });
       }
       // ctor设置name
-      Object.defineProperty(ctor, "name", {
-        value: "NaslTypeConstructor",
+      Object.defineProperty(ctor, 'name', {
+        value: 'NaslTypeConstructor',
       });
 
       return ctor;
@@ -215,10 +215,10 @@ export function initApplicationConstructor(dataTypesMap, genInitFromSchema) {
 // 判断字符串的具体类型
 export function judgeStrType(str: string): string | undefined {
   const regMap: Record<string, RegExp> = {
-    "nasl.core.Date": /^\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2}$/,
-    "nasl.core.Time": /^(\d{1,2})(:\d{1,2})?:(\d{1,2})$/,
+    'nasl.core.Date': /^\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2}$/,
+    'nasl.core.Time': /^(\d{1,2})(:\d{1,2})?:(\d{1,2})$/,
     // 2021-01-01T05:11:22.010Z 或 2021-01-01 05:11:22
-    "nasl.core.DateTime":
+    'nasl.core.DateTime':
       /^(\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2}T(\d{1,2})(:\d{1,2})?:(\d{1,2})\.\d{3}Z)$|^(\d{1,4}(\/|-)\d{1,2}(\/|-)\d{1,2} (\d{1,2})(:\d{1,2})?:(\d{1,2}))$/,
   };
   for (const key in regMap) {
@@ -236,18 +236,18 @@ export function isInstanceOf(variable, typeKey) {
   const varStr = Object.prototype.toString.call(variable);
   const { concept, typeKind, typeNamespace, typeName, typeArguments } = typeDefinition || {};
   const isPrimitive = isDefPrimitive(typeKey);
-  if (typeKind === "union") {
+  if (typeKind === 'union') {
     return !!typeArguments?.some((typeArg) => isInstanceOf(variable, genSortedTypeKey(typeArg)));
-  } else if (concept === "Enum") {
+  } else if (concept === 'Enum') {
     // 枚举
     const { enumItems } = typeDefinition;
     if (Array.isArray(enumItems)) {
-      if (varStr === "[object String]") {
+      if (varStr === '[object String]') {
         // 当前值在枚举中存在
         // 枚举值支持integer，改为不严格判断
         const enumItemIndex = enumItems.findIndex((enumItem) => variable == enumItem.value);
         return enumItemIndex !== -1;
-      } else if (varStr === "[object Array]") {
+      } else if (varStr === '[object Array]') {
         const enumItemIndex = variable.findIndex(
           (varItem) => !isInstanceOf(varItem.value, genSortedTypeKey(typeDefinition)),
         );
@@ -258,33 +258,33 @@ export function isInstanceOf(variable, typeKey) {
   } else if (isPrimitive) {
     const isBigNumber = variable instanceof BigNumber || BigNumber.isBigNumber(variable);
     // 基础类型
-    if (varStr === "[object String]") {
+    if (varStr === '[object String]') {
       const actualStrType = judgeStrType(variable);
       if (actualStrType) {
         return actualStrType === typeKey;
-      } else if (["nasl.core.String", "nasl.core.Binary"].includes(typeKey)) {
+      } else if (['nasl.core.String', 'nasl.core.Binary'].includes(typeKey)) {
         return true;
       }
     } else if (
-      (varStr === "[object Number]" || isBigNumber) &&
-      ["nasl.core.Long", "nasl.core.Decimal"].includes(typeKey)
+      (varStr === '[object Number]' || isBigNumber) &&
+      ['nasl.core.Long', 'nasl.core.Decimal'].includes(typeKey)
     ) {
       return true;
-    } else if (varStr === "[object Boolean]" && typeKey === "nasl.core.Boolean") {
+    } else if (varStr === '[object Boolean]' && typeKey === 'nasl.core.Boolean') {
       return true;
     }
-  } else if (typeKind === "generic" && typeNamespace === "nasl.collection") {
+  } else if (typeKind === 'generic' && typeNamespace === 'nasl.collection') {
     if (
-      !((typeName === "List" && varStr === "[object Array]") || (typeName === "Map" && varStr === "[object Object]"))
+      !((typeName === 'List' && varStr === '[object Array]') || (typeName === 'Map' && varStr === '[object Object]'))
     ) {
       return false;
     }
     // 特殊范型List/Map
     let keyChecked = true;
     // 期望的值的类型
-    const valueTypeArg = typeName === "List" ? typeArguments?.[0] : typeArguments?.[1];
+    const valueTypeArg = typeName === 'List' ? typeArguments?.[0] : typeArguments?.[1];
     // Map存在key类型校验不通过校验的情况
-    if (typeName === "Map") {
+    if (typeName === 'Map') {
       // 期望的key类型
       const keyTypeArg = typeArguments?.[0];
       for (const key in variable) {
@@ -295,11 +295,11 @@ export function isInstanceOf(variable, typeKey) {
     }
     // key校验通过，再校验value是否符合
     if (keyChecked) {
-      if (typeName === "List" && Array.isArray(variable)) {
+      if (typeName === 'List' && Array.isArray(variable)) {
         const failedIndex = variable.findIndex((varItem) => !isInstanceOf(varItem, genSortedTypeKey(valueTypeArg)));
         // 当前数组为空或者与定义完全匹配
         return variable.length === 0 || failedIndex === -1;
-      } else if (typeName === "Map" && variable) {
+      } else if (typeName === 'Map' && variable) {
         let checked = true;
         for (const key in variable) {
           const varItem = variable[key];
@@ -319,50 +319,50 @@ export function isInstanceOf(variable, typeKey) {
 // 类型定义是否属于基础类型
 const isDefPrimitive = (typeKey) =>
   [
-    "nasl.core.Boolean",
-    "nasl.core.Long",
-    "nasl.core.Decimal",
-    "nasl.core.String",
-    "nasl.core.Text",
-    "nasl.core.Binary",
-    "nasl.core.Date",
-    "nasl.core.Time",
-    "nasl.core.DateTime",
-    "nasl.core.Email",
+    'nasl.core.Boolean',
+    'nasl.core.Long',
+    'nasl.core.Decimal',
+    'nasl.core.String',
+    'nasl.core.Text',
+    'nasl.core.Binary',
+    'nasl.core.Date',
+    'nasl.core.Time',
+    'nasl.core.DateTime',
+    'nasl.core.Email',
   ].includes(typeKey);
 
 // 类型定义是否属于字符串大类
 export const isDefString = (typeKey) =>
   [
-    "nasl.core.String",
-    "nasl.core.Text",
-    "nasl.core.Binary",
-    "nasl.core.Date",
-    "nasl.core.Time",
-    "nasl.core.DateTime",
-    "nasl.core.Email",
+    'nasl.core.String',
+    'nasl.core.Text',
+    'nasl.core.Binary',
+    'nasl.core.Date',
+    'nasl.core.Time',
+    'nasl.core.DateTime',
+    'nasl.core.Email',
   ].includes(typeKey);
 
 // 类型定义是否属于数字大类
-export const isDefNumber = (typeKey) => ["nasl.core.Long", "nasl.core.Decimal"].includes(typeKey);
+export const isDefNumber = (typeKey) => ['nasl.core.Long', 'nasl.core.Decimal'].includes(typeKey);
 
 // 类型定义是否属于数组
 export const isDefList = (typeDefinition) => {
   const { typeKind, typeNamespace, typeName } = typeDefinition || {};
-  return typeKind === "generic" && typeNamespace === "nasl.collection" && typeName === "List";
+  return typeKind === 'generic' && typeNamespace === 'nasl.collection' && typeName === 'List';
 };
 
 // 类型定义是否属于Map
 export const isDefMap = (typeDefinition) => {
   const { typeKind, typeNamespace, typeName } = typeDefinition || {};
-  return typeKind === "generic" && typeNamespace === "nasl.collection" && typeName === "Map";
+  return typeKind === 'generic' && typeNamespace === 'nasl.collection' && typeName === 'Map';
 };
 
 // 值是否属于基础类型
 // 数字（number）、字符串（string）、布尔值（boolean）、undefined、null、对象（Object）
 const isValPrimitive = (value) => {
   const typeStr = Object.prototype.toString.call(value);
-  return ["[object Boolean]", "[object Number]", "[object String]"].includes(typeStr);
+  return ['[object Boolean]', '[object Number]', '[object String]'].includes(typeStr);
 };
 
 /**
@@ -376,14 +376,14 @@ const isTypeMatch = (typeKey, value) => {
   const isValuePrimitive = isValPrimitive(value); // 类型字符串
   const typeStr = Object.prototype.toString.call(value);
   const { concept } = typeAnnotation || {};
-  let isMatch = isPrimitive === isValuePrimitive || (concept === "Enum" && typeStr === "[object String]");
+  let isMatch = isPrimitive === isValuePrimitive || (concept === 'Enum' && typeStr === '[object String]');
   // 大类型匹配的基础上继续深入判断
   if (isMatch) {
     if (isPrimitive) {
       if (
-        (typeKey === "nasl.core.Boolean" && typeStr !== "[object Boolean]") ||
-        (isDefNumber(typeKey) && typeStr !== "[object Number]") ||
-        (isDefString(typeKey) && typeStr !== "[object String]")
+        (typeKey === 'nasl.core.Boolean' && typeStr !== '[object Boolean]') ||
+        (isDefNumber(typeKey) && typeStr !== '[object Number]') ||
+        (isDefString(typeKey) && typeStr !== '[object String]')
       ) {
         isMatch = false;
       }
@@ -396,21 +396,39 @@ function unorderedArrayEqual<T>(a: T[], b: T[]) {
   return xor(a, b).length === 0;
 }
 
+/**
+ * 解析类型引用到实际的类型定义
+ * @param typeAnnotation 需要解析的类型标注
+ * @returns 如果解析成功则返回解析后的类型属性，解析失败返回null
+ */
+function resolveTypeReference(typeAnnotation: TypeAnnotation) {
+  if (typeAnnotation.typeKind === 'reference') {
+    const typeKey = genSortedTypeKey(typeAnnotation);
+    const candiateDef = getTypeDefinition(typeKey);
+    // 如果仍然是type reference，那么视作失败
+    if (candiateDef?.concept === 'TypeAnnotation' && candiateDef.typeKind === 'reference') {
+      return undefined;
+    }
+    return candiateDef;
+  }
+  return undefined;
+}
+
 function exactMatchShapeAgainstDef(value, def: any): boolean {
   function isMatchForPrimitive(value, ty) {
     const valueTypeStr = Object.prototype.toString.call(value);
     // 检查enum类型
-    if (ty.typeKind === "primitive" && ty.concept === "Enum") {
-      return valueTypeStr === "[object String]";
+    if (ty.typeKind === 'primitive' && ty.concept === 'Enum') {
+      return valueTypeStr === '[object String]';
     }
-    if (ty.typeKind !== "primitive") {
+    if (ty.typeKind !== 'primitive') {
       return false;
     }
     const typeKey = `${ty.typeNamespace}.${ty.typeName}`;
     return (
-      (typeKey === "nasl.core.Boolean" && valueTypeStr === "[object Boolean]") ||
-      (isDefNumber(typeKey) && valueTypeStr === "[object Number]") ||
-      (isDefString(typeKey) && valueTypeStr === "[object String]")
+      (typeKey === 'nasl.core.Boolean' && valueTypeStr === '[object Boolean]') ||
+      (isDefNumber(typeKey) && valueTypeStr === '[object Number]') ||
+      (isDefString(typeKey) && valueTypeStr === '[object String]')
     );
   }
   if (!def || value === undefined) {
@@ -419,36 +437,40 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
   if (value === null) {
     return true;
   }
-  if (def.typeKind === "primitive") {
+  if (def.typeKind === 'primitive') {
     return isMatchForPrimitive(value, def);
-  } else if (def.typeKind === "union") {
+  } else if (def.typeKind === 'union') {
     for (const ty of def.typeArguments) {
       if (exactMatchShapeAgainstDef(value, ty)) {
         return true;
       }
     }
     return false;
-  } else if (def.typeKind === "generic") {
+  } else if (def.typeKind === 'generic') {
     return isInstanceOf(value, genSortedTypeKey(def));
   } else if (def.properties) {
+    // 此时 def 既可以为 anonymousStructure 也可以为 Structure/Entity 等等
     const properties = def.properties;
-    if (properties) {
-      if (
-        typeof value === "object" &&
-        value !== null &&
-        Array.isArray(properties) &&
-        unorderedArrayEqual(
-          Object.keys(value),
-          properties.map((prop) => prop.name),
-        )
-      ) {
-        return properties.every((prop) => {
-          const propValue = value?.[prop.name];
-          if (propValue === undefined) {
-            return false;
-          }
-          return exactMatchShapeAgainstDef(propValue, prop.typeAnnotation);
-        });
+    if (
+      typeof value === 'object' &&
+      value !== null &&
+      Array.isArray(properties) &&
+      unorderedArrayEqual(
+        Object.keys(value),
+        properties.map((prop) => prop.name),
+      )
+    ) {
+      return properties.every((prop) => {
+        const propValue = value?.[prop.name];
+        if (propValue === undefined) {
+          return false;
+        }
+        return exactMatchShapeAgainstDef(propValue, prop.typeAnnotation);
+      });
+    } else if (def.typeKind === 'reference') {
+      const resolved = resolveTypeReference(def);
+      if (resolved) {
+        return exactMatchShapeAgainstDef(value, resolved);
       }
     }
     return false;
@@ -458,7 +480,7 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
 
 export function getTypeDefinition(typeKey: string):
   | TypeAnnotation
-  | { concept: "Enum" }
+  | { concept: 'Enum' }
   // FIXME 若这里添加了Entity就会报错，看看实际情况如何，写得严密一点
   // | { concept: "Entity"; properties: { typeAnnotation: TypeAnnotation; name: string; defaultValue: DefaultValue }[] }
   | undefined {
@@ -474,11 +496,11 @@ function inferConstructorAgainstTypeKey(
     return undefined;
   }
 
-  if (def.concept === "Enum" || def.typeKind === "primitive") {
+  if (def.concept === 'Enum' || def.typeKind === 'primitive') {
     // 视作没有Constructor
     return undefined;
   }
-  if (def.typeKind === "union") {
+  if (def.typeKind === 'union') {
     // Union的所有分支对应的类型构造器，按照优先级排序后，从左到右匹配：
     // 1. 对当前类型构造器，看它有无定义tag字段：有tag字段且值和value对应字段相同，直接输出当前类型构造器而无需结构一致；否则，跳过。
     // 2. 先判断结构是否一致（复合类型递归看properties属性；Primitive类型直接判断即可）。结构相同的时候，当前类型构造器作为候选；否则，跳过。
@@ -492,20 +514,20 @@ function inferConstructorAgainstTypeKey(
     for (const ty of sortTypeArgumentsBasedOnTypePriority(def.typeArguments)) {
       const curTypeKey = `${ty.typeNamespace}.${ty.typeName}`;
       // 对依赖库的extensions.${libname}.errors.${ErrorName}需要映射为extensions.${libname}.structures.${ErrorName}
-      const normalizedTypeKey = curTypeKey.startsWith("extensions.")
-        ? curTypeKey.replace(".errors.", ".structures.")
+      const normalizedTypeKey = curTypeKey.startsWith('extensions.')
+        ? curTypeKey.replace('.errors.', '.structures.')
         : curTypeKey;
       const curDef = getTypeDefinition(normalizedTypeKey);
       if (!curDef) {
         continue;
       }
-      if (curDef.concept === "Enum" && exactMatchShapeAgainstDef(value, curDef)) {
+      if (curDef.concept === 'Enum' && exactMatchShapeAgainstDef(value, curDef)) {
         return typeMap[curTypeKey];
-      } else if (ty.typeKind === "primitive" && exactMatchShapeAgainstDef(value, curDef)) {
+      } else if (ty.typeKind === 'primitive' && exactMatchShapeAgainstDef(value, curDef)) {
         return typeMap[curTypeKey];
-      } else if (ty.typeKind === "union") {
-        throw new Error("Union类型的typeArguments不能再为union");
-      } else if (ty.typeKind === "reference") {
+      } else if (ty.typeKind === 'union') {
+        throw new Error('Union类型的typeArguments不能再为union');
+      } else if (ty.typeKind === 'reference') {
         // Entity | Structure
         // @ts-expect-error FIXME curDef上没有properties
         const properties = curDef?.properties;
@@ -513,8 +535,8 @@ function inferConstructorAgainstTypeKey(
           // 如果存在字段定义，那么尝试获取第一个tag字段
           const tagProperty = flatMap(properties, (prop) => {
             const defaultValue = prop.defaultValue;
-            const hardcodedPropertyName = "errorType";
-            if (prop.name === hardcodedPropertyName && defaultValue?.expression?.concept === "StringLiteral") {
+            const hardcodedPropertyName = 'errorType';
+            if (prop.name === hardcodedPropertyName && defaultValue?.expression?.concept === 'StringLiteral') {
               return [
                 // 允许tagValue为undefined
                 { name: prop.name, tagValue: defaultValue.expression.value },
@@ -557,20 +579,20 @@ export const genInitData = (typeKey, defaultValue, parentLevel?) => {
   const defaultValueType = Object.prototype.toString.call(defaultValue);
   let parsedValue = defaultValue;
   // 设置成null，才能同步给后端清除该值，但是null对checkbox组件是一种特殊状态
-  if (typeKey === "nasl.core.Boolean") {
+  if (typeKey === 'nasl.core.Boolean') {
     parsedValue = defaultValue ?? undefined;
   }
   const typeDefinition = typeDefinitionMap[typeKey];
   const { concept, typeKind, typeNamespace, typeName, typeArguments, properties } = typeDefinition || {};
   if (
-    defaultValueType === "[object String]" &&
-    !["nasl.core.String", "nasl.core.Text", "nasl.core.Email"].includes(typeKey) &&
-    concept !== "Enum" &&
-    !["union"].includes(typeKind)
+    defaultValueType === '[object String]' &&
+    !['nasl.core.String', 'nasl.core.Text', 'nasl.core.Email'].includes(typeKey) &&
+    concept !== 'Enum' &&
+    !['union'].includes(typeKind)
   ) {
     // 一些特殊情况，特殊处理成undefined
     // 1.defaultValue在nasl节点上错误得赋值给了空字符串
-    if ([""].includes(defaultValue)) {
+    if ([''].includes(defaultValue)) {
       parsedValue = undefined;
     } else {
       parsedValue = tryJSONParse(defaultValue) !== undefined ? tryJSONParse(defaultValue) : defaultValue;
@@ -581,21 +603,21 @@ export const genInitData = (typeKey, defaultValue, parentLevel?) => {
   }
 
   // nasl.interface下的类型无法通过构造器构造，因此直接返回
-  if (typeKey?.startsWith?.("nasl.interface.")) {
+  if (typeKey?.startsWith?.('nasl.interface.')) {
     return parsedValue;
   }
   const isTypeMatched = parsedValue === undefined || isTypeMatch(typeKey, parsedValue);
   if (isTypeMatched) {
-    if (typeKind === "generic" && typeNamespace === "nasl.collection" && ["List", "Map"].includes(typeName)) {
+    if (typeKind === 'generic' && typeNamespace === 'nasl.collection' && ['List', 'Map'].includes(typeName)) {
       // 特殊范型List/Map
-      let initVal = typeName === "List" ? [] : {};
+      let initVal = typeName === 'List' ? [] : {};
       if (parsedValue) {
         // valueTypeAnnotation可能会由于一些情况出现空，因此不能加上对typeArguments数组的整体容错判断
-        const valueTypeAnnotation = typeName === "List" ? typeArguments?.[0] : typeArguments?.[1];
+        const valueTypeAnnotation = typeName === 'List' ? typeArguments?.[0] : typeArguments?.[1];
         const sortedTypeKey = genSortedTypeKey(valueTypeAnnotation);
-        if (typeName === "List" && Array.isArray(parsedValue)) {
+        if (typeName === 'List' && Array.isArray(parsedValue)) {
           initVal = parsedValue.map((item) => genInitData(sortedTypeKey, item, level));
-        } else if (typeName === "Map") {
+        } else if (typeName === 'Map') {
           for (const key in parsedValue) {
             const val = parsedValue[key];
             initVal[key] = genInitData(sortedTypeKey, val, level);
@@ -604,15 +626,15 @@ export const genInitData = (typeKey, defaultValue, parentLevel?) => {
       }
       return initVal;
     }
-    if (typeName === "DateTime" && parsedValue !== undefined) {
+    if (typeName === 'DateTime' && parsedValue !== undefined) {
       if (parsedValue instanceof Date) {
-        parsedValue = moment(new Date()).format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+        parsedValue = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
       }
       return parsedValue;
     } else if (typeKey) {
       const Ctor = inferConstructorAgainstTypeKey(parsedValue, typeKey);
       if (Ctor) {
-        if (concept === "Structure" && Object.prototype.toString.call(parsedValue) === "[object Object]") {
+        if (concept === 'Structure' && Object.prototype.toString.call(parsedValue) === '[object Object]') {
           parsedValue = jsonNameReflection(properties, parsedValue);
         }
         const instance = new Ctor({
@@ -632,7 +654,7 @@ export const genInitData = (typeKey, defaultValue, parentLevel?) => {
  * @returns
  */
 function indent(tabSize) {
-  return " ".repeat(4 * tabSize);
+  return ' '.repeat(4 * tabSize);
 }
 
 /**
@@ -649,22 +671,22 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
     return variable;
   }
   // null 或 undefined 返回 "（空）"
-  if ([undefined, null].includes(variable) || typeKey === "nasl.core.Null") {
+  if ([undefined, null].includes(variable) || typeKey === 'nasl.core.Null') {
     // 空
     if (tabSize > 0) {
-      return "（空）";
+      return '（空）';
     } else {
-      return "";
+      return '';
     }
   }
-  let str = "";
+  let str = '';
   const isPrimitive = isDefPrimitive(typeKey);
   if (isPrimitive) {
     // 基础类型
-    str = "" + variable;
+    str = '' + variable;
     // >=8位有效数字时，按小e
-    if (["nasl.core.Double", "nasl.core.Decimal"].includes(typeKey)) {
-      const varArr = str.split(".");
+    if (['nasl.core.Double', 'nasl.core.Decimal'].includes(typeKey)) {
+      const varArr = str.split('.');
       let count = 0;
       varArr.forEach((varStr) => {
         count += varStr.length;
@@ -678,9 +700,9 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
     }
 
     // 日期时间处理
-    if (typeKey === "nasl.core.Date") {
-      str = momentTZ.tz(safeNewDate(variable), getAppTimezone(tz)).format("YYYY-MM-DD");
-    } else if (typeKey === "nasl.core.Time") {
+    if (typeKey === 'nasl.core.Date') {
+      str = momentTZ.tz(safeNewDate(variable), getAppTimezone(tz)).format('YYYY-MM-DD');
+    } else if (typeKey === 'nasl.core.Time') {
       const timeRegex = /^([01]?\d|2[0-3])(?::([0-5]?\d)(?::([0-5]?\d))?)?$/;
       // 纯时间 12:30:00
       if (timeRegex.test(variable)) {
@@ -690,38 +712,38 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
         [
           {
             index: 1,
-            format: "HH",
+            format: 'HH',
           },
           {
             index: 2,
-            format: "mm",
+            format: 'mm',
           },
           {
             index: 3,
-            format: "ss",
+            format: 'ss',
           },
         ].forEach(({ index, format }) => {
           const varItem = match[index];
           if (varItem) {
             formatArr.push(format);
           }
-          varArr.push(varItem || "00");
+          varArr.push(varItem || '00');
         });
         str = momentTZ
-          .tz(safeNewDate("2022-01-01 " + varArr.join(":")), getAppTimezone(tz))
-          .format(formatArr.join(":"));
+          .tz(safeNewDate('2022-01-01 ' + varArr.join(':')), getAppTimezone(tz))
+          .format(formatArr.join(':'));
       } else {
-        str = momentTZ.tz(safeNewDate(variable), getAppTimezone(tz)).format("HH:mm:ss");
+        str = momentTZ.tz(safeNewDate(variable), getAppTimezone(tz)).format('HH:mm:ss');
       }
-    } else if (typeKey === "nasl.core.DateTime") {
-      str = momentTZ.tz(safeNewDate(variable), getAppTimezone(tz)).format("YYYY-MM-DD HH:mm:ss");
+    } else if (typeKey === 'nasl.core.DateTime') {
+      str = momentTZ.tz(safeNewDate(variable), getAppTimezone(tz)).format('YYYY-MM-DD HH:mm:ss');
     }
     if (tabSize > 0) {
-      if (["nasl.core.String", "nasl.core.Text"].includes(typeKey)) {
+      if (['nasl.core.String', 'nasl.core.Text'].includes(typeKey)) {
         const maxLen = 100;
         const moreThanMax = variable.length > maxLen;
         if (moreThanMax) {
-          str = variable.slice(0, maxLen) + "...";
+          str = variable.slice(0, maxLen) + '...';
         }
       }
       // 是否属于字符串大类
@@ -733,39 +755,39 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
     const typeDefinition = typeDefinitionMap[typeKey];
     let { concept, typeKind, typeNamespace, typeName, typeArguments, name, properties, enumItems } =
       typeDefinition || {};
-    if (typeKind === "union") {
+    if (typeKind === 'union') {
       if (Array.isArray(typeArguments) && typeArguments.length) {
         const typeArg = typeArguments.find((typeArg) => isInstanceOf(variable, genSortedTypeKey(typeArg)));
         if (typeArg) {
           str = toString(genSortedTypeKey(typeArg), variable, tz, tabSize, collection) as string;
         }
       }
-    } else if (concept === "Enum") {
+    } else if (concept === 'Enum') {
       if (Array.isArray(enumItems) && enumItems.length) {
         // 改为不严格判断，枚举值支持数字类型
         const enumItem = enumItems.find((enumItem) => variable == enumItem.value);
         if (window.$i18n && window.$global?.i18nInfo?.enabled && enumItem?.label?.i18nKey) {
           str = window.$i18n.t(enumItem.label.i18nKey);
         } else {
-          str = enumItem?.label?.value || "";
+          str = enumItem?.label?.value || '';
         }
       }
-    } else if (["TypeAnnotation", "Structure", "Entity"].includes(concept)) {
+    } else if (['TypeAnnotation', 'Structure', 'Entity'].includes(concept)) {
       // 复合类型
       if (collection.has(variable)) {
-        str = "";
+        str = '';
         if (isDefList(typeDefinition)) {
           if (variable.length > 0) {
-            str += "[...]";
+            str += '[...]';
           } else {
-            str += "[]";
+            str += '[]';
           }
         } else if (isDefMap(typeDefinition)) {
           const keys = Object.keys(variable);
           if (keys.length > 0) {
-            str += "[... -> ...]";
+            str += '[... -> ...]';
           } else {
-            str += "[->]";
+            str += '[->]';
           }
         } else {
           const keys = Object.keys(variable);
@@ -773,27 +795,27 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
             str += `${name} `;
           }
           if (keys.length > 0) {
-            str += "{...}";
+            str += '{...}';
           } else {
-            str += "{}";
+            str += '{}';
           }
         }
       } else {
         collection.add(variable);
 
-        if (typeKind === "generic" && typeNamespace === "nasl.collection") {
-          if (typeName === "List") {
+        if (typeKind === 'generic' && typeNamespace === 'nasl.collection') {
+          if (typeName === 'List') {
             const itemTypeKey = genSortedTypeKey(typeArguments?.[0]);
             const tmp = variable.map(
               (varItem) => `${indent(tabSize + 1)}${toString(itemTypeKey, varItem, tz, tabSize + 1, collection)}`,
             );
-            const arrStr = tmp.join(",\n");
+            const arrStr = tmp.join(',\n');
             if (variable.length) {
               str = `[\n${arrStr}\n${indent(tabSize)}]`;
             } else {
-              str = "[]";
+              str = '[]';
             }
-          } else if (typeName === "Map") {
+          } else if (typeName === 'Map') {
             const keys = Object.keys(variable);
             const keyTypeKey = genSortedTypeKey(typeArguments?.[0]);
             const itemTypeKey = genSortedTypeKey(typeArguments?.[1]);
@@ -808,16 +830,16 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
                     collection,
                   )}`,
               )
-              .join(",\n");
+              .join(',\n');
             if (keys.length) {
               str = `{\n${arrStr}\n${indent(tabSize)}}`;
             } else {
-              str = "{}";
+              str = '{}';
             }
           }
         } else {
           // 处理一些范型数据结构的情况
-          if (typeKind === "generic") {
+          if (typeKind === 'generic') {
             const genericTypeKey = `${typeNamespace}.${typeName}`;
             const genericTypeDefinition = typeDefinitionMap[genericTypeKey];
             if (genericTypeDefinition) {
@@ -844,11 +866,11 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
               }
             }
           }
-          let code = "";
+          let code = '';
           if (name) {
             code += `${name} `;
           }
-          code += "{\n";
+          code += '{\n';
           if (Array.isArray(properties) && properties.length) {
             code += properties
               .map((property) => {
@@ -858,7 +880,7 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
                 const propValStr = toString(propTypeKey, propVal, tz, tabSize + 1, collection);
                 return `${indent(tabSize + 1)}${propName}: ${propValStr}`;
               })
-              .join(",\n");
+              .join(',\n');
           }
           code += `\n${indent(tabSize)}}`;
           str = code;
@@ -866,10 +888,10 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
       }
     }
   }
-  if (str === "") {
-    if (Object.prototype.toString.call(variable) === "[object Object]") {
+  if (str === '') {
+    if (Object.prototype.toString.call(variable) === '[object Object]') {
       if (collection.has(variable)) {
-        str = "{...}";
+        str = '{...}';
       } else {
         collection.add(variable);
 
@@ -880,11 +902,11 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
           const propValStr = toString(undefined, propVal, tz, tabSize + 1, collection);
           propStr.push(`${indent(tabSize + 1)}${key}: ${propValStr}`);
         }
-        str += propStr.join(",\n");
+        str += propStr.join(',\n');
         str += `\n}`;
       }
     } else {
-      str = "" + variable;
+      str = '' + variable;
     }
   }
   return str;
@@ -912,18 +934,18 @@ function isValidDate(dateString, reg) {
   }
   // 验证日期是否真实存在
   const date = safeNewDate(dateString);
-  if (date.toString() === "Invalid Date") {
+  if (date.toString() === 'Invalid Date') {
     return false;
   }
   let splitChar;
-  if (dateString.includes("-")) {
-    splitChar = "-";
-  } else if (dateString.includes("/")) {
-    splitChar = "/";
-  } else if (dateString.includes(".")) {
-    splitChar = ".";
+  if (dateString.includes('-')) {
+    splitChar = '-';
+  } else if (dateString.includes('/')) {
+    splitChar = '/';
+  } else if (dateString.includes('.')) {
+    splitChar = '.';
   }
-  const [year, month, day] = dateString.split(" ")?.[0]?.split(splitChar).map(Number);
+  const [year, month, day] = dateString.split(' ')?.[0]?.split(splitChar).map(Number);
   if (date.getFullYear() !== year || date.getMonth() + 1 !== month || date.getDate() !== day) {
     return false;
   }
@@ -935,22 +957,22 @@ export const fromString = (variable, typeKey) => {
   const isPrimitive = isDefPrimitive(typeKey);
   const { typeName } = typeDefinition || {};
   // 日期
-  if (typeName === "DateTime") {
+  if (typeName === 'DateTime') {
     const date = safeNewDate(variable);
     const outputDate = format(date, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
     return outputDate;
-  } else if (typeName === "Date") {
-    return moment(safeNewDate(variable)).format("YYYY-MM-DD");
-  } else if (typeName === "Time" && TimeReg.test(variable)) {
+  } else if (typeName === 'Date') {
+    return moment(safeNewDate(variable)).format('YYYY-MM-DD');
+  } else if (typeName === 'Time' && TimeReg.test(variable)) {
     // ???
-    return moment(safeNewDate("2022-01-01 " + variable)).format("HH:mm:ss");
+    return moment(safeNewDate('2022-01-01 ' + variable)).format('HH:mm:ss');
   }
   // 浮点数
-  else if (["Decimal", "Double"].includes(typeName) && FloatNumberReg.test(variable)) {
+  else if (['Decimal', 'Double'].includes(typeName) && FloatNumberReg.test(variable)) {
     return parseFloat(String(+variable));
   }
   // 整数
-  else if (["Integer", "Long"].includes(typeName) && IntegerReg.test(variable)) {
+  else if (['Integer', 'Long'].includes(typeName) && IntegerReg.test(variable)) {
     const maxMap = {
       Integer: 2147483647,
       Long: 9223372036854775807,
@@ -961,8 +983,8 @@ export const fromString = (variable, typeKey) => {
     }
   }
   // 布尔
-  else if (typeName === "Boolean") {
-    if (["true", "false"].includes(variable)) {
+  else if (typeName === 'Boolean') {
+    if (['true', 'false'].includes(variable)) {
       return JSON.parse(variable);
     }
   }
@@ -977,7 +999,7 @@ export function toastAndThrowError(err) {
 function jsonNameReflection(properties, parsedValue) {
   if (!Array.isArray(properties)) return parsedValue;
   properties.forEach(({ jsonName, name }) => {
-    if (jsonName === name || jsonName === undefined || jsonName === null || jsonName === "") return;
+    if (jsonName === name || jsonName === undefined || jsonName === null || jsonName === '') return;
     parsedValue[name] = parsedValue[jsonName];
     delete parsedValue[jsonName];
   });
