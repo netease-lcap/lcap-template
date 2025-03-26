@@ -465,7 +465,7 @@ export function getTypeDefinition(typeKey: string):
   return typeDefinitionMap[typeKey];
 }
 
-function inferTypeConstructorAgainstTypeKey(
+function inferConstructorAgainstTypeKey(
   value: unknown,
   typeKey: string,
 ): (new (options: { defaultValue: unknown; level: number }) => unknown) | undefined {
@@ -610,12 +610,12 @@ export const genInitData = (typeKey, defaultValue, parentLevel?) => {
       }
       return parsedValue;
     } else if (typeKey) {
-      const TypeConstructor = inferTypeConstructorAgainstTypeKey(parsedValue, typeKey);
-      if (TypeConstructor) {
+      const Ctor = inferConstructorAgainstTypeKey(parsedValue, typeKey);
+      if (Ctor) {
         if (concept === "Structure" && Object.prototype.toString.call(parsedValue) === "[object Object]") {
           parsedValue = jsonNameReflection(properties, parsedValue);
         }
-        const instance = new TypeConstructor({
+        const instance = new Ctor({
           defaultValue: parsedValue,
           level,
         });
