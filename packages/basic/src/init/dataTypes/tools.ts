@@ -453,8 +453,19 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
         return false;
       }
       return value.every((item) => exactMatchShapeAgainstDef(item, targetTy));
+    } else if (def.typeName === "Map" && def.typeNamespace === "nasl.collection") {
+      const keyTy = def.typeArguments[0];
+      const valueTy = def.typeArguments[1];
+      if (!keyTy || !valueTy || typeof value !== "object" || value === null || Array.isArray(value)) {
+        return false;
+      }
+      for (const [k, v] of Object.entries(value)) {
+        if (!exactMatchShapeAgainstDef(k, keyTy) || !exactMatchShapeAgainstDef(v, valueTy)) {
+          return false;
+        }
+      }
+      return true;
     }
-    // TODO 处理 Map的情形
     // FIXME 实现一个只看形状的collection匹配函数
     // 在exactMatchShapeAgainstDef中，不应该去调用isInstanceOf。
     // 此时Value未被绑定构造器，因此它会返回错误的值。
