@@ -478,13 +478,13 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
         }
         return exactMatchShapeAgainstDef(propValue, prop.typeAnnotation);
       });
-    } else if (def.typeKind === "reference") {
-      const resolved = resolveTypeReference(def);
-      if (resolved) {
-        return exactMatchShapeAgainstDef(value, resolved);
-      }
     }
     return false;
+  } else if (def.typeKind === "reference") {
+    const resolved = resolveTypeReference(def);
+    if (resolved) {
+      return exactMatchShapeAgainstDef(value, resolved);
+    }
   }
   return false;
 }
