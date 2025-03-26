@@ -236,6 +236,12 @@ importers:
         specifier: ^1.0.0-pre.53
         version: 1.0.0-pre.53
 
+  packages/react:
+    devDependencies:
+      fs-extra:
+        specifier: ^9.0.0
+        version: 9.1.0
+
   packages/vue2:
     dependencies:
       '@lcap/basic-template':
