@@ -1,21 +1,22 @@
-const { execSync } = require("child_process");
-const fs = require("fs");
-const { type } = require("os");
-const path = require("path");
-const glob = require("glob");
+const { execSync } = require('child_process');
+const fs = require('fs');
+const { type } = require('os');
+const path = require('path');
+const glob = require('glob');
 
-const packageRoot = path.resolve(__dirname, "..");
-const distPath = path.resolve(__dirname, "../dist");
+const isMac = process.platform === 'darwin';
+const packageRoot = path.resolve(__dirname, '..');
+const distPath = path.resolve(__dirname, '../dist');
 
-const ext = "{vue,js,ts,json,css}";
+const ext = '{vue,js,ts,json,css}';
 
 [
   {
-    type: "pc",
+    type: 'pc',
     exclude: `*.mobile.${ext}`,
   },
   {
-    type: "mobile",
+    type: 'mobile',
     exclude: `*.pc.${ext}`,
   },
 ].forEach(({ type, exclude }) => {
@@ -41,12 +42,16 @@ const ext = "{vue,js,ts,json,css}";
     nodir: true,
   });
   files.forEach((filePath) => {
-    const newFilePath = filePath.replace(`.${type}.`, ".");
+    const newFilePath = filePath.replace(`.${type}.`, '.');
     execSync(`mv ${filePath} ${newFilePath}`);
   });
 
   // 打包
-  execSync(`tar -cvzf ${output}/zip.tgz -C ${output} package`);
+  if (isMac) {
+    execSync(`tar --no-mac-metadata -cvzf ${output}/zip.tgz -C ${output} package`);
+  } else {
+    execSync(`tar -cvzf ${output}/zip.tgz -C ${output} package`);
+  }
 
   // 删除文件夹
   execSync(`rm -rf ${output}/package`);
