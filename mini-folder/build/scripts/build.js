@@ -17,7 +17,11 @@ for (const project of projects) {
   const tempDist = `${miniRootDir}/.temp/${project.name}/dist`;
   execSync(`mkdir -p ${tempDist}/package`);
   execSync(`cp -r ${miniRootDir}/${project.name}/${project.output}/* ${tempDist}/package`);
-  execSync(`tar --no-mac-metadata -cvzf ${tempDist}/zip.tgz -C ${tempDist} package`);
+  if (isMac) {
+    execSync(`tar --no-mac-metadata -cvzf ${tempDist}/zip.tgz -C ${tempDist} package`);
+  } else {
+    execSync(`tar -cvzf ${tempDist}/zip.tgz -C ${tempDist} package`);
+  }
   execSync(`rm -rf ${tempDist}/package`);
 
   // copy source -> tempSource
