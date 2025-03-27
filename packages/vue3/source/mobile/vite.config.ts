@@ -26,7 +26,6 @@ export default defineConfig({
       external: [],
       output: {
         format: 'umd',
-        path: {},
         entryFileNames: '[name].[hash].js',
         chunkFileNames: '[name].[hash].js',
         assetFileNames: 'assets/[name].[hash].[ext]',
