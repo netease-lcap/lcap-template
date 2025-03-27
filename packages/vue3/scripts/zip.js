@@ -1,6 +1,7 @@
 const { execSync } = require('child_process');
 const path = require('path');
 
+const isMac = process.platform === 'darwin';
 const packageRoot = path.resolve(__dirname, '..');
 const distPath = path.resolve(__dirname, '../dist');
 
@@ -20,7 +21,11 @@ const distPath = path.resolve(__dirname, '../dist');
   execSync(`cp -r ${packageRoot}/source/${type} ${output}/package/source`);
 
   // 打包
-  execSync(`tar -cvzf ${output}/zip.tgz -C ${output} package`);
+  if (isMac) {
+    execSync(`tar --no-mac-metadata -cvzf ${output}/zip.tgz -C ${output} package`);
+  } else {
+    execSync(`tar -cvzf ${output}/zip.tgz -C ${output} package`);
+  }
 
   // 删除文件夹
   execSync(`rm -rf ${output}/package`);
