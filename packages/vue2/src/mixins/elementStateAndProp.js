@@ -14,5 +14,8 @@ export default (list = []) => ({
     onSyncState(elem, key, val) {
       this[`${elem}_state_${key}`] = val;
     },
+    getStateKey(elem, key, type) {
+      return `${elem}_${type || ''}_${key}`;
+    },
   },
 });
