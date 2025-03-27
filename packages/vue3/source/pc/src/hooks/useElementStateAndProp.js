@@ -7,6 +7,9 @@ export function useElementStateAndProp(state, list = []) {
   return {
     onSyncState(elem, key, val) {
       state[`${elem}_state_${key}`] = val;
+    },
+    getStateKey(elem, key, type) {
+      return `${elem}_${type || ''}_${key}`;
     }
   }
 }
