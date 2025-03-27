@@ -40,13 +40,14 @@ window.$sleep = function () {
 };
 Vue.prototype.$sleep = window.$sleep;
 
+// 全局混入
+window.$mixins = mixins;
+
 window._lcapCreateService = createService;
 window.LcapInstall = install;
 
 installOptions(Vue);
 installDirectives(Vue, directives);
-// 全局混入
-window._mixins = mixins;
 
 const fnList = ['afterRouter'];
 const evalWrap = function (metaData, fnName) {
