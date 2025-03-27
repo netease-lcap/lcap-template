@@ -29,6 +29,7 @@ import { getTitleGuard } from './router';
 
 import App from './App.vue';
 import { setI18nLocale } from './i18n';
+import mixins from './mixins';
 
 Vue.config.productionTip = false;
 
@@ -44,6 +45,8 @@ window.LcapInstall = install;
 
 installOptions(Vue);
 installDirectives(Vue, directives);
+// 全局混入
+window._mixins = mixins;
 
 const fnList = ['afterRouter'];
 const evalWrap = function (metaData, fnName) {
