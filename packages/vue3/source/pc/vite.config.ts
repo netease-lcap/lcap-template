@@ -25,19 +25,11 @@ export default defineConfig({
     rollupOptions: {
       external: [],
       output: {
-        format: 'amd',
-        amd: {
-          autoId: true
-        },
-        path: {},
+        format: 'umd',
         entryFileNames: '[name].[hash].js',
         chunkFileNames: '[name].[hash].js',
         assetFileNames: 'assets/[name].[hash].[ext]',
         hashCharacters: 'hex',
-        manualChunks: {
-          'element-plus': ['@lcap/element-plus'],
-          'vue-vendor': ['vue', 'vue-router', 'pinia'],
-        }
       },
     },
   },
