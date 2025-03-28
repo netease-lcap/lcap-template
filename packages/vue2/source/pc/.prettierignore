@@ -8,5 +8,7 @@
 /src/guards
 /src/hooks
 /src/store
+/src/platform.config.json
+/src/metaData.js
 
 dist

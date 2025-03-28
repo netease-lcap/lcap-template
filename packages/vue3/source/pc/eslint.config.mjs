@@ -19,7 +19,9 @@ export default [
       '**/assets/**',
       '**/metaData/**',
       '**/plugins/**',
-      '**/router/**'
+      '**/router/**',
+      'src/platform.config.json',
+      'src/metaData.js'
     ],
   },
 
