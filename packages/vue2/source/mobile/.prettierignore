@@ -1,1 +1,12 @@
+/src/public
 /src/packages
+/src/common
+/src/assets
+/src/metaData
+/src/plugins
+/src/router
+/src/guards
+/src/hooks
+/src/store
+
+dist
