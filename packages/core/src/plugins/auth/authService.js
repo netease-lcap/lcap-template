@@ -242,9 +242,9 @@ export default {
   },
 
   _setCustomResources(list = []) {
-    _map = new Map();
+    this._map = new Map();
     list.forEach((resource = {}) =>
-      _map.set(resource.resourceValue, {
+      this._map.set(resource.resourceValue, {
         ...resource,
         ResourceType: resource.resourceType,
         ResourceValue: resource.resourceValue,
