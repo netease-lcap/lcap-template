@@ -240,6 +240,17 @@ export default {
   has(authPath) {
     return (this._map && this._map.has(authPath)) || false;
   },
+
+  _setCustomResources(list = []) {
+    _map = new Map();
+    list.forEach((resource = {}) =>
+      _map.set(resource.resourceValue, {
+        ...resource,
+        ResourceType: resource.resourceType,
+        ResourceValue: resource.resourceValue,
+      }),
+    );
+  },
 };
 
 export const runAhead = function (domainName) {
