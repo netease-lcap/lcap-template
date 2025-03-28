@@ -5,12 +5,21 @@ import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
 export default [
   {
     name: 'app/files-to-lint',
-    files: ['src/**/*.{ts,mts,tsx,vue}'],
+    files: ['src/views/**/*.{js,jsx,ts,tsx,vue}', 'src/components/**/*.{js,jsx,ts,tsx,vue}'],
   },
 
   {
     name: 'app/files-to-ignore',
-    ignores: ['**/dist/**', '**/public/**', '**/packages/**', '**/common/**', '**/metaData.js'],
+    ignores: [
+      '**/dist/**',
+      '**/public/**',
+      '**/packages/**',
+      '**/common/**',
+      '**/assets/**',
+      '**/metaData/**',
+      '**/plugins/**',
+      '**/router/**'
+    ],
   },
 
   js.configs.recommended,
