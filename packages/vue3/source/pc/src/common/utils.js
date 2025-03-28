@@ -28,7 +28,7 @@ export function installLibraries(vm, libraries) {
   window.$libraries = {};
 
   Object.keys(libraries).forEach((key) => {
-    window.$libraries.ElementPlus = libraries[key];
+    window.$libraries[key] = libraries[key];
 
     const lib = libraries[key]?.default || libraries[key];
     vm.use(lib);
