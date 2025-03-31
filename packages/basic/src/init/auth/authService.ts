@@ -1,9 +1,9 @@
-import qs from "qs";
+import qs from 'qs';
 
-import { initAuthService, initLowauthService } from "../../apis";
-import { getBasePath, cookie } from "../../utils";
-import Global from "../../global";
-import Config from "../../config";
+import { initAuthService, initLowauthService } from '../../apis';
+import { getBasePath, cookie } from '../../utils';
+import Global from '../../global';
+import Config from '../../config';
 
 export const getBaseHeaders = () => {
   type Headers = {
@@ -13,8 +13,8 @@ export const getBaseHeaders = () => {
   const headers: Headers = {
     Env: window.appInfo && window.appInfo.env,
   };
-  if (cookie.get("authorization")) {
-    headers.Authorization = cookie.get("authorization");
+  if (cookie.get('authorization')) {
+    headers.Authorization = cookie.get('authorization');
   }
   return headers;
 };
@@ -41,6 +41,13 @@ export interface IService {
   has: (authPath: string) => boolean;
   hasSub?: (subPath: string) => boolean;
   hasFullPath?: (path: string) => boolean;
+  // 隐藏方法，用于自定义修改权限项
+  _setCustomResources?: (
+    list: Array<{
+      resourceValue: string;
+      resourceType: string;
+    }>,
+  ) => void;
 }
 
 let _map;
@@ -89,7 +96,7 @@ const Service: IService = {
           userInfo.DisplayName = userInfo.UserName;
         }
 
-        const $global = Config.globalProperties.get("$global") || {};
+        const $global = Config.globalProperties.get('$global') || {};
         const frontendVariables = $global.frontendVariables || {};
         frontendVariables.userInfo = userInfo;
         $global.userInfo = userInfo;
@@ -123,7 +130,7 @@ const Service: IService = {
           // 初始化权限项
           _map = new Map();
           if (Array.isArray(data)) {
-            resources = data.filter((resource) => resource?.resourceType === "ui");
+            resources = data.filter((resource) => resource?.resourceType === 'ui');
             resources.forEach((resource) => _map.set(resource.resourceValue, resource));
           }
           return resources;
@@ -143,7 +150,7 @@ const Service: IService = {
         .then((res) => {
           _map = new Map();
           const resources = res.Data.items.reduce((acc, { ResourceType, ResourceValue, ...item }) => {
-            if (ResourceType === "ui") {
+            if (ResourceType === 'ui') {
               acc.push({
                 ...item,
                 ResourceType,
@@ -162,13 +169,13 @@ const Service: IService = {
     return userResourcesPromise;
   },
   async getKeycloakLogoutUrl() {
-    let logoutUrl = "";
+    let logoutUrl = '';
     const basePath = getBasePath();
     if (window.appInfo.hasUserCenter) {
       const res = await lowauthService.getAppLoginTypes({
         query: {
-          Action: "GetTenantLoginTypes",
-          Version: "2020-06-01",
+          Action: 'GetTenantLoginTypes',
+          Version: '2020-06-01',
           TenantName: window.appInfo.tenant,
         },
       });
@@ -179,12 +186,12 @@ const Service: IService = {
     } else {
       const res = await authService.getNuimsTenantLoginTypes({
         query: {
-          Action: "GetTenantLoginTypes",
-          Version: "2020-06-01",
+          Action: 'GetTenantLoginTypes',
+          Version: '2020-06-01',
           TenantName: window.appInfo.tenant,
         },
       });
-      const KeycloakConfig = res?.Data.find((item) => item.LoginType === "Keycloak");
+      const KeycloakConfig = res?.Data.find((item) => item.LoginType === 'Keycloak');
       if (KeycloakConfig) {
         logoutUrl = `${KeycloakConfig?.extendProperties?.logoutUrl}?redirect_uri=${window.location.protocol}//${window.location.host}${basePath}/login`;
       }
@@ -197,7 +204,7 @@ const Service: IService = {
 
     if (window.appInfo.hasUserCenter) {
       const logoutUrl = await Service.getKeycloakLogoutUrl();
-      localStorage.setItem("logoutUrl", logoutUrl);
+      localStorage.setItem('logoutUrl', logoutUrl);
       if (logoutUrl) {
         window.location.href = logoutUrl;
         await sleep(1000);
@@ -208,13 +215,13 @@ const Service: IService = {
           })
           .then(() => {
             // 用户中心，去除认证和用户名信息
-            cookie.erase("authorization");
-            cookie.erase("username");
+            cookie.erase('authorization');
+            cookie.erase('username');
           });
       }
     } else {
       const logoutUrl = await Service.getKeycloakLogoutUrl();
-      localStorage.setItem("logoutUrl", logoutUrl);
+      localStorage.setItem('logoutUrl', logoutUrl);
       if (logoutUrl) {
         window.location.href = logoutUrl;
         await sleep(1000);
@@ -224,8 +231,8 @@ const Service: IService = {
             headers: getBaseHeaders(),
           })
           .then(() => {
-            cookie.erase("authorization");
-            cookie.erase("username");
+            cookie.erase('authorization');
+            cookie.erase('username');
           });
       }
     }
@@ -268,6 +275,17 @@ const Service: IService = {
    */
   has(authPath) {
     return (_map && _map.has(authPath)) || false;
+  },
+
+  _setCustomResources(list = []) {
+    _map = new Map();
+    list.forEach((resource) =>
+      _map.set(resource.resourceValue, {
+        ...resource,
+        ResourceType: resource.resourceType,
+        ResourceValue: resource.resourceValue,
+      }),
+    );
   },
 };
 
