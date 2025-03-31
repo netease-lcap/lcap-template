@@ -10,6 +10,8 @@ const backendUrl = '';
 const publicPath = '';
 // 是否是开发环境
 const isDev = false;
+// 配置需要 external 依赖的 url
+const externalUrls: string[] = [];
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -17,7 +19,16 @@ export default defineConfig({
     vue(),
     html({
       fileName: 'client.js',
-      template: (templateParameters) => genClient(templateParameters, publicPath),
+      template: (templateParameters) => {
+        const externalCode = `
+          ${JSON.stringify(externalUrls)}.forEach(x => window.LazyLoad.js(x));
+        `;
+        const clientCode = genClient(templateParameters, publicPath);
+        return `
+          ${externalUrls.length > 0 ? externalCode : ''}
+          ${clientCode}
+        `;
+      },
     }),
   ],
   build: {
@@ -30,6 +41,7 @@ export default defineConfig({
         chunkFileNames: '[name].[hash].js',
         assetFileNames: 'assets/[name].[hash].[ext]',
         hashCharacters: 'hex',
+        globals: {},
       },
     },
   },
