@@ -1,45 +1,45 @@
-import axios from "axios";
-import { stringify } from "qs";
-import JSONbig from "json-bigint";
-import BigNumber from "bignumber.js";
-import get from "lodash/get";
+import axios from 'axios';
+import { stringify } from 'qs';
+import JSONbig from 'json-bigint';
+import BigNumber from 'bignumber.js';
+import get from 'lodash/get';
 
-import Service from "../request-pre";
-import { formatMicroFrontUrl } from "../../init/router/microFrontUrl"; // 微前端路由方法
+import Service from '../request-pre';
+import { formatMicroFrontUrl } from '../../init/router/microFrontUrl'; // 微前端路由方法
 
-import cookie from "../cookie";
-import { addConfigs } from "./add.configs";
-import { getFilenameFromContentDispositionHeader } from "./tools";
-import paramsSerializer from "./paramsSerializer";
-import { createMockServiceByData } from "./mockData";
-import { sseRequester } from "./sseRequester";
+import cookie from '../cookie';
+import { addConfigs } from './add.configs';
+import { getFilenameFromContentDispositionHeader } from './tools';
+import paramsSerializer from './paramsSerializer';
+import { createMockServiceByData } from './mockData';
+import { sseRequester } from './sseRequester';
 
-import Config from "../../config";
-import { overwriteErrorMsgFieldIfSpecified } from "./utils";
-import { default as builtInInterceptors } from "./interceptors";
+import Config from '../../config';
+import { overwriteErrorMsgFieldIfSpecified } from './utils';
+import { default as builtInInterceptors } from './interceptors';
 
-const getData = (str) => new Function("return " + str)();
-// function getJsonParse() {
-//   let hasSource = false;
-//   const jsonStr = `{"myBigInt":6028792033986383748 }`;
-//   JSON.parse(jsonStr, (...arg) => {
-//     if (get(arg, "2")) hasSource = true;
-//     return arg[1];
-//   });
-//   const warpJsonParse = (jsonStr) =>
-//     JSON.parse(jsonStr, (...arg) => {
-//       if (typeof arg[1] === "number" && Number.isInteger(arg[1]) && !Number.isSafeInteger(arg[1])) {
-//         return new BigNumber(get(arg, "2.source"));
-//       }
-//       return arg[1];
-//     });
-//   return hasSource ? warpJsonParse : JSONbig.parse;
-// }
-const jsonParse = JSONbig.parse;
+const getData = (str) => new Function('return ' + str)();
+function getJsonParse() {
+  let hasSource = false;
+  const jsonStr = `{"myBigInt":6028792033986383748 }`;
+  JSON.parse(jsonStr, (...arg) => {
+    if (get(arg, '2')) hasSource = true;
+    return arg[1];
+  });
+  const warpJsonParse = (jsonStr) =>
+    JSON.parse(jsonStr, (...arg) => {
+      if (typeof arg[1] === 'number' && Number.isInteger(arg[1]) && String(arg[1]).length > 15) {
+        return new BigNumber(get(arg, '2.source'));
+      }
+      return arg[1];
+    });
+  return hasSource ? warpJsonParse : JSONbig.parse;
+}
+const jsonParse = getJsonParse();
 
 const formatContentType = function (contentType, data) {
   const map = {
-    "application/x-www-form-urlencoded"(data) {
+    'application/x-www-form-urlencoded'(data) {
       return stringify(data);
     },
   };
@@ -47,13 +47,13 @@ const formatContentType = function (contentType, data) {
 };
 
 const parseCookie = (str) => {
-  if (typeof str !== "string") {
+  if (typeof str !== 'string') {
     return {};
   }
 
   return str
-    .split(";")
-    .map((v) => v.split("="))
+    .split(';')
+    .map((v) => v.split('='))
     .reduce((acc, v) => {
       const getValue = (s) => {
         try {
@@ -81,12 +81,12 @@ const formatCookie = (cookieStr) => {
     result[key] = {
       name: key,
       value: obj[key],
-      domain: "", // 前端只能拿到k v 其他字段补齐即可
-      cookiePath: "",
-      sameSite: "",
-      httpOnly: "",
-      secure: "",
-      maxAge: "",
+      domain: '', // 前端只能拿到k v 其他字段补齐即可
+      cookiePath: '',
+      sameSite: '',
+      httpOnly: '',
+      secure: '',
+      maxAge: '',
     };
   });
   return result;
@@ -105,22 +105,22 @@ function download(url) {
     url: formatMicroFrontUrl(path),
     method,
     params: query,
-    data: formatContentType(headers["Content-Type"], body),
-    responseType: "blob",
+    data: formatContentType(headers['Content-Type'], body),
+    responseType: 'blob',
     timeout,
   })
     .then((res) => {
       // 包含 content-disposition， 从中解析名字，不包含 content-disposition 的获取请求地址的后缀
-      let effectiveFileName = res.request.getAllResponseHeaders().includes("content-disposition")
-        ? getFilenameFromContentDispositionHeader(res.request.getResponseHeader("content-disposition"))
-        : res.request.responseURL.split("/").pop();
+      let effectiveFileName = res.request.getAllResponseHeaders().includes('content-disposition')
+        ? getFilenameFromContentDispositionHeader(res.request.getResponseHeader('content-disposition'))
+        : res.request.responseURL.split('/').pop();
       const { data, status, statusText } = res;
 
       // 通过UA判断是否是移动端
       const mobilePattern = /mobile|mobi|wap|simulator|iphone|android/gi;
       const isMobile = mobilePattern.test(navigator.userAgent);
       if (!isMobile) {
-        effectiveFileName = decodeURIComponent(effectiveFileName).replace(/_\d{8,}\./, ".");
+        effectiveFileName = decodeURIComponent(effectiveFileName).replace(/_\d{8,}\./, '.');
         if (data && data.size === 0) {
           return Promise.resolve({
             data: {
@@ -132,9 +132,9 @@ function download(url) {
       }
 
       const downloadUrl = window.URL.createObjectURL(new Blob([data]));
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = downloadUrl;
-      link.setAttribute("download", effectiveFileName); // any other extension
+      link.setAttribute('download', effectiveFileName); // any other extension
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -158,12 +158,12 @@ function download(url) {
 
 function formatCallConnectorPath(path: string, connectionName: string): string {
   // /api/connectors/connector1/namespace1/getA
-  const pathItemList = (path || "").split("/").filter((i) => i);
+  const pathItemList = (path || '').split('/').filter((i) => i);
   if (pathItemList.length < 3) {
-    throw Error("unexpected path when use CallConnector");
+    throw Error('unexpected path when use CallConnector');
   }
   const [prefix1, prefix2, connectorName, ...rt] = pathItemList;
-  return `/${prefix1}/${prefix2}/${connectorName}/${connectionName}/${rt.join("/")}`;
+  return `/${prefix1}/${prefix2}/${connectorName}/${connectionName}/${rt.join('/')}`;
 }
 
 export function genBaseOptions(requestInfo) {
@@ -171,20 +171,20 @@ export function genBaseOptions(requestInfo) {
   const { method, body = {}, headers = {}, query = {} } = url;
   const path = formatMicroFrontUrl(url.path);
 
-  const baseURL = config.baseURL ? config.baseURL : "";
-  headers["Content-Type"] = headers["Content-Type"] || "application/json";
-  if (!headers.Authorization && cookie.get("authorization")) {
-    headers.Authorization = cookie.get("authorization");
+  const baseURL = config.baseURL ? config.baseURL : '';
+  headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+  if (!headers.Authorization && cookie.get('authorization')) {
+    headers.Authorization = cookie.get('authorization');
   }
   headers.DomainName = window.appInfo?.domainName;
-  if (window.appInfo?.frontendName) headers["LCAP-FRONTEND"] = window.appInfo?.frontendName;
+  if (window.appInfo?.frontendName) headers['LCAP-FRONTEND'] = window.appInfo?.frontendName;
   // 用户本地时区信息，传递给后端
   headers.TimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   let data;
   const method2 = method.toUpperCase();
-  if (Array.isArray(body) || Object.keys(body).length || ["PUT", "POST", "PATCH", "DELETE"].includes(method2)) {
-    data = formatContentType(headers["Content-Type"], body);
+  if (Array.isArray(body) || Object.keys(body).length || ['PUT', 'POST', 'PATCH', 'DELETE'].includes(method2)) {
+    data = formatContentType(headers['Content-Type'], body);
   }
 
   return {
@@ -195,7 +195,7 @@ export function genBaseOptions(requestInfo) {
     transformRequest: [
       function (data, headers) {
         try {
-          if (headers["Content-Type"] !== "application/x-www-form-urlencoded") {
+          if (headers['Content-Type'] !== 'application/x-www-form-urlencoded') {
             const request = JSONbig.stringify(data);
             return request;
           }
@@ -219,17 +219,17 @@ export function genBaseOptions(requestInfo) {
     data,
     headers,
     withCredentials: config.withCredentials ?? !baseURL,
-    xsrfCookieName: "csrfToken",
-    xsrfHeaderName: "x-csrf-token",
-    onUploadProgress: typeof config.onUploadProgress === "function" ? config.onUploadProgress : () => {},
-    onDownloadProgress: typeof config.onDownloadProgress === "function" ? config.onDownloadProgress : () => {},
+    xsrfCookieName: 'csrfToken',
+    xsrfHeaderName: 'x-csrf-token',
+    onUploadProgress: typeof config.onUploadProgress === 'function' ? config.onUploadProgress : () => {},
+    onDownloadProgress: typeof config.onDownloadProgress === 'function' ? config.onDownloadProgress : () => {},
   };
 }
 
 const requester = function (requestInfo) {
   const { url, config = {} } = requestInfo;
   if (!url?.path) {
-    throw Error("unexpected url path as", url?.path);
+    throw Error('unexpected url path as', url?.path);
   }
   // 如果参数中存在 connectionName 则认为请求来自于 CallConnector
   const connectionName = config?.connectionName;
@@ -239,7 +239,7 @@ const requester = function (requestInfo) {
   if (config.download) {
     return download(url);
   }
-  if (config?.serviceType === "sse") {
+  if (config?.serviceType === 'sse') {
     return sseRequester(requestInfo);
   }
 
@@ -278,12 +278,12 @@ const requester = function (requestInfo) {
 
   const options = genBaseOptions(requestInfo);
 
-  if (typeof window.axiosOptionsSetup === "function") {
+  if (typeof window.axiosOptionsSetup === 'function') {
     window.axiosOptionsSetup(options);
   }
 
   // 自定义请求信息
-  if (typeof Config.configureRequest === "function") {
+  if (typeof Config.configureRequest === 'function') {
     Config.configureRequest(options, axios);
   }
 
@@ -311,7 +311,7 @@ const adjustPathWithSysPrefixPath = (apiSchemaList) => {
       const newApiSchema = newApiSchemaMap[key];
       const path = newApiSchema?.url?.path;
       const sysPrefixPath = window.appInfo?.sysPrefixPath;
-      if (path && path.startsWith("/") && sysPrefixPath) {
+      if (path && path.startsWith('/') && sysPrefixPath) {
         newApiSchema.url.path = sysPrefixPath + path;
       }
     }
@@ -330,10 +330,10 @@ export const createService = function createService(apiSchemaList, serviceConfig
   });
 
   {
-    service.postConfig.set("postRequestError", {
+    service.postConfig.set('postRequestError', {
       async reject(response, params, requestInfo) {
         response.Code = response.code || response.status;
-        const status = "error";
+        const status = 'error';
         const err = response;
         const { config } = requestInfo;
 
@@ -346,7 +346,7 @@ export const createService = function createService(apiSchemaList, serviceConfig
         }
 
         const HttpResponse = {
-          status: response.response.status + "",
+          status: response.response.status + '',
           body: JSON.stringify(response.response.data),
           headers: response.response.headers,
           cookies: formatCookie(document.cookie),
@@ -359,7 +359,7 @@ export const createService = function createService(apiSchemaList, serviceConfig
           ...HttpResponse,
         };
 
-        if (typeof window.postRequest === "function") {
+        if (typeof window.postRequest === 'function') {
           await window.postRequest(event);
         }
 
@@ -401,8 +401,8 @@ export const createService = function createService(apiSchemaList, serviceConfig
       JSON.parse(window?.allMockData?.mock).map((v) => {
         createMockServiceByData(v.name, getData(v.mockData), mockInstance);
       });
-      createMockServiceByData("GetUser", {}, mockInstance);
-      createMockServiceByData("GetUserResources", {}, mockInstance);
+      createMockServiceByData('GetUser', {}, mockInstance);
+      createMockServiceByData('GetUserResources', {}, mockInstance);
       Object.keys(logicsInstance).map(
         (apiName) => !mockInstance[apiName] && (mockInstance[apiName] = logicsInstance[apiName]),
       );
@@ -418,17 +418,17 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
   fixServiceConfig.config = fixServiceConfig.config || {};
   Object.assign(fixServiceConfig.config, {
     shortResponse: true,
-    concept: "Logic",
+    concept: 'Logic',
   });
   serviceConfig = fixServiceConfig;
   const newApiSchemaMap = adjustPathWithSysPrefixPath(apiSchemaList);
 
   if (window.preRequest) {
-    service.preConfig.set("preRequest", {
+    service.preConfig.set('preRequest', {
       async resolve(requestInfo, preData) {
         const HttpRequest = {
           requestURI: requestInfo.url.path,
-          remoteIp: "",
+          remoteIp: '',
           requestMethod: requestInfo.url.method,
           body: JSON.stringify(requestInfo.url.body),
           headers: requestInfo.url.headers,
@@ -438,7 +438,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
         };
 
         let data = preData;
-        if (typeof window.preRequest === "function") {
+        if (typeof window.preRequest === 'function') {
           data = await window.preRequest(HttpRequest, preData);
         }
 
@@ -449,24 +449,24 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
   }
 
   if (window.postRequest) {
-    service.postConfig.set("postRequest", {
+    service.postConfig.set('postRequest', {
       async resolve(response, params, requestInfo) {
         if (!response) {
           return Promise.reject();
         }
 
-        if (requestInfo?.config?.serviceType === "sse") {
+        if (requestInfo?.config?.serviceType === 'sse') {
           return response;
         }
 
-        const status = "success";
+        const status = 'success';
         const { config } = requestInfo;
         const serviceType = config?.serviceType;
-        if (serviceType && serviceType === "external") {
+        if (serviceType && serviceType === 'external') {
           return response;
         }
         const HttpResponse = {
-          status: response.status + "",
+          status: response.status + '',
           body: JSON.stringify(response.data),
           headers: response.headers,
           cookies: formatCookie(document.cookie),
@@ -478,7 +478,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           ...HttpResponse,
         };
 
-        if (typeof window.postRequest === "function") {
+        if (typeof window.postRequest === 'function') {
           await window.postRequest(event);
         }
 
@@ -492,38 +492,38 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
         return response;
       },
     });
-    service.postConfig.set("postRequestError", {
+    service.postConfig.set('postRequestError', {
       async reject(response, params, requestInfo) {
-        if (requestInfo?.config?.serviceType === "sse") {
-          throw Error("远端调用异常");
+        if (requestInfo?.config?.serviceType === 'sse') {
+          throw Error('远端调用异常');
         }
         response.Code = response.code || response.status;
-        const status = "error";
+        const status = 'error';
         const err = response;
         const { config } = requestInfo;
-        if (err === "expired request") {
+        if (err === 'expired request') {
           throw err;
         }
         if (!err.response) {
           if (!config.noErrorTip) {
             // instance.show('系统错误，请查看日志！');
-            Config.toast.error("系统错误，请查看日志！");
+            Config.toast.error('系统错误，请查看日志！');
             // 得抛错，否则会走成功回调，然后shortResponse会报错
             throw err;
           }
         }
         if (window.LcapMicro?.loginFn) {
-          if (err.Code === 401 && err.Message === "token.is.invalid") {
+          if (err.Code === 401 && err.Message === 'token.is.invalid') {
             window.LcapMicro.loginFn();
             return;
           }
-          if (err.Code === "InvalidToken" && err.Message === "Token is invalid") {
+          if (err.Code === 'InvalidToken' && err.Message === 'Token is invalid') {
             window.LcapMicro.loginFn();
             return;
           }
         }
-        if (err.Code === 501 && err.Message === "abort") {
-          throw Error("程序中止");
+        if (err.Code === 501 && err.Message === 'abort') {
+          throw Error('程序中止');
         }
 
         if (!response.response) {
@@ -535,7 +535,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
         }
 
         const HttpResponse = {
-          status: response.response.status + "",
+          status: response.response.status + '',
           body: JSON.stringify(response.response.data),
           headers: response.response.headers,
           cookies: formatCookie(document.cookie),
@@ -548,7 +548,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           ...HttpResponse,
         };
 
-        if (typeof window.postRequest === "function") {
+        if (typeof window.postRequest === 'function') {
           await window.postRequest(event);
         }
         // 开启handleError时，不抛出错误，返回response
@@ -579,8 +579,8 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
     serviceConfig.config.postRequestError = true;
   }
 
-  service.postConfig.set("lcapLocation", (response, params, requestInfo) => {
-    const lcapLocation = response?.headers?.["lcap-location"];
+  service.postConfig.set('lcapLocation', (response, params, requestInfo) => {
+    const lcapLocation = response?.headers?.['lcap-location'];
     if (lcapLocation) {
       location.href = lcapLocation;
     }
