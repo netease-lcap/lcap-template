@@ -3,4 +3,3 @@ export * from './useEnhancedCss';
 export * from './useDataSourceUtils';
 export * from './useWatchProps';
 export * from './useRefs';
-export * from './useElementStateAndProp';
