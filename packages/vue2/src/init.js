@@ -176,6 +176,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
           next();
         }
       } catch (err) {
+        console.error('beforeRouter error:', err);
         next();
       }
     };
