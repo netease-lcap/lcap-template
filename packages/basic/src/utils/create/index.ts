@@ -1,6 +1,7 @@
 import axios from "axios";
 import { stringify } from "qs";
-import JSONbig from "json-bigint";
+// import JSONbig from 'json-bigint';
+import JSONbig from "../json-bigint";
 import BigNumber from "bignumber.js";
 import get from "lodash/get";
 
