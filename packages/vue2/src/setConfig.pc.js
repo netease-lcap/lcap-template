@@ -1,22 +1,26 @@
-import Vue from "vue";
-import { setConfig } from "@/common";
+import Vue from 'vue';
+import { setConfig } from '@/common';
 
-import { utils } from "./plugins/dataTypes/index";
-import { destination, back, go } from "./plugins/router";
-import { createRouter } from "./router";
+import { utils } from './plugins/dataTypes/index';
+import { destination, back, go } from './plugins/router';
+import { createRouter } from './router';
 
 setConfig({
   toast: {
-    show:
-      Vue.prototype?.$toast?.show ||
-      (() => {
-        console.warn("请在Vue.prototype上挂载$toast.show方法");
-      }),
-    error:
-      Vue.prototype?.$toast?.error ||
-      (() => {
-        console.warn("请在Vue.prototype上挂载$toast.error方法");
-      }),
+    show(msg) {
+      if (typeof Vue.prototype?.$toast?.show === 'function') {
+        return Vue.prototype.$toast.show(msg);
+      }
+
+      console.warn('请在Vue.prototype上挂载$toast.show方法');
+    },
+    error(msg) {
+      if (typeof Vue.prototype?.$toast?.error === 'function') {
+        return Vue.prototype.$toast.error(msg);
+      }
+
+      console.warn('请在Vue.prototype上挂载$toast.error方法');
+    },
   },
   router: {
     destination,
@@ -26,11 +30,13 @@ setConfig({
   },
   utils: {
     ...utils,
-    showMessage:
-      Vue.prototype?.$toast?.show ||
-      (() => {
-        console.warn("请在Vue.prototype上挂载$toast.show方法");
-      }),
+    showMessage(msg) {
+      if (typeof Vue.prototype?.$toast?.show === 'function') {
+        return Vue.prototype.$toast.show(msg);
+      }
+
+      console.warn('请在Vue.prototype上挂载$toast.show方法');
+    },
   },
   reactive: (obj) => {
     return new Vue({
