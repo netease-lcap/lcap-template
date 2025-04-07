@@ -1,6 +1,7 @@
 import axios from "axios";
 import { stringify } from "qs";
-import JSONbig from "json-bigint";
+// import JSONbig from 'json-bigint';
+import JSONbig from "../json-bigint";
 import BigNumber from "bignumber.js";
 import get from "lodash/get";
 
@@ -193,10 +194,13 @@ export function genBaseOptions(requestInfo) {
     baseURL,
     method: method2,
     transformRequest: [
-      function (data) {
+      function (data, headers) {
         try {
-          const request = JSONbig.stringify(data);
-          return request;
+          if (headers["Content-Type"] !== "application/x-www-form-urlencoded") {
+            const request = JSONbig.stringify(data);
+            return request;
+          }
+          return data;
         } catch (error) {
           return data;
         }
@@ -452,10 +456,10 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
           return Promise.reject();
         }
 
-        if (requestInfo?.config?.serviceType === 'sse') {
+        if (requestInfo?.config?.serviceType === "sse") {
           return response;
         }
-        
+
         const status = "success";
         const { config } = requestInfo;
         const serviceType = config?.serviceType;
@@ -491,8 +495,8 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
     });
     service.postConfig.set("postRequestError", {
       async reject(response, params, requestInfo) {
-        if (requestInfo?.config?.serviceType === 'sse') {
-          throw Error('远端调用异常');
+        if (requestInfo?.config?.serviceType === "sse") {
+          throw Error("远端调用异常");
         }
         response.Code = response.code || response.status;
         const status = "error";
