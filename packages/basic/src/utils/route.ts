@@ -8,7 +8,10 @@ const filterRoutes = (routes, ancestorPaths, compareFn) => {
         ancestorPaths = [];
       }
       let newRoute = null;
-      if (compareFn(route, ancestorPaths)) {
+
+      // 默认跳转页直接允许
+      const isRedirect = !!route.redirect && route.path === '';
+      if (isRedirect || compareFn(route, ancestorPaths)) {
         const { children, ...others } = route || {};
         newRoute = {
           ...others,
@@ -31,21 +34,21 @@ function parsePath(path) {
   if (!path) {
     return;
   }
-  let hash = "";
+  let hash = '';
   const query = {};
-  const hashIndex = path.indexOf("#");
+  const hashIndex = path.indexOf('#');
   if (hashIndex >= 0) {
     hash = path.slice(hashIndex);
     path = path.slice(0, hashIndex);
   }
-  const queryIndex = path.indexOf("?");
+  const queryIndex = path.indexOf('?');
   if (queryIndex >= 0) {
     const queryStr = path.slice(queryIndex + 1);
     if (queryStr) {
-      const paramPairStrArr = queryStr.split("&");
+      const paramPairStrArr = queryStr.split('&');
       if (Array.isArray(paramPairStrArr)) {
         paramPairStrArr.forEach((paramPairStr) => {
-          const paramPairArr = paramPairStr.split("=");
+          const paramPairArr = paramPairStr.split('=');
           if (Array.isArray(paramPairArr)) {
             query[paramPairArr[0]] = paramPairArr[1];
           }
