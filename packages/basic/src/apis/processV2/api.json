@@ -1,0 +1,183 @@
+{
+  "getMyTaskList": {
+    "url": {
+      "path": "/api/processV2/{taskType}",
+      "method": "post"
+    }
+  },
+  "getMyPendingTasks": {
+    "url": {
+      "path": "/api/processV2/getMyPendingTasks",
+      "method": "post"
+    }
+  },
+  "getMyCompletedTasks": {
+    "url": {
+      "path": "/api/processV2/getMyCompletedTasks",
+      "method": "post"
+    }
+  },
+  "getMyInitiatedTasks": {
+    "url": {
+      "path": "/api/processV2/getMyInitiatedTasks",
+      "method": "post"
+    }
+  },
+  "getTaskDestinationUrl": {
+    "url": {
+      "path": "/api/processV2/getTaskDestinationUrl",
+      "method": "post"
+    }
+  },
+  "getProcDefInfos": {
+    "url": {
+      "path": "/api/processV2/getProcDefInfos",
+      "method": "post"
+    }
+  },
+  "getProcInstInitiators": {
+    "url": {
+      "path": "/api/processV2/getProcInstInitiators",
+      "method": "post"
+    }
+  },
+  "getProcInstInfo": {
+    "url": {
+      "path": "/api/processV2/getProcInstInfo",
+      "method": "post"
+    }
+  },
+  "getProcInstGraph": {
+    "url": {
+      "path": "/api/processV2/getProcInstGraph",
+      "method": "post"
+    }
+  },
+  "setTaskInstance": {
+    "url": {
+      "path": "/api/processV2/{operate}",
+      "method": "post"
+    }
+  },
+  "approveTask": {
+    "url": {
+      "path": "/api/processV2/approveTask",
+      "method": "post"
+    }
+  },
+  "rejectTask": {
+    "url": {
+      "path": "/api/processV2/rejectTask",
+      "method": "post"
+    }
+  },
+  "submitTask": {
+    "url": {
+      "path": "/api/processV2/submitTask",
+      "method": "post"
+    }
+  },
+  "reassignTask": {
+    "url": {
+      "path": "/api/processV2/reassignTask",
+      "method": "post"
+    }
+  },
+  "revertTask": {
+    "url": {
+      "path": "/api/processV2/revertTask",
+      "method": "post"
+    }
+  },
+  "withdrawTask": {
+    "url": {
+      "path": "/api/processV2/withdrawTask",
+      "method": "post"
+    }
+  },
+  "launchProcess": {
+    "url": {
+      "path": "/api/processV2/launchProcess",
+      "method": "post"
+    }
+  },
+  "getTaskOperationPermissions": {
+    "url": {
+      "path": "/api/processV2/getTaskOperationPermissions",
+      "method": "post"
+    }
+  },
+  "getProcInstRecords": {
+    "url": {
+      "path": "/api/processV2/getProcInstRecords",
+      "method": "post"
+    }
+  },
+  "getUsersForReassign": {
+    "url": {
+      "path": "/api/processV2/getUsersForReassign",
+      "method": "post"
+    }
+  },
+  "fieldPermissionDetail": {
+    "url": {
+      "path": "/api/processV2/getDataPropertyPermissions",
+      "method": "post"
+    }
+  },
+  "getTaskInstanceForm": {
+    "url": {
+      "path": "/api/processV2/getTaskData",
+      "method": "post"
+    }
+  },
+  "getProcessFormDefinition": {
+    "url": {
+      "path": "/api/processV2/getTaskFormDef",
+      "method": "post"
+    }
+  },
+  "getProcVariable": {
+    "url": {
+      "path": "/api/processV2/getProcVariable",
+      "method": "post"
+    }
+  },
+  "addSignTask": {
+    "url": {
+      "path": "/api/processV2/addSignTask",
+      "method": "post"
+    }
+  },
+  "getUsersForAddSign": {
+    "url": {
+      "path": "/api/processV2/getUsersForAddSign",
+      "method": "post"
+    }
+  },
+  "getTaskInfo": {
+    "url": {
+      "path": "/api/processV2/getTaskInfo",
+      "method": "post"
+    }
+  },
+
+  "getTaskInstanceList": {
+    "url": {
+      "path": "/api/system/processV2/getTaskInstanceList",
+      "method": "post"
+    }
+  },
+  "getProcessInstanceList": {
+    "url": {
+      "path": "/api/system/processV2/getProcessInstanceList",
+      "method": "post"
+    }
+  },
+  "addTaskComment": {
+    "url": {
+      "path": "/api/system/processV2/addTaskComment",
+      "method": "post"
+    }
+  }
+}

@@ -1,20 +1,16 @@
 {
   "compilerOptions": {
-    "lib": [
-      "DOM",
-      "ESNext"
-    ],
-    "target": "es5",
-    "module": "commonjs",
-    "rootDir": "src",
+    "lib": ["DOM", "ESNext"],
+    "target": "ES6",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "baseUrl": ".",
-    "outDir": "dist",
     "allowJs": true,
-    "declaration": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": [
-    "./src"
-  ]
+  "include": ["src/**/*", "tests/**/*"]
 }

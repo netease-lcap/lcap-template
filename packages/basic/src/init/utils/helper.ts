@@ -1,5 +1,5 @@
-const moment = require('moment');
-const momentTZ = require('moment-timezone');
+import momentTZ from 'moment-timezone';
+import moment from 'moment';
 
 export const findAsync = async (arr, callback) => {
   for (let i = 0; i < arr.length; i++) {
@@ -41,15 +41,30 @@ export const findIndexAsync = async (arr, callback) => {
   return -1;
 };
 
-export const sortAsync = (array = [], sortRule) => async (callback) => {
-  const promises = array.map(async (current) => {
-    const id = await callback(current);
-    return { id, current };
-  });
-  const list = await Promise.all(promises);
-  let res = list.sort((a, b) => sortRule(a.id, b.id))
-  return res.forEach((item, index) => array[index] = item.current);
-}
+export const sortRule = (valueA, valueB, sort) => {
+  if (
+    Number.isNaN(valueA) ||
+    Number.isNaN(valueB) ||
+    typeof valueA === 'undefined' ||
+    typeof valueB === 'undefined' ||
+    valueA === null ||
+    valueB === null
+  ) {
+    return 1;
+  } else {
+    if (valueA >= valueB) {
+      if (sort) {
+        return 1;
+      }
+      return -1;
+    } else {
+      if (sort) {
+        return -1;
+      }
+      return 1;
+    }
+  }
+};
 
 export const getAppTimezone = (inputTz) => {
   const _appTimeZone = window?.appInfo?.appTimeZone;
@@ -67,8 +82,7 @@ export const getAppTimezone = (inputTz) => {
 const validIANATimezoneCache = {};
 // 判断是否是有效的时区字符
 export function isValidTimezoneIANAString(timezoneString) {
-  if (validIANATimezoneCache[timezoneString])
-    return true;
+  if (validIANATimezoneCache[timezoneString]) return true;
   try {
     new Intl.DateTimeFormat(undefined, { timeZone: timezoneString });
     validIANATimezoneCache[timezoneString] = true;
@@ -81,9 +95,30 @@ export function isValidTimezoneIANAString(timezoneString) {
 export function naslDateToLocalDate(date) {
   const localTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const localDate = momentTZ.tz(date, 'YYYY-MM-DD', localTZ);
-  return new Date(localDate.format('YYYY-MM-DD HH:mm:ss'));
+  return safeNewDate(localDate.format('YYYY-MM-DD HH:mm:ss'));
 }
 
 export function convertJSDateInTargetTimeZone(date, tz) {
-  return new Date(momentTZ.tz(date, getAppTimezone(tz)).format('YYYY-MM-DD HH:mm:ss.SSS'));
+  return safeNewDate(momentTZ.tz(safeNewDate(date), getAppTimezone(tz)).format('YYYY-MM-DD HH:mm:ss'));
 }
+
+export const safeNewDate = (dateStr) => {
+  // 如果输入是字符串形式的时间戳，则先转换为时间戳
+  if (typeof dateStr === 'string' && /^\d+$/.test(dateStr)) {
+    const date = new Date(parseInt(dateStr, 10));
+    if (!isNaN(date.getTime())) {
+      return date;
+    }
+  }
+
+  try {
+    const res = new Date(dateStr.replaceAll('-', '/'));
+    if (['Invalid Date', 'Invalid time value', 'invalid date'].includes(res.toString())) {
+      return new Date(dateStr);
+    } else {
+      return res;
+    }
+  } catch (err) {
+    return new Date(dateStr);
+  }
+};

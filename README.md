@@ -1,3 +1,6 @@
+[![Node.js CI](https://github.com/netease-lcap/lcap-template/actions/workflows/test.yml/badge.svg)](https://github.com/netease-lcap/lcap-template/actions/workflows/test.yml)
+[![Deploy Pages](https://github.com/netease-lcap/lcap-template/actions/workflows/doc.yml/badge.svg)](https://github.com/netease-lcap/lcap-template/actions/workflows/doc.yml)
+
 # lcap-template
 > 低代码应用模板
 
@@ -5,9 +8,8 @@
 ```
 |-- root
   |-- packages
-      |-- core // 通用基础包
-      |-- pc // pc端业务包
-      |-- h5 // h5端业务包
+      |-- basic // 通用纯函数，不依赖框架
+      |-- vue2 // vue2框架应用
 ```
 
 ## 环境依赖
@@ -25,7 +27,7 @@ pnpm install
 ```
 pnpm build
 
-pnpm deploy:dev
+pnpm run deploy --platform a --username b --password c
 ```
 
 ## 修改版本号方式
@@ -33,17 +35,3 @@ pnpm deploy:dev
 ```
 pnpm change:version --version 1.0.0
 ```
-
-## 发版asset资源获取（不再需要此操作）
-
-https://github.com/vusion-templates/lcap-template/actions
-
-下载后的文件夹结构
-```
-|-- lcap-template
-  |-- core-template@1.0.0 // 通用基础包
-  |-- mobile-template@1.0.0 // h5端业务包
-  |-- pc-template@1.0.0 // pc端业务包
-```
-
-‼️将上述3个文件夹放到lcap-assets目录的 @lcap 目录下

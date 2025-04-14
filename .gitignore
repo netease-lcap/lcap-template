@@ -28,3 +28,14 @@ temp/
 
 dist/
 esm/
+umd/
+cjs/
+typings/
+
+coverage/
+
+lcap.deploy.json
+.swc
+.temp
+mini-folder/**/project.private.config.json
+docs/

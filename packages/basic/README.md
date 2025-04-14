@@ -1,8 +1,3 @@
-# basic-utils
+# basic-template
 
-## 使用方法
-
-```js
-
-
-```
+基础函数库

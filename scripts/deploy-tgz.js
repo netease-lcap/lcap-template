@@ -1,9 +1,10 @@
 const upload = require('lcap/lib/upload');
 const fs = require('fs');
 const path = require('path');
+const getDeployConfig = require('./getDeployConfig');
 
 /**
- * 
+ *
  * @param {*} options
  * @param {string} options.target
  * @param {string} options.root
@@ -15,8 +16,9 @@ const path = require('path');
  */
 function deployTgz(options = {}) {
   const { root, name, version, platform, username, password } = options;
+  const defaultConfig = getDeployConfig(options);
 
-  const target = name.replace("@", "").replace("/", "-") + "-" + version + ".tgz";
+  const target = name.replace('@', '').replace('/', '-') + '-' + version + '.tgz';
   const targetPath = path.resolve(root, target);
   // tgz 是否存在
   if (!fs.existsSync(targetPath)) {
@@ -24,7 +26,7 @@ function deployTgz(options = {}) {
     process.exit(1);
   }
 
-  const source = "zip.tgz";
+  const source = 'zip.tgz';
   const sourcePath = path.resolve(root, source);
 
   // zip.tgz 是否存在
@@ -42,40 +44,26 @@ function deployTgz(options = {}) {
 
   // 开始上传流程
   const prefix = `packages/${name}@${version}`;
-  let formFiles = [source];
-
-  if (!formFiles.length) {
-    console.warn("No files found!");
-    process.exit(0);
-  }
-
-  formFiles = formFiles.map((filePath) => {
-    let relativePath = path
-      .relative(root, filePath)
-      .replace(/^public[\\/]/, "")
-      .replace(/\\/g, "/");
-
-    relativePath = path.posix.join(prefix, relativePath);
-
-    return { 
-      name: relativePath, 
-      path: filePath 
-    };
-  });
+  let formFiles = [
+    {
+      name: path.posix.join(prefix, source),
+      path: sourcePath,
+    },
+  ];
 
   return upload(formFiles, {
-    platform: platform,
-    username: username,
-    password: password,
+    platform: platform || defaultConfig.platform,
+    username: username || defaultConfig.username,
+    password: password || defaultConfig.password,
   })
     .then(() => {
       console.log(`上传成功`);
     })
     .catch(() => {
-      throw new Error("上传失败");
+      throw new Error('上传失败');
     })
     .finally(() => {
-      fs.unlinkSync(sourcePath);
+      fs.unlinkSync(targetPath);
     });
 }
 

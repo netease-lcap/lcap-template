@@ -2,18 +2,20 @@
   "name": "root",
   "private": true,
   "description": "低代码应用模板",
-  "version": "1.2.0",
+  "version": "1.7.2",
   "scripts": {
+    "doc": "pnpm --filter=@lcap/basic-template run doc",
+    "prepare": "husky",
+    "test": "pnpm --filter \"./packages/*\" run test",
     "change:version": "node ./scripts/version",
-    "build": "pnpm --filter \"./packages/*\" build:designer",
-    "deploy:dev": "pnpm --filter \"./packages/*\" deploy:dev",
-    "deploy:test": "pnpm --filter \"./packages/*\" deploy:test",
-    "deploy:codewave-test": "pnpm --filter \"./packages/*\" deploy:codewave-test"
+    "build": "pnpm --filter \"./packages/*\" --filter \"./mini-folder/*\" run build",
+    "deploy": "pnpm --filter \"./packages/*\" --filter \"./mini-folder/*\" run deploy",
+    "format:vue3": "prettier --write \"packages/**/vue3/**/*.{vue,ts,tsx,jsx,js}\"",
+    "format:react": "prettier --write \"packages/**/react/**/*.{vue,ts,tsx,jsx,js}\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@8.15.4",
   "engines": {
     "node": ">=18",
     "pnpm": ">=8"
@@ -21,7 +23,18 @@
   "devDependencies": {
     "fs-extra": "^9.0.0",
     "glob": "^10.3.10",
+    "husky": "^9.1.6",
     "lcap": "0.2.3",
-    "minimist": "^1.2.8"
+    "lint-staged": "^15.2.10",
+    "minimist": "^1.2.8",
+    "prettier": "^3.3.3"
+  },
+  "lint-staged": {
+    "**/*.json": [
+      "prettier --write"
+    ],
+    "!(**/source/**/*).{ts,tsx,jsx,js}": [
+      "prettier --write"
+    ]
   }
 }

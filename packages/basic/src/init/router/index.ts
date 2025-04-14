@@ -1,45 +1,55 @@
-import {
-  formatMicroFrontUrl,
-  formatMicroFrontRouterPath,
-} from "./microFrontUrl";
+import { formatMicroFrontUrl, formatMicroFrontRouterPath } from './microFrontUrl';
 
 import Config from '../../config';
-import Global from "../../global";
+import Global from '../../global';
 
 function initRouter() {
-    function $destination(...args) {
-      Config.router?.destination?.call(this, ...args);
-    };
+  function $destination(...args) {
+    Config.router?.destination?.call(this, ...args);
+  }
 
-    async function $link (url, target = "_self") {
-      let realUrl;
-      if (typeof url === "function") {
-        realUrl = await url();
-      } else {
-        realUrl = url;
-      }
-      downloadClick(realUrl, target);
-    };
+  async function $link(url, target = '_self') {
+    let realUrl;
+    if (typeof url === 'function') {
+      realUrl = await url();
+    } else if (url?.charAt(0) === '/') {
+      Config.router?.destination?.call(this, url, target);
+      return;
+    } else {
+      realUrl = url;
+    }
+    downloadClick(realUrl, target);
+  }
 
-    Global.prototype.$destination = function (...args) {
-      $destination.call(this, ...args);
-    };
-    Global.prototype.$link = $link;
-    Global.prototype.$formatMicroFrontUrl = formatMicroFrontUrl;
-    Global.prototype.$formatMicroFrontRouterPath = formatMicroFrontRouterPath;
+  function $toQueryString(params) {
+    const query = Object.entries(params)
+      .filter(([, value]) => value !== undefined && value !== null)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
 
-    return {
-      formatMicroFrontUrl: formatMicroFrontUrl,
-      formatMicroFrontRouterPath: formatMicroFrontRouterPath,
-      link: $link,
-      destination: $destination,
-    };
+    return query.length > 0 ? `?${query}` : '';
+  }
+
+  Config.globalProperties.set('$destination', $destination);
+  Config.globalProperties.set('$link', $link);
+
+  Config.globalProperties.set('$formatMicroFrontUrl', formatMicroFrontUrl);
+  Config.globalProperties.set('$formatMicroFrontRouterPath', formatMicroFrontRouterPath);
+
+  Config.globalProperties.set('$toQueryString', $toQueryString);
+
+  return {
+    formatMicroFrontUrl: formatMicroFrontUrl,
+    formatMicroFrontRouterPath: formatMicroFrontRouterPath,
+    link: $link,
+    destination: $destination,
+  };
 }
 
 function downloadClick(realUrl, target) {
-  const a = document.createElement("a");
-  a.setAttribute("href", realUrl);
-  a.setAttribute("target", target);
+  const a = document.createElement('a');
+  a.setAttribute('href', realUrl);
+  a.setAttribute('target', target);
   document.body.appendChild(a);
   a.click();
   setTimeout(() => {
@@ -47,7 +57,6 @@ function downloadClick(realUrl, target) {
   }, 500);
 }
 
-export { 
-  initRouter, 
-  downloadClick 
-};
+export { initRouter, downloadClick };
+
+export * from './microFrontUrl';

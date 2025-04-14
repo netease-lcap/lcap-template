@@ -1,0 +1,12 @@
+:root {
+    /* your variables */
+}
+
+body::backdrop {
+    background-color: var(--background-color-default);
+}
+
+/* 兼容全屏下的滚动问题 */
+body:fullscreen {
+    overflow: auto;
+}

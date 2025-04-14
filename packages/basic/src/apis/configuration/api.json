@@ -1,14 +1,14 @@
 {
-	"getCustomConfig": {
-		"url": {
-			"method": "get",
-			"path": "/api/system/getCustomConfig/{configKey}"
-		}
-	},
-	"getCurrentIp": {
-		"url": {
-			"method": "get",
-			"path": "/api/system/getCurrentIp"
-		}
-	}
+  "getCustomConfig": {
+    "url": {
+      "method": "get",
+      "path": "/api/system/getCustomConfigV2/{configKey}"
+    }
+  },
+  "getCurrentIp": {
+    "url": {
+      "method": "get",
+      "path": "/api/system/getCurrentIp"
+    }
+  }
 }

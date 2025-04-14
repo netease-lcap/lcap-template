@@ -1,0 +1,1 @@
+export { default as dependencies } from './dependencies';

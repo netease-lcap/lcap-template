@@ -1,32 +1,26 @@
-import queryString from "query-string";
+import qs from 'qs';
 
-import { initService as authInitService } from '../../apis/auth';
-import { initService as lowauthInitService } from '../../apis/lowauth';
-
-import cookie from '../../utils/cookie';
-import { getBasePath } from '../../utils/encodeUrl';
-
+import { initAuthService, initLowauthService } from '../../apis';
+import { getBasePath, cookie } from '../../utils';
 import Global from '../../global';
+import Config from '../../config';
 
 export const getBaseHeaders = () => {
-    type Headers = {
-        Env: string;
-        Authorization?: string;
-    }
-    const headers: Headers = {
-        Env: window.appInfo && window.appInfo.env,
-    };
-    if (cookie.get('authorization')) {
-        headers.Authorization = cookie.get('authorization');
-    }
-    return headers;
+  type Headers = {
+    Env: string;
+    Authorization?: string;
+  };
+  const headers: Headers = {
+    Env: window.appInfo && window.appInfo.env,
+  };
+  if (cookie.get('authorization')) {
+    headers.Authorization = cookie.get('authorization');
+  }
+  return headers;
 };
 
-let userInfoPromise = null;
-let userResourcesPromise = null;
-
 // FIXME 替换成真实类型
-export type NASLUserInfo = { 
+export type NASLUserInfo = {
   UserName: string;
   UserId: string;
 };
@@ -47,6 +41,13 @@ export interface IService {
   has: (authPath: string) => boolean;
   hasSub?: (subPath: string) => boolean;
   hasFullPath?: (path: string) => boolean;
+  // 隐藏方法，用于自定义修改权限项
+  _setCustomResources?: (
+    list: Array<{
+      resourceValue: string;
+      resourceType: string;
+    }>,
+  ) => void;
 }
 
 let _map;
@@ -55,71 +56,82 @@ let lowauthService;
 
 const Service: IService = {
   start() {
-    authService = authInitService();
-    lowauthService = lowauthInitService();
+    authService = initAuthService();
+    lowauthService = initLowauthService();
     window.authService = authService;
   },
   getUserInfo() {
-    if (!userInfoPromise) {
-      if (window.appInfo.hasUserCenter) {
-        userInfoPromise = lowauthService.GetUser({
-          headers: getBaseHeaders(),
-          config: {
-            noErrorTip: true,
-          },
-        });
-      } else {
-        userInfoPromise = authService.GetUser({
-          headers: getBaseHeaders(),
-          config: {
-            noErrorTip: true,
-          },
-        });
-      }
-      userInfoPromise = userInfoPromise
-        .then((result) => {
-          const userInfo = result?.Data;
-          if (!userInfo?.UserId && userInfo?.userId) {
-            userInfo.UserId = userInfo.userId;
-            userInfo.UserName = userInfo.userName;
-          }
+    let userInfoPromise = null;
 
-          const $global = Global.prototype.$global || {};
-          const frontendVariables = $global.frontendVariables || {};
-          frontendVariables.userInfo = userInfo;
-          $global.userInfo = userInfo;
-
-          return userInfo;
-        })
-        .catch((e) => {
-          userInfoPromise = null;
-          throw e;
-        });
+    if (window.appInfo.hasUserCenter) {
+      userInfoPromise = lowauthService.GetUser({
+        headers: getBaseHeaders(),
+        config: {
+          noErrorTip: true,
+        },
+      });
+    } else {
+      userInfoPromise = authService.GetUser({
+        headers: getBaseHeaders(),
+        config: {
+          noErrorTip: true,
+        },
+      });
     }
+    userInfoPromise = userInfoPromise
+      .then((result) => {
+        // 兼容新的返回格式
+        let userInfo;
+        if (result?.data?.Data) {
+          userInfo = result.data.Data;
+        } else {
+          userInfo = result?.Data;
+        }
+
+        if (!userInfo?.UserId && userInfo?.userId) {
+          userInfo.UserId = userInfo.userId;
+          userInfo.UserName = userInfo.userName;
+        }
+        if (userInfo && !userInfo?.DisplayName && userInfo?.UserName) {
+          userInfo.DisplayName = userInfo.UserName;
+        }
+
+        const $global = Config.globalProperties.get('$global') || {};
+        const frontendVariables = $global.frontendVariables || {};
+        frontendVariables.userInfo = userInfo;
+        $global.userInfo = userInfo;
+
+        return userInfo;
+      })
+      .catch((e) => {
+        userInfoPromise = null;
+        throw e;
+      });
+
     return userInfoPromise;
   },
   getUserResources(DomainName) {
+    let userResourcesPromise = null;
+
     if (window.appInfo.hasAuth) {
       userResourcesPromise = lowauthService
         .GetUserResources({
           headers: getBaseHeaders(),
-          query: {
-          },
+          query: {},
           config: {
             noErrorTip: true,
           },
         })
         .then((result) => {
+          // 兼容新的返回格式
+          const data = result?.data || result;
+
           let resources = [];
           // 初始化权限项
           _map = new Map();
-          if (Array.isArray(result)) {
-            resources = result.filter(
-              (resource) => resource?.resourceType === "ui"
-            );
-            resources.forEach((resource) =>
-              _map.set(resource.resourceValue, resource)
-            );
+          if (Array.isArray(data)) {
+            resources = data.filter((resource) => resource?.resourceType === 'ui');
+            resources.forEach((resource) => _map.set(resource.resourceValue, resource));
           }
           return resources;
         });
@@ -137,38 +149,33 @@ const Service: IService = {
         })
         .then((res) => {
           _map = new Map();
-          const resources = res.Data.items.reduce(
-            (acc, { ResourceType, ResourceValue, ...item }) => {
-              if (ResourceType === "ui") {
-                acc.push({
-                  ...item,
-                  ResourceType,
-                  ResourceValue,
-                  resourceType: ResourceType,
-                  resourceValue: ResourceValue,
-                }); // 兼容大小写写法，留存大写，避免影响其他隐藏逻辑
-              }
-              return acc;
-            },
-            []
-          );
+          const resources = res.Data.items.reduce((acc, { ResourceType, ResourceValue, ...item }) => {
+            if (ResourceType === 'ui') {
+              acc.push({
+                ...item,
+                ResourceType,
+                ResourceValue,
+                resourceType: ResourceType,
+                resourceValue: ResourceValue,
+              }); // 兼容大小写写法，留存大写，避免影响其他隐藏逻辑
+            }
+            return acc;
+          }, []);
           // 初始化权限项
-          resources.forEach((resource) =>
-            _map.set(resource?.ResourceValue, resource)
-          );
+          resources.forEach((resource) => _map.set(resource?.ResourceValue, resource));
           return resources;
         });
     }
     return userResourcesPromise;
   },
   async getKeycloakLogoutUrl() {
-    let logoutUrl = "";
+    let logoutUrl = '';
     const basePath = getBasePath();
     if (window.appInfo.hasUserCenter) {
       const res = await lowauthService.getAppLoginTypes({
         query: {
-          Action: "GetTenantLoginTypes",
-          Version: "2020-06-01",
+          Action: 'GetTenantLoginTypes',
+          Version: '2020-06-01',
           TenantName: window.appInfo.tenant,
         },
       });
@@ -179,14 +186,12 @@ const Service: IService = {
     } else {
       const res = await authService.getNuimsTenantLoginTypes({
         query: {
-          Action: "GetTenantLoginTypes",
-          Version: "2020-06-01",
+          Action: 'GetTenantLoginTypes',
+          Version: '2020-06-01',
           TenantName: window.appInfo.tenant,
         },
       });
-      const KeycloakConfig = res?.Data.find(
-        (item) => item.LoginType === "Keycloak"
-      );
+      const KeycloakConfig = res?.Data.find((item) => item.LoginType === 'Keycloak');
       if (KeycloakConfig) {
         logoutUrl = `${KeycloakConfig?.extendProperties?.logoutUrl}?redirect_uri=${window.location.protocol}//${window.location.host}${basePath}/login`;
       }
@@ -198,8 +203,8 @@ const Service: IService = {
     const sleep = (t) => new Promise((r) => setTimeout(r, t));
 
     if (window.appInfo.hasUserCenter) {
-      const logoutUrl = await this.getKeycloakLogoutUrl();
-      localStorage.setItem("logoutUrl", logoutUrl);
+      const logoutUrl = await Service.getKeycloakLogoutUrl();
+      localStorage.setItem('logoutUrl', logoutUrl);
       if (logoutUrl) {
         window.location.href = logoutUrl;
         await sleep(1000);
@@ -210,13 +215,13 @@ const Service: IService = {
           })
           .then(() => {
             // 用户中心，去除认证和用户名信息
-            cookie.erase("authorization");
-            cookie.erase("username");
+            cookie.erase('authorization');
+            cookie.erase('username');
           });
       }
     } else {
-      const logoutUrl = await this.getKeycloakLogoutUrl();
-      localStorage.setItem("logoutUrl", logoutUrl);
+      const logoutUrl = await Service.getKeycloakLogoutUrl();
+      localStorage.setItem('logoutUrl', logoutUrl);
       if (logoutUrl) {
         window.location.href = logoutUrl;
         await sleep(1000);
@@ -226,8 +231,8 @@ const Service: IService = {
             headers: getBaseHeaders(),
           })
           .then(() => {
-            cookie.erase("authorization");
-            cookie.erase("username");
+            cookie.erase('authorization');
+            cookie.erase('username');
           });
       }
     }
@@ -250,8 +255,8 @@ const Service: IService = {
     });
   },
   // 处理数据的参数转化
-  parse: queryString.parse,
-  stringify: queryString.stringify,
+  parse: qs.parse,
+  stringify: qs.stringify,
   /**
    * 权限服务是否初始化
    */
@@ -262,7 +267,7 @@ const Service: IService = {
    * 初始化权限服务
    */
   init(domainName) {
-    return this.getUserInfo().then(() => this.getUserResources(domainName));
+    return Service.getUserInfo().then(() => Service.getUserResources(domainName));
   },
   /**
    * 是否有权限
@@ -270,6 +275,17 @@ const Service: IService = {
    */
   has(authPath) {
     return (_map && _map.has(authPath)) || false;
+  },
+
+  _setCustomResources(list = []) {
+    _map = new Map();
+    list.forEach((resource) =>
+      _map.set(resource.resourceValue, {
+        ...resource,
+        ResourceType: resource.resourceType,
+        ResourceValue: resource.resourceValue,
+      }),
+    );
   },
 };
 
