@@ -1,16 +1,15 @@
-import "./types/global";
+import './types/global';
 
-import Config, { setConfig } from "./config";
+import Config, { setConfig } from './config';
 
-export * from "./apis";
+export * from './apis';
 
-export * from "./init";
+export * from './init';
 
-export * from "./router";
+export * from './router';
 
-import Global, { global } from "./global";
+import Global, { global } from './global';
 
 export { Config, setConfig, Global, global };
 
-export * from "./utils";
-export * from "./Formatters";
+export * from './utils';
