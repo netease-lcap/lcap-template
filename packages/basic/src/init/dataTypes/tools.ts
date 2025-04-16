@@ -2,11 +2,13 @@ import { format } from 'date-fns';
 import momentTZ from 'moment-timezone';
 import moment from 'moment';
 import { flatMap, xor } from 'lodash';
+import { Helpers } from '@lcap/nasl-sdk';
 
 import BigNumber from 'bignumber.js';
-import { getAppTimezone, safeNewDate } from '../utils';
 import Config from '../../config';
 import { sortTypeArgumentsBasedOnTypePriority } from './inference';
+
+const { getAppTimezone, safeNewDate } = Helpers;
 
 function tryJSONParse(str) {
   let result;

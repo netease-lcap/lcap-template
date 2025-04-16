@@ -1,43 +1,41 @@
-import { utils as u } from "@/init/utils";
+const utils = global.sdkUtils;
 
-// jest.spyOn(u, 'toastAndThrow').mockImplementation(() => null);
-
-describe("测试所有列表函数的边界输入场景", () => {
+describe('测试所有列表函数的边界输入场景', () => {
   const fns = [
-    u.Concat,
-    u.Join,
-    u.Length,
-    u.Get,
-    u.Set,
-    u.Contains,
-    u.Add,
-    u.AddAll,
-    u.Insert,
-    u.Remove,
-    u.RemoveAt,
-    u.ListAverage,
-    u.ListDistinct,
-    u.ListDistinctBy,
-    u.ListFilter,
-    u.ListFind,
-    u.ListFindIndex,
-    u.ListFlatten,
-    u.ListGroupBy,
-    u.ListHead,
-    u.ListLast,
-    u.ListMax,
-    u.ListMin,
-    u.ListProduct,
-    u.ListReverse,
-    u.ListSlice,
-    u.ListSliceToPageOf,
-    u.ListSort,
-    u.ListSum,
-    u.ListToMap,
-    u.ListTransform,
+    utils.Concat,
+    utils.Join,
+    utils.Length,
+    utils.Get,
+    utils.Set,
+    utils.Contains,
+    utils.Add,
+    utils.AddAll,
+    utils.Insert,
+    utils.Remove,
+    utils.RemoveAt,
+    utils.ListAverage,
+    utils.ListDistinct,
+    utils.ListDistinctBy,
+    utils.ListFilter,
+    utils.ListFind,
+    utils.ListFindIndex,
+    utils.ListFlatten,
+    utils.ListGroupBy,
+    utils.ListHead,
+    utils.ListLast,
+    utils.ListMax,
+    utils.ListMin,
+    utils.ListProduct,
+    utils.ListReverse,
+    utils.ListSlice,
+    utils.ListSliceToPageOf,
+    utils.ListSort,
+    utils.ListSum,
+    utils.ListToMap,
+    utils.ListTransform,
   ];
 
-  test("测试 undefined 和 null 输入", () => {
+  test('测试 undefined 和 null 输入', () => {
     fns.forEach((fn) => {
       try {
         expect(fn(undefined)).toBeNull;
@@ -55,7 +53,7 @@ describe("测试所有列表函数的边界输入场景", () => {
     });
   });
 
-  test("测试空数组输入", () => {
+  test('测试空数组输入', () => {
     fns.forEach((fn) => {
       try {
         expect(fn([])).toBeNull;
@@ -65,12 +63,12 @@ describe("测试所有列表函数的边界输入场景", () => {
     });
   });
 
-  test("测试空数组+lambda的输入", () => {
-    expect(JSON.stringify(u.ListGroupBy([], (item) => item))).toBe("{}");
+  test('测试空数组+lambda的输入', () => {
+    expect(JSON.stringify(utils.ListGroupBy([], (item) => item))).toBe('{}');
   });
 
-  test("测试无效数组元素", () => {
-    let __fns = fns.filter((fn) => fn !== u.ListDistinctBy && fn !== u.ListTransform);
+  test('测试无效数组元素', () => {
+    let __fns = fns.filter((fn) => fn !== utils.ListDistinctBy && fn !== utils.ListTransform);
     __fns.forEach((fn) => {
       try {
         expect(fn([undefined, null, null])).toBeNull;

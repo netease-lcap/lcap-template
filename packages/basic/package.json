@@ -1,6 +1,6 @@
 {
   "name": "@lcap/basic-template",
-  "version": "1.7.2",
+  "version": "2.0.0",
   "description": "",
   "main": "cjs/index.js",
   "module": "esm/index.js",
@@ -31,12 +31,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@lcap/nasl-sdk": "0.0.1-beta.4",
     "@microsoft/fetch-event-source": "^2.0.1",
     "axios": "^0.21.2",
     "bignumber.js": "^9.1.2",
     "crypto-js": "^4.1.1",
     "date-fns": "^2.6.0",
-    "date-fns-tz": "^2.0.0",
     "decimal.js": "^10.4.1",
     "lodash": "^4.17.15",
     "mockjs": "^1.1.0",
