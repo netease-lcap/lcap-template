@@ -107,7 +107,12 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
     }
 
     const makeConstructor = ({ genInitFromSchema, genSortedTypeKey, typeDefinitionMap }) => {
-      const properties = [];
+      const properties: {
+        propertyName: string;
+        parsedValue: any;
+        needGenInitFromSchema: boolean;
+        sortedTypeKey: string;
+      }[] = [];
 
       if (Array.isArray(propList)) {
         propList.forEach((property) => {
@@ -175,7 +180,7 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
           if (item.needGenInitFromSchema) {
             value = genInitFromSchema(item.sortedTypeKey, value, level);
           }
-          this[item.propertyName] = value ?? null;
+          this[item.propertyName] = value;
         });
 
         Object.defineProperty(this, '$type', {
@@ -186,6 +191,11 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
       // ctor设置name
       Object.defineProperty(ctor, 'name', {
         value: 'NaslTypeConstructor',
+      });
+
+      Object.defineProperty(this, '$propertiesNames', {
+        value: properties.map((item) => item.propertyName),
+        enumerable: false,
       });
 
       return ctor;
