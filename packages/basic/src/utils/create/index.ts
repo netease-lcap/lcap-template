@@ -18,7 +18,6 @@ import { sseRequester } from './sseRequester';
 import Config from '../../config';
 import { overwriteErrorMsgFieldIfSpecified } from './utils';
 import { default as builtInInterceptors } from './interceptors';
-import { isCreatedByGenInitFromSchema } from '..';
 
 const getData = (str) => new Function('return ' + str)();
 function getJsonParse() {
