@@ -197,7 +197,7 @@ export function genBaseOptions(requestInfo) {
   }
 
   // 保持对象的形状，让服务端识别
-  const replacerToKeepUndefinedFields = (key, value) => (value === undefined ? null : value);
+  const replacerToKeepUndefinedFields = (_: string, value: unknown) => (value === undefined ? null : value);
 
   return {
     params: query,
