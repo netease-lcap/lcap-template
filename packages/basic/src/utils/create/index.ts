@@ -18,6 +18,7 @@ import { sseRequester } from './sseRequester';
 import Config from '../../config';
 import { overwriteErrorMsgFieldIfSpecified } from './utils';
 import { default as builtInInterceptors } from './interceptors';
+import { isCreatedByGenInitFromSchema } from '..';
 
 const getData = (str) => new Function('return ' + str)();
 function getJsonParse() {
@@ -172,6 +173,13 @@ export function genBaseOptions(requestInfo) {
   const { method, body = {}, headers = {}, query = {} } = url;
   const path = formatMicroFrontUrl(url.path);
 
+  axios.defaults.transformRequest = [
+    function (data) {
+      const replacer = (key, value) => (typeof value === 'undefined' ? null : value);
+      return JSON.stringify(data, replacer);
+    },
+  ];
+
   const baseURL = config.baseURL ? config.baseURL : '';
   headers['Content-Type'] = headers['Content-Type'] || 'application/json';
   if (!headers.Authorization && cookie.get('authorization')) {
@@ -188,6 +196,9 @@ export function genBaseOptions(requestInfo) {
     data = formatContentType(headers['Content-Type'], body);
   }
 
+  // 保持对象的形状，让服务端识别
+  const replacerToKeepUndefinedFields = (key, value) => (value === undefined ? null : value);
+
   return {
     params: query,
     paramsSerializer,
@@ -197,7 +208,7 @@ export function genBaseOptions(requestInfo) {
       function (data, headers) {
         try {
           if (headers['Content-Type'] !== 'application/x-www-form-urlencoded') {
-            const request = JSONbig.stringify(data);
+            const request = JSONbig.stringify(data, replacerToKeepUndefinedFields);
             return request;
           }
           return data;
