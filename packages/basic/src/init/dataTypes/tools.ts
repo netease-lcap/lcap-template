@@ -157,9 +157,8 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
         });
       }
 
-      function ctor(params) {
-        const level = params.level;
-        const defaultValue = params.defaultValue;
+      function ctor(option: { level: number; defaultValue: any }) {
+        const { level, defaultValue } = option;
         if (defaultValue && Object.prototype.toString.call(defaultValue) === '[object Object]') {
           Object.assign(this, defaultValue);
         }
@@ -188,7 +187,10 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
           enumerable: false,
         });
       }
-      // ctor设置name
+
+      /**
+       * 参考 isCreatedByGenInitFromSchema，写入可识别的名称
+       */
       Object.defineProperty(ctor, 'name', {
         value: 'NaslTypeConstructor',
       });
