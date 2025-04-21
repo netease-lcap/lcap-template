@@ -31,7 +31,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@lcap/nasl-sdk": "0.0.1-beta.4",
+    "@lcap/nasl-sdk": "0.0.1-beta.5",
     "@microsoft/fetch-event-source": "^2.0.1",
     "axios": "^0.21.2",
     "bignumber.js": "^9.1.2",
