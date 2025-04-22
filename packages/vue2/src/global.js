@@ -1,4 +1,3 @@
-// 定义一下全局变量
 import Vue from 'vue';
 import { install } from '@vusion/utils';
 
