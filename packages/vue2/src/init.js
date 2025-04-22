@@ -1,9 +1,9 @@
 import Vue from 'vue';
-import { installOptions, installFilters, installComponents, installDirectives, install } from '@vusion/utils';
+import { installOptions, installFilters, installComponents, installDirectives } from '@vusion/utils';
 
-import * as Components from '@/components';
+import '@/global';
 
-import './setConfig';
+import '@/setConfig';
 
 import {
   filters,
@@ -22,29 +22,14 @@ import {
   getBasePath,
   filterAuthResources,
   findNoAuthView,
-  createService,
 } from '@/common';
+
+import * as Components from '@/components';
 
 import { getTitleGuard } from './router';
 
 import App from './App.vue';
 import { setI18nLocale } from './i18n';
-import mixins from './mixins';
-
-Vue.config.productionTip = false;
-
-window.$sleep = function () {
-  return new Promise((resolve) => {
-    this.$nextTick(resolve);
-  });
-};
-Vue.prototype.$sleep = window.$sleep;
-
-// 全局混入
-window.$mixins = mixins;
-
-window._lcapCreateService = createService;
-window.LcapInstall = install;
 
 installOptions(Vue);
 installDirectives(Vue, directives);
