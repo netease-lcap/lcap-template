@@ -45,14 +45,14 @@ export const Guarded: React.FC<
     if ($auth.isInit() && !userInfo?.UserId) {
       localStorage.setItem('beforeLogin', JSON.stringify(location));
       // 跳转到登录页面
-      return <Navigate to={`${getBasePath()}/login`}></Navigate>;
+      return <Navigate to={`/login`}></Navigate>;
     }
 
     const hasPermission = userResources.some((userResource) => userResource.startsWith(toPath));
     // 已登录, 无权限
     if (!hasPermission) {
       // @ts-ignore
-      return <Navigate to={`${getBasePath()}/noAuth`}></Navigate>;
+      return <Navigate to={`/noAuth`}></Navigate>;
     }
   }
 
