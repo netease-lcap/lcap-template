@@ -45,7 +45,7 @@ export const Guarded: React.FC<
     if ($auth.isInit() && !userInfo?.UserId) {
       localStorage.setItem('beforeLogin', JSON.stringify(location));
       // 跳转到登录页面
-      return <Navigate to={`/login`}></Navigate>;
+      return <Navigate to={`${getBasePath()}/login`}></Navigate>;
     }
 
     const normalizePath = (path: string) => path.endsWith('/') ? path : `${path}/`;
@@ -58,7 +58,7 @@ export const Guarded: React.FC<
     // 已登录, 无权限
     if (!hasPermission) {
       // @ts-ignore
-      return <Navigate to={`/noAuth`}></Navigate>;
+      return <Navigate to={`${getBasePath()}/noAuth`}></Navigate>;
     }
   }
 
