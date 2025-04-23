@@ -48,7 +48,13 @@ export const Guarded: React.FC<
       return <Navigate to={`${getBasePath()}/login`}></Navigate>;
     }
 
-    const hasPermission = userResources.some((userResource) => userResource.startsWith(toPath));
+    const normalizePath = (path: string) => path.endsWith('/') ? path : `${path}/`;
+    const hasPermission = userResources.some((userResource: string) => {
+      const a = normalizePath(userResource);
+      const b = normalizePath(toPath);
+      
+      return a === b;
+    });
     // 已登录, 无权限
     if (!hasPermission) {
       // @ts-ignore
