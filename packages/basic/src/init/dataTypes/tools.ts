@@ -189,17 +189,11 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
       }
 
       /**
-       * 参考 isCreatedByGenInitFromSchema，写入可识别的名称
+       * 写入可识别的名称，在 isCreatedByGenInitFromSchema 中使用
        */
       Object.defineProperty(ctor, 'name', {
         value: 'NaslTypeConstructor',
       });
-
-      Object.defineProperty(this, '$propertiesNames', {
-        value: properties.map((item) => item.propertyName),
-        enumerable: false,
-      });
-
       return ctor;
     };
 
