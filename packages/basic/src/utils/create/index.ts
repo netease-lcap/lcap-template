@@ -171,14 +171,6 @@ export function genBaseOptions(requestInfo) {
   const { url, config = {} } = requestInfo;
   const { method, body = {}, headers = {}, query = {} } = url;
   const path = formatMicroFrontUrl(url.path);
-
-  axios.defaults.transformRequest = [
-    function (data) {
-      const replacer = (key, value) => (typeof value === 'undefined' ? null : value);
-      return JSON.stringify(data, replacer);
-    },
-  ];
-
   const baseURL = config.baseURL ? config.baseURL : '';
   headers['Content-Type'] = headers['Content-Type'] || 'application/json';
   if (!headers.Authorization && cookie.get('authorization')) {
