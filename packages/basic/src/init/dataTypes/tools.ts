@@ -109,7 +109,12 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
     }
 
     const makeConstructor = ({ genInitFromSchema, genSortedTypeKey, typeDefinitionMap }) => {
-      const properties = [];
+      const properties: {
+        propertyName: string;
+        parsedValue: any;
+        needGenInitFromSchema: boolean;
+        sortedTypeKey: string;
+      }[] = [];
 
       if (Array.isArray(propList)) {
         propList.forEach((property) => {
@@ -154,16 +159,15 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
         });
       }
 
-      function ctor(params) {
-        const level = params.level;
-        const defaultValue = params.defaultValue;
+      function ctor(option: { level: number; defaultValue: any }) {
+        const { level, defaultValue } = option;
         if (defaultValue && Object.prototype.toString.call(defaultValue) === '[object Object]') {
           Object.assign(this, defaultValue);
         }
 
         properties.forEach((item) => {
           // const code = `return defaultValue?.${item.propertyName} ?? ${item.parsedValue};`;
-          // 👇
+          // 转换为 ES6:
           const code = `var _defaultValue$p, _defaultValue;
             return (_defaultValue$p =
               (_defaultValue = defaultValue) === null || _defaultValue === void 0
@@ -177,7 +181,7 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
           if (item.needGenInitFromSchema) {
             value = genInitFromSchema(item.sortedTypeKey, value, level);
           }
-          this[item.propertyName] = value ?? null;
+          this[item.propertyName] = value;
         });
 
         Object.defineProperty(this, '$type', {
@@ -185,11 +189,13 @@ function genConstructor(typeKey, definition, genInitFromSchema) {
           enumerable: false,
         });
       }
-      // ctor设置name
+
+      /**
+       * 写入可识别的名称，在 isCreatedByGenInitFromSchema 中使用
+       */
       Object.defineProperty(ctor, 'name', {
         value: 'NaslTypeConstructor',
       });
-
       return ctor;
     };
 
