@@ -1,7 +1,8 @@
-import VueI18n from "vue-i18n";
+import Vue from 'vue';
+import VueI18n from 'vue-i18n';
 
 export function setI18nLocale(appConfig) {
-  let locale = "zh-CN";
+  let locale = 'zh-CN';
   if (appConfig.i18nInfo) {
     const { I18nList, messages } = appConfig.i18nInfo;
     locale = getUserLanguage(appConfig, messages);
@@ -11,7 +12,7 @@ export function setI18nLocale(appConfig) {
     // 设置当前语言名称
     appConfig.i18nInfo.localeName = I18nList?.find((item) => item.id === locale)?.name;
     // 设置当前语言的翻译信息
-    window.Vue.prototype.$CloudUILang = locale;
+    Vue.prototype.$CloudUILang = locale;
 
     Object.keys(messages).forEach((key) => {
       if (Vue.prototype.$CloudUIMessages[key]) {
@@ -49,7 +50,7 @@ function getUserLanguage(appConfig, messages = {}) {
         locale = match;
       } else {
         // 如果不存在，就用默认语言
-        locale = appConfig.i18nInfo.locale || "zh-CN";
+        locale = appConfig.i18nInfo.locale || 'zh-CN';
       }
     }
   }
