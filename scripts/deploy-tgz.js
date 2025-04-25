@@ -1,7 +1,7 @@
-const upload = require("lcap/lib/upload");
-const fs = require("fs");
-const path = require("path");
-const getDeployConfig = require("./getDeployConfig");
+const upload = require('lcap/lib/upload');
+const fs = require('fs');
+const path = require('path');
+const getDeployConfig = require('./getDeployConfig');
 
 /**
  *
@@ -18,7 +18,7 @@ function deployTgz(options = {}) {
   const { root, name, version, platform, username, password } = options;
   const defaultConfig = getDeployConfig(options);
 
-  const target = name.replace("@", "").replace("/", "-") + "-" + version + ".tgz";
+  const target = name.replace('@', '').replace('/', '-') + '-' + version + '.tgz';
   const targetPath = path.resolve(root, target);
   // tgz 是否存在
   if (!fs.existsSync(targetPath)) {
@@ -26,7 +26,7 @@ function deployTgz(options = {}) {
     process.exit(1);
   }
 
-  const source = "zip.tgz";
+  const source = 'zip.tgz';
   const sourcePath = path.resolve(root, source);
 
   // zip.tgz 是否存在
@@ -60,10 +60,14 @@ function deployTgz(options = {}) {
       console.log(`上传成功`);
     })
     .catch(() => {
-      throw new Error("上传失败");
+      throw new Error('上传失败');
     })
     .finally(() => {
-      fs.unlinkSync(targetPath);
+      try {
+        fs.unlinkSync(targetPath);
+      } catch (error) {
+        console.warn(`删除文件失败: ${targetPath}`);
+      }
     });
 }
 
