@@ -197,7 +197,9 @@ export function genBaseOptions(requestInfo) {
       function (data, headers) {
         try {
           if (headers['Content-Type'] !== 'application/x-www-form-urlencoded') {
-            const request = JSONbig.stringify(data);
+            // 对于 JSON 请求，序列化的时候保持对象的形状，不让 undefined 字段消失。便于服务端识别
+            const replacerToKeepUndefinedFields = (_: string, value: unknown) => (value === undefined ? null : value);
+            const request = JSONbig.stringify(data, replacerToKeepUndefinedFields);
             return request;
           }
           return data;
