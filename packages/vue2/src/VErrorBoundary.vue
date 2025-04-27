@@ -31,7 +31,7 @@ export default {
   },
   errorCaptured(err, vm, info) {
     // 仅在 dev 环境下捕获 render 错误
-    if (appInfo.env === 'dev' && ['render'].includes(info)) {
+    if (window.appInfo.env === 'dev' && ['render'].includes(info)) {
       console.log('errorCaptured: 👇');
       console.log('err:', err);
       console.log('vm:', vm);

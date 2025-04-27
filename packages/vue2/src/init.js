@@ -34,7 +34,6 @@ import { setI18nLocale } from './i18n';
 installOptions(Vue);
 installDirectives(Vue, directives);
 
-const fnList = ['afterRouter'];
 const evalWrap = function (metaData, fnName) {
   // eslint-disable-next-line no-eval
   metaData && fnName && metaData?.frontendEvents[fnName] && eval(metaData.frontendEvents[fnName]);
@@ -99,7 +98,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   Vue.prototype.logined = true;
 
   // 全局catch error，主要来处理中止组件,的错误不想暴露给用户，其余的还是在控制台提示出来
-  Vue.config.errorHandler = (err, vm, info) => {
+  Vue.config.errorHandler = (err) => {
     if (err.name === 'Error' && err.message === '程序中止') {
       console.warn('程序中止');
     } else {
@@ -135,40 +134,40 @@ const init = (appConfig, platformConfig, routes, metaData) => {
 
   window.VueRouterInstance = router;
 
-  const beforeRouter = Vue.prototype.beforeRouter;
-  const getAuthGuard =
-    (router, routes, authResourcePaths, appConfig, baseResourcePaths, beforeRouter) => async (to, from, next) => {
-      try {
-        if (beforeRouter) {
-          const event = {
-            baseResourcePaths,
-            router,
-            routes,
-            authResourcePaths,
-            appConfig,
-            beforeRouter,
-            to,
-            from,
-            next,
-            parsePath,
-            getBasePath,
-            filterAuthResources,
-            findNoAuthView,
-            filterRoutes,
-          };
-          await beforeRouter(event);
-        } else {
-          next();
-        }
-      } catch (err) {
-        console.error('beforeRouter error:', err);
+  const beforeRouter = window.beforeRouter || Vue.prototype.beforeRouter;
+
+  const getAuthGuard = (params) => async (to, from, next) => {
+    try {
+      if (beforeRouter) {
+        await beforeRouter({
+          ...params,
+          to,
+          from,
+          next,
+          parsePath,
+          getBasePath,
+          filterAuthResources,
+          findNoAuthView,
+          filterRoutes,
+        });
+      } else {
         next();
       }
-    };
-  beforeRouter &&
-    router.beforeEach(
-      getAuthGuard(router, routes, authResourcePaths, appConfig, baseResourcePaths, window.beforeRouter),
-    );
+    } catch (err) {
+      console.error('beforeRouter error:', err);
+      next();
+    }
+  };
+
+  router.beforeEach(
+    getAuthGuard({
+      router,
+      routes,
+      authResourcePaths,
+      appConfig,
+      baseResourcePaths,
+    }),
+  );
   router.beforeEach(getTitleGuard(appConfig));
   router.beforeEach(microFrontend);
 
@@ -182,12 +181,14 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   const afterRouter = Vue.prototype.afterRouter;
 
   afterRouter &&
-    router.afterEach(async (to, from, next) => {
+    router.afterEach(async (to, from) => {
       try {
         if (afterRouter) {
           await afterRouter(to, from);
         }
-      } catch (err) {}
+      } catch (err) {
+        console.error('afterRouter error:', err);
+      }
     });
 
   if (window.LcapMicro?.container) {
