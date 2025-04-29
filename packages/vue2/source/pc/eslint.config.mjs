@@ -1,7 +1,7 @@
 import js from '@eslint/js';
 import pluginVue from 'eslint-plugin-vue';
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
-import globals from './globals.json' assert { type: 'json' };
+import globals from './eslint-config/globals.json' assert { type: 'json' };
 
 export default [
   {
