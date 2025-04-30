@@ -55,7 +55,7 @@ setConfig({
       return Vue.prototype[key];
     },
   },
-  configureRequest(options, axios) {
+  configureRequest(_options, axios) {
     axios.interceptors.response.use(
       function onSuccess(response) {
         if (response.headers.authorization) {
@@ -74,23 +74,23 @@ setConfig({
      */
 
     // 修改请求baseURL
-    // options.baseURL = 'https://some-domain.com/api';
+    // _options.baseURL = 'https://some-domain.com/api';
 
     // 增加额外的请求头
-    // options.headers = {
-    //     ...(options.headers || {}),
+    // _options.headers = {
+    //     ...(_options.headers || {}),
     //     key1: 'value1',
     // }
 
     // 增加额外的请求参数（带在请求链接上）
-    // options.params = {
-    //     ...(options.params || {}),
+    // _options.params = {
+    //     ...(_options.params || {}),
     //     key2: 'value2',
     // };
 
     // 增加额外的请求参数（带在请求体上）
-    // options.data = {
-    //     ...(options.data || {}),
+    // _options.data = {
+    //     ...(_options.data || {}),
     //     key3: 'value3',
     // }
   },
