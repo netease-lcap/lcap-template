@@ -7,24 +7,13 @@ import PluginLCAP from './eslint-config/plugins/lcap.js';
 export default [
   {
     name: 'app/files-to-lint',
-    files: ['src/views/**/*.{js,jsx,ts,tsx,vue}', 'src/components/**/*.{js,jsx,ts,tsx,vue}'],
+    files: ['src/**/*.{js,jsx,ts,tsx,vue}'],
   },
 
   {
     name: 'app/files-to-ignore',
     ignores: [
-      '**/dist/**',
-      '**/public/**',
-      '**/packages/**',
-      '**/common/**',
-      '**/assets/**',
-      '**/metaData/**',
-      '**/plugins/**',
-      '**/router/**',
-      'src/platform.config.json',
-      'src/metaData.js',
-      'vue.config.js',
-      'eslint.config.mjs',
+      '**/*.config.{js,ts,mjs}',
     ],
   },
 

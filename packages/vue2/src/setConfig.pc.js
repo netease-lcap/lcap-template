@@ -54,7 +54,7 @@ setConfig({
       return Vue.prototype[key];
     },
   },
-  configureRequest(_options) {
+  configureRequest(_options, _axios) {
     /**
      * options配置参考
      * https://axios-http.com/zh/docs/req_config
