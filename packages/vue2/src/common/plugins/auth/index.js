@@ -1,10 +1,10 @@
-import { initAuth, authService } from "@lcap/basic-template";
+import { initAuth, authService } from '@lcap/basic-template';
 
 export default {
   install(Vue, options = {}) {
     initAuth(options);
 
-    const base = (options.base || "").replace(/\/$/, "");
+    const base = (options.base || '').replace(/\/$/, '');
     /**
      * - 组件权限项功能
      * - 自动隐藏路由组件功能
@@ -20,14 +20,14 @@ export default {
      * modifiers 的名字用于子权限行为，组件属性那里有问题，暂时没有实现
      */
     const vAuth = {
-      async handle(el, binding, vnode, oldVnode) {
+      async handle(el, binding) {
         // 初始化操作，防止先出现后消失
-        if (el.__vue__ && el.__vue__.$options.name === "u-table-view-column") el.__vue__.currentHidden = false;
+        if (el.__vue__ && el.__vue__.$options.name === 'u-table-view-column') el.__vue__.currentHidden = false;
         else {
-          el && (el.style.display = "none");
+          el && (el.style.display = 'none');
         }
         const data = {
-          value: binding.value || "",
+          value: binding.value || '',
           actions: Object.keys(binding.modifiers),
         };
 
@@ -36,9 +36,9 @@ export default {
         const visible = await authService.has(authPath);
 
         // 表格列不起作用，特殊处理
-        if (el.__vue__ && el.__vue__.$options.name === "u-table-view-column") el.__vue__.currentHidden = !visible;
+        if (el.__vue__ && el.__vue__.$options.name === 'u-table-view-column') el.__vue__.currentHidden = !visible;
         else {
-          el && (el.style.display = visible ? "" : "none");
+          el && (el.style.display = visible ? '' : 'none');
         }
       },
       bind(el, binding, vnode, oldVnode) {
@@ -48,7 +48,7 @@ export default {
         vAuth.handle(el, binding, vnode, oldVnode);
       },
     };
-    Vue.directive("auth", vAuth);
+    Vue.directive('auth', vAuth);
 
     Vue.mixin({
       mounted() {
@@ -62,21 +62,21 @@ export default {
         _updateVisibleByAuth() {
           if (!(options.autoHide && this.to)) return;
           // 有 v-auth 了就不处理 to 的了。
-          if (this.$vnode.data.directives && this.$vnode.data.directives.some((directive) => directive.name === "auth"))
+          if (this.$vnode.data.directives && this.$vnode.data.directives.some((directive) => directive.name === 'auth'))
             return;
           if (!authService.isInit()) return;
 
           let visible = true;
           if (options.autoHide && this.to) {
             let toPath;
-            if (typeof this.to === "object") toPath = this.to.path;
-            else if (typeof this.to === "string") toPath = this.to.split("?")[0];
+            if (typeof this.to === 'object') toPath = this.to.path;
+            else if (typeof this.to === 'string') toPath = this.to.split('?')[0];
             // 去掉末尾的 / 导致的权限不匹配
-            const fullPath = (base + toPath).replace(/\/+$/, "");
+            const fullPath = (base + toPath).replace(/\/+$/, '');
             visible = visible && authService.has(fullPath);
           }
 
-          this.$el && (this.$el.style.display = visible ? "" : "none");
+          this.$el && (this.$el.style.display = visible ? '' : 'none');
         },
       },
     });
