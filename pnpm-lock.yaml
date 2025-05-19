@@ -44,9 +44,6 @@ importers:
       decimal.js:
         specifier: ^10.4.1
         version: 10.4.3
-      json-bigint:
-        specifier: 0.4.0
-        version: 0.4.0
       lodash:
         specifier: ^4.17.15
         version: 4.17.21
