@@ -1,8 +1,8 @@
 import axios from 'axios';
 import Service from 'request-pre';
 import { stringify } from 'qs';
-
-import JSONbig from "json-bigint";
+// import JSONbig from 'json-bigint';
+import JSONbig from '../json-bigint';
 import BigNumber from "bignumber.js";
 import get from "lodash/get";
 
@@ -184,10 +184,13 @@ export function genBaseOptions(requestInfo) {
     baseURL,
     method: method2,
     transformRequest: [
-      function (data) {
+      function (data, headers) {
         try {
-          const request = JSONbig.stringify(data);
-          return request;
+          if (headers['Content-Type'] !== 'application/x-www-form-urlencoded') {
+            const request = JSONbig.stringify(data);
+            return request;
+          }
+          return data;
         } catch (error) {
           return data;
         }
