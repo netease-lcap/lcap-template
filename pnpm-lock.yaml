@@ -120,9 +120,6 @@ importers:
       decimal.js:
         specifier: ^10.4.1
         version: 10.4.3
-      json-bigint:
-        specifier: 0.4.0
-        version: 0.4.0
       lodash:
         specifier: ^4.17.15
         version: 4.17.21
@@ -4203,9 +4200,6 @@ packages:
     resolution: {integrity: sha512-OYu7XEzjkCQ3C5Ps3QIZsQfNpqoJyZZA99wd9aWd05NCtC5pWOkShK2mkL6HXQR6/Cy2lbNdPlZBpuQHXE63gA==, tarball: https://registry.npmmirror.com/jsesc/-/jsesc-2.5.2.tgz}
     engines: {node: '>=4'}
     hasBin: true
-
-  json-bigint@0.4.0:
-    resolution: {integrity: sha512-XVRlFBFhzHFuV6ACStPP+7MURGyHWvEP+cPCWox6Y4oySdlqHVjOHd/EL3q/kKbDc6p3tdQV/kZuFIFUQQFmaw==}
 
   json-buffer@3.0.0:
     resolution: {integrity: sha512-CuUqjv0FUZIdXkHPI8MezCnFCdaTAacej1TZYulLoAg1h/PhwkdXFN4V/gzY4g+fMBCOV2xF+rp7t2XD2ns/NQ==, tarball: https://registry.npmmirror.com/json-buffer/-/json-buffer-3.0.0.tgz}
@@ -10636,10 +10630,6 @@ snapshots:
   jsesc@0.5.0: {}
 
   jsesc@2.5.2: {}
-
-  json-bigint@0.4.0:
-    dependencies:
-      bignumber.js: 9.1.2
 
   json-buffer@3.0.0: {}
 
