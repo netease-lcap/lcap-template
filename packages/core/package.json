@@ -25,7 +25,6 @@
     "date-fns": "^2.6.0",
     "date-fns-tz": "^2.0.0",
     "decimal.js": "^10.4.1",
-    "json-bigint": "0.4.0",
     "lodash": "^4.17.15",
     "mockjs": "^1.1.0",
     "moment": "^2.29.4",

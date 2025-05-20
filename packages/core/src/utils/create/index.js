@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Service from 'request-pre';
 import { stringify } from 'qs';
-import JSONbig from "json-bigint";
+import JSONbig from "../json-bigint";
 import BigNumber from "bignumber.js";
 import get from "lodash/get";
 
@@ -27,7 +27,6 @@ function getJsonParse() {
   const warpJsonParse = (jsonStr) =>
     JSON.parse(jsonStr, (...arg) => {
       if (typeof arg[1] === "number" && Number.isInteger(arg[1]) && !Number.isSafeInteger(arg[1])) {
-        // @ts-ignore
         return new BigNumber(get(arg, "2.source"));
       }
       return arg[1];
@@ -191,10 +190,13 @@ export function genBaseOptions(requestInfo) {
     baseURL,
     method: method2,
     transformRequest: [
-      function (data) {
+      function (data, headers) {
         try {
-          const request = JSONbig.stringify(data);
-          return request;
+          if (headers['Content-Type'] !== 'application/x-www-form-urlencoded') {
+            const request = JSONbig.stringify(data);
+            return request;
+          }
+          return data;
         } catch (error) {
           return data;
         }
