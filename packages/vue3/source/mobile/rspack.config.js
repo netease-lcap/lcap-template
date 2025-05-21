@@ -83,6 +83,7 @@ module.exports = defineConfig({
 		}),
     // LcapPlugin start
 		new LcapPlugin({
+      isDev,
 			// 是否增量编译
 			isIncremental: false,
 			// 上一次的编译结果

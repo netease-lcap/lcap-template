@@ -7,8 +7,7 @@ module.exports = class LcapPlugin {
     this.options = options;
   }
   apply(compiler) {
-    const { isIncremental, lastResource, extra } = this.options;
-
+    const { isDev, isIncremental, lastResource, extra } = this.options;
 
     // 增量发布
     if (isIncremental) {
@@ -20,16 +19,27 @@ module.exports = class LcapPlugin {
     }
 
     // 标准发布
-    overrideRuntime(compiler);
-    emitChunksMapResource(compiler);
+    overrideRuntime(compiler, {
+      isDev,
+    });
+    emitChunksMapResource(compiler, {
+      isDev,
+    });
     emitClintResource(compiler, {
+      isDev,
       extra,
     });
   }
 }
 
 // 复写加载css\js chunk的函数
-function overrideRuntime(compiler) {
+function overrideRuntime(compiler, options) {
+  const { isDev } = options;
+
+  if (!isDev) {
+    return;
+  }
+
   const { RuntimeModule, RuntimeGlobals } = compiler.webpack;
 
   // 复写__webpack_require__.k和__webpack_require__.u
@@ -62,7 +72,13 @@ function overrideRuntime(compiler) {
 }
 
 // 增加chunkMap资源
-function emitChunksMapResource(compiler) {
+function emitChunksMapResource(compiler, options) {
+  const { isDev } = options;
+
+  if (!isDev) {
+    return;
+  }
+
   compiler.hooks.emit.tapAsync(plugin, (compilation, callback) => {
     // 2、增加router.min.js asset
     const ChunksNameMap = {};
@@ -71,7 +87,7 @@ function emitChunksMapResource(compiler) {
       warnings: false,
       modules: false,
     });
-    
+
     statsJson.chunks.forEach(chunk => {
       const chunkId = chunk.id;
       const chunkName = chunk.names[0];
@@ -94,7 +110,7 @@ window.lcapChunksHashMap = ${JSON.stringify(ChunksHashMap)};`;
 
 // 生成client.js
 function emitClintResource(compiler, options) {
-  const { extra } = options;
+  const { isDev, extra } = options;
   compiler.hooks.compilation.tap(plugin, compilation => {
       rspack.HtmlRspackPlugin.getCompilationHooks(compilation).beforeAssetTagGeneration.tapPromise(plugin, async data => {
         const { assets } = data;
@@ -113,7 +129,7 @@ function emitClintResource(compiler, options) {
         const clientCode = `(function() {
           function loadAssets() {
             // chunksMap
-            window.LazyLoad.js(["${publicPath}router.min.js?t=" + Date.now()]);
+            ${isDev} && window.LazyLoad.js(["${publicPath}router.min.js?t=" + Date.now()]);
 
             window.LazyLoad.js(${JSON.stringify(allJS)});
             window.LazyLoad.css(${JSON.stringify(allCSS)});
