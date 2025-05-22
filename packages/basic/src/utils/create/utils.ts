@@ -1,3 +1,5 @@
+import safeJSONStringify from "safe-json-stringify";
+
 type Nil = null | undefined;
 /**
  * 若有定义errorMessage为string，且data中包含errorMsg字段，则直接写入字段尝试替换错误信息
@@ -18,26 +20,19 @@ export function overwriteErrorMsgFieldIfSpecified(
 /**
  * stringfy 过滤掉 function 和循环引用
  * */
-export function stringifyWithLoopProtection(obj, replacer?, space?) {
-  const seen = new WeakSet();
+export function stringifyWithLoopProtection(obj: any, replacer?: any, space?: any) {
   let hasCircleProp = false;
-  const result = JSON.stringify(
+
+  const result = safeJSONStringify(
     obj,
-    function (key, value) {
-      if (typeof value === "object" && value !== null) {
-        if (seen.has(value)) {
-          hasCircleProp = true;
-          // 如果已经见过该对象，则返回undefined;
-          return undefined;
-        }
-        seen.add(value);
+    (key, value) => {
+      if (value === "[Circular]") {
+        // 循环引用
+        hasCircleProp = true;
+        return undefined;
       }
-      // 使用用户提供的replacer函数（如果有的话）
-      if (replacer) {
-        return replacer(key, value);
-      } else {
-        return value;
-      }
+
+      return replacer(key, value);
     },
     space,
   );

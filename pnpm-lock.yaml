@@ -174,6 +174,9 @@ importers:
       qs:
         specifier: ^6.8.0
         version: 6.13.0
+      safe-json-stringify:
+        specifier: ^1.2.0
+        version: 1.2.0
     devDependencies:
       '@jest/globals':
         specifier: ^29.7.0
@@ -199,6 +202,9 @@ importers:
       '@types/node':
         specifier: ^20.11.16
         version: 20.17.6
+      '@types/safe-json-stringify':
+        specifier: ^1.1.5
+        version: 1.1.5
       fast-check:
         specifier: ^3.14.0
         version: 3.23.1
@@ -2335,6 +2341,9 @@ packages:
 
   '@types/retry@0.12.2':
     resolution: {integrity: sha512-XISRgDJ2Tc5q4TRqvgJtzsRkFYNJzZrhTdtMoGVBttwzzQJkPnS3WWTFc7kuDRoPtPakl+T+OfdEUjYJj7Jbow==}
+
+  '@types/safe-json-stringify@1.1.5':
+    resolution: {integrity: sha512-wQ1unJoajjDOP7bkg7FHOYelVp6BSsuBIFSvifNKeiMHegXWa6vddoqM/dHTVkX8bn9fJcor4Hukff9AtFybcA==}
 
   '@types/sass@1.45.0':
     resolution: {integrity: sha512-jn7qwGFmJHwUSphV8zZneO3GmtlgLsmhs/LQyVvQbIIa+fzGMUiHI4HXJZL3FT8MJmgXWbLGiVVY7ElvHq6vDA==}
@@ -8367,6 +8376,9 @@ packages:
   safe-buffer@5.2.1:
     resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
 
+  safe-json-stringify@1.2.0:
+    resolution: {integrity: sha512-gH8eh2nZudPQO6TytOvbxnuhYBOvDBBLW52tz5q6X58lJcd/tkmqFR+5Z9adS8aJtURSXWThWy/xJtJwixErvg==}
+
   safe-regex@1.1.0:
     resolution: {integrity: sha512-aJXcif4xnaNUzvUuC5gcb46oTS7zvg4jpMTnuqtrEPlR3vFr4pxtdTwaF1Qs3Enjn9HK+ZlwQui+a7z0SywIzg==}
 
@@ -12500,6 +12512,8 @@ snapshots:
   '@types/retry@0.12.0': {}
 
   '@types/retry@0.12.2': {}
+
+  '@types/safe-json-stringify@1.1.5': {}
 
   '@types/sass@1.45.0':
     dependencies:
@@ -19666,6 +19680,8 @@ snapshots:
   safe-buffer@5.1.2: {}
 
   safe-buffer@5.2.1: {}
+
+  safe-json-stringify@1.2.0: {}
 
   safe-regex@1.1.0:
     dependencies:
