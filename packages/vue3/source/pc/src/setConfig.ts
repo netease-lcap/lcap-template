@@ -36,7 +36,7 @@ export function setConfig(options = {}) {
         app.config.globalProperties.$message?.info?.(msg);
       },
     },
-    configureRequest(_options, _axios) {
+    configureRequest(_options) {
       /**
        * options配置参考
        * https://axios-http.com/zh/docs/req_config

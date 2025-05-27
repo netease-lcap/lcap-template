@@ -1,7 +1,7 @@
-import metaData from './metaData.js';
-import platformConfig from './platform.config.js';
-import { routes } from './router.js';
-import cloudAdminDesigner from './init.js';
+import metaData from './metaData';
+import platformConfig from './platform.config';
+import { routes } from './router';
+import cloudAdminDesigner from './init';
 
 let app: any = null;
 
