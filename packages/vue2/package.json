@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "webpack-dev-server --config build/webpack.dev.config.js",
     "build": "webpack --config build/webpack.config.js",
-    "prebuild": "rm -rf dist",
+    "prebuild": "rimraf ./dist",
     "postbuild": "npm run zip",
     "zip": "node ./scripts/zip.js",
     "deploy": "node ./scripts/deploy.js"
@@ -23,11 +23,11 @@
     "@lcap/basic-template": "workspace:*",
     "@vusion/utils": "^0.4.10",
     "babel-polyfill": "^6.26.0",
+    "date-fns": "^2.6.0",
+    "lodash": "^4.17.15",
     "process": "^0.11.10",
     "vue": "2.6.12",
     "vue-i18n": "^8.28.2",
-    "date-fns": "^2.6.0",
-    "lodash": "^4.17.15",
     "vue-router": "^3.1.2"
   },
   "devDependencies": {
@@ -43,6 +43,7 @@
     "minimist": "^1.2.8",
     "postcss": "^8.4.38",
     "postcss-loader": "^8.1.1",
+    "rimraf": "^6.0.1",
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
     "vue-loader": "^15.11.1",
