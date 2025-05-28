@@ -1,6 +1,4 @@
-import { Helpers } from '@lcap/nasl-sdk';
-
-const { convertJSDateInTargetTimeZone } = Helpers;
+const { convertJSDateInTargetTimeZone } = global.sdkHelpers;
 
 describe('日期时间格式化辅助函数', () => {
   test('convertJSDateInTargetTimeZone', () => {

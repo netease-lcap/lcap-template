@@ -1,4 +1,4 @@
-import NaslSDK from '@lcap/nasl-sdk';
+import NaslSDK from '../../sdk';
 
 import Global from '../../global';
 import Config from '../../config';
