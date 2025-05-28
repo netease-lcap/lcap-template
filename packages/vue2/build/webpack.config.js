@@ -1,68 +1,67 @@
-const path = require("path");
-const webpack = require("webpack");
-const { VueLoaderPlugin } = require("vue-loader");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
-const EsbuildPlugin = require("./plugins/esbuild-plugin");
+const path = require('path');
+const webpack = require('webpack');
+const { VueLoaderPlugin } = require('vue-loader');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const EsbuildPlugin = require('./plugins/esbuild-plugin');
 
-const root = path.resolve(__dirname, "..");
-const pkg = require(path.resolve(root, "./package.json"));
+const root = path.resolve(__dirname, '..');
+const pkg = require(path.resolve(root, './package.json'));
 
-const publicPath = "/";
+const publicPath = '/';
 
-const library = "cloudAdminDesigner";
+const library = 'cloudAdminDesigner';
 
-const extensions = [".vue", ".js", ".ts", ".json", ".css"];
+const extensions = ['.vue', '.js', '.ts', '.json', '.css'];
 
 const baseConfig = (type) => {
   return {
-    mode: "production",
-    devtool: "source-map",
-    entry: [path.resolve(root, `./src/assets/css/index.${type}.css`), path.resolve(root, "./src/init.js")],
+    mode: 'production',
+    devtool: 'source-map',
+    entry: [path.resolve(root, `./src/assets/css/index.${type}.css`), path.resolve(root, './src/init.js')],
     output: {
       publicPath,
       path: path.resolve(root, `dist/${type}`),
       filename: `${library}.umd.min.js`,
       library: {
         name: library,
-        type: "umd",
+        type: 'umd',
         umdNamedDefine: true,
-        export: "default",
+        export: 'default',
       },
     },
     resolve: {
       alias: {
-        "@": path.resolve(root, "src"),
+        '@': path.resolve(root, 'src'),
       },
       extensions: [...extensions, ...extensions.map((ext) => `.${type}${ext}`)],
     },
     externals: {
       vue: {
-        root: "Vue",
-        commonjs: "vue",
-        commonjs2: "vue",
-        amd: "vue",
+        root: 'Vue',
+        commonjs: 'vue',
+        commonjs2: 'vue',
+        amd: 'vue',
       },
     },
     module: {
       rules: [
         {
           test: /\.vue$/,
-          loader: "vue-loader",
+          loader: 'vue-loader',
         },
         {
           test: /\.js$/,
-          loader: "babel-loader",
+          loader: 'babel-loader',
         },
         {
           test: /\.ts$/,
           use: [
             {
-              loader: "babel-loader",
+              loader: 'babel-loader',
             },
             {
-              loader: "ts-loader",
+              loader: 'ts-loader',
             },
           ],
         },
@@ -71,13 +70,13 @@ const baseConfig = (type) => {
           use: [
             MiniCssExtractPlugin.loader,
             {
-              loader: "css-loader",
+              loader: 'css-loader',
             },
             {
-              loader: "postcss-loader",
+              loader: 'postcss-loader',
               options: {
                 postcssOptions: {
-                  plugins: ["autoprefixer"],
+                  plugins: ['autoprefixer'],
                 },
               },
             },
@@ -88,31 +87,30 @@ const baseConfig = (type) => {
     optimization: {
       minimizer: [
         new EsbuildPlugin({
-          target: "es2015",
+          target: 'es2015',
           css: true,
         }),
       ],
     },
     plugins: [
       new webpack.ProvidePlugin({
-        process: require.resolve("process/browser"),
+        process: require.resolve('process/browser'),
       }),
       new VueLoaderPlugin(),
       new MiniCssExtractPlugin({
         filename: `${library}.css`,
       }),
       new webpack.ProgressPlugin(),
-      new CleanWebpackPlugin(),
       // new BundleAnalyzerPlugin({
       //   analyzerMode: "static",
       //   openAnalyzer: false,
       //   reportFilename: `report-${type}.html`,
       // }),
     ],
-    stats: "minimal",
+    stats: 'minimal',
   };
 };
 
-module.exports = [baseConfig("pc"), baseConfig("mobile")];
+module.exports = [baseConfig('pc'), baseConfig('mobile')];
 
 exports.baseConfig = baseConfig;
