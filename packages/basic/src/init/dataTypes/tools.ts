@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import momentTZ from 'moment-timezone';
 import moment from 'moment';
 import { flatMap, xor } from 'lodash';
-import { Helpers } from '@lcap/nasl-sdk';
+import { Helpers } from '../../sdk';
 
 import BigNumber from 'bignumber.js';
 import Config from '../../config';
