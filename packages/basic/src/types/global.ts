@@ -20,6 +20,7 @@ interface Window {
   postRequest: any;
   axiosOptionsSetup: (options: any) => void;
   $i18n: any;
+  Vue: any;
 }
 
 // navigator对象
