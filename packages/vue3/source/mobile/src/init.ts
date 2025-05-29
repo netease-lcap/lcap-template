@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import { createApp, nextTick } from 'vue';
 import { createPinia } from 'pinia';
 import * as Components from '@/components';
 import * as Libraries from '@/libraries';
@@ -33,7 +33,7 @@ const evalWrap = function (metaData, fnName) {
 
 window.$sleep = function () {
   return new Promise((resolve) => {
-    this.$nextTick(resolve);
+    nextTick(resolve);
   });
 };
 

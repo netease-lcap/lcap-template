@@ -7,7 +7,7 @@ import mixins from '@/mixins';
 // 关闭生产提示
 Vue.config.productionTip = false;
 
-window.$sleep = function () {
+Vue.prototype.$sleep = function () {
   return new Promise((resolve) => {
     if (typeof this?.$nextTick === 'function') {
       this.$nextTick(resolve);
@@ -16,7 +16,7 @@ window.$sleep = function () {
     }
   });
 };
-Vue.prototype.$sleep = window.$sleep;
+window.$sleep = Vue.prototype.$sleep;
 
 // 全局混入
 window.$mixins = mixins;
