@@ -158,37 +158,15 @@ module.exports = defineConfig({
     port: 8810,
 		historyApiFallback: true,
     compress: false,
-    proxy: {
-      "/assets": {
-        target: backendUrl,
-        changeOrigin: true,
-        autoRewrite: true,
-      },
-      "/api": {
-        target: backendUrl,
-        changeOrigin: true,
-        autoRewrite: true,
-      },
-      "/rest": {
-        target: backendUrl,
-        changeOrigin: true,
-        autoRewrite: true,
-      },
-      "^/gateway/": {
-        target: backendUrl,
-        changeOrigin: true,
-        autoRewrite: true,
-      },
-      "^/gw/": {
-        target: `http://localhost:8080`,
-        changeOrigin: true,
-        autoRewrite: true,
-      },
-      "^/upload": {
-        target: backendUrl,
-        changeOrigin: true,
-        autoRewrite: true,
-      },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
     },
+    proxy: [
+      {
+        context: ["/assets", "/api", "/rest", "/gateway", "/gw", "/upload"],
+        target: backendUrl,
+        changeOrigin: true,
+      },
+    ],
   },
 });
