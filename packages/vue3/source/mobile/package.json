@@ -12,7 +12,6 @@
     "pinia": "2.3.1",
     "vue": "3.5.13",
     "vue-router": "4.5.0",
-    "@lcap/basic-template": "http://minio-api.codewave-test.163yun.com/lowcode-static/packages/%40lcap/basic-template%401.7.1/zip.tgz",
     "vue-i18n": "11.1.2",
     "date-fns": "2.30.0",
     "lodash": "4.17.21"
