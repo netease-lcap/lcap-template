@@ -158,13 +158,18 @@ function download(url) {
 }
 
 function formatCallConnectorPath(path: string, connectionName: string): string {
+  const sysPrefixPath = window.appInfo?.sysPrefixPath;
+  if (sysPrefixPath) {
+    path = path?.replace(sysPrefixPath, "");
+  }
+
   // /api/connectors/connector1/namespace1/getA
   const pathItemList = (path || '').split('/').filter((i) => i);
   if (pathItemList.length < 3) {
     throw Error('unexpected path when use CallConnector');
   }
   const [prefix1, prefix2, connectorName, ...rt] = pathItemList;
-  return `/${prefix1}/${prefix2}/${connectorName}/${connectionName}/${rt.join('/')}`;
+  return `${sysPrefixPath ? sysPrefixPath : ""}/${prefix1}/${prefix2}/${connectorName}/${connectionName}/${rt.join('/')}`;
 }
 
 export function genBaseOptions(requestInfo) {
