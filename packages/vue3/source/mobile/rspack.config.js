@@ -108,35 +108,24 @@ module.exports = defineConfig({
 						const moduleName = /[\\/]pages[\\/](.*)\.vue?/.exec(resource)[1].split(/[\\/]/g).join('_');
 						return `${cacheGroupKey}_${moduleName}`;
 					},
-					chunks: 'all',
 					enforce: true,
 					priority: 5,
 				},
 				routes: {
 					test: /src[\\/]router\.ts/,
 					name: 'routes',
-					chunks: 'initial',
 					enforce: true,
 					priority: 4,
 				},
 				source: {
 					test: /[\\/]src[\\/]/,
 					name: 'source',
-					chunks: 'all',
 					enforce: true,
 					priority: 3,
-				},
-				lcap: {
-					test: /[\\/]node_modules[\\/](lcap|@lcap)/,
-					name: 'lcap',
-					chunks: 'all',
-					enforce: true,
-					priority: 2
 				},
 				vendor: {
 					test: /[\\/]node_modules[\\/]/,
 					name: 'vendor',
-					chunks: 'all',
 					enforce: true,
 					priority: 1
 				},
