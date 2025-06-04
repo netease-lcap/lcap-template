@@ -25,7 +25,7 @@ module.exports = class LcapPlugin {
     emitChunksMapResource(compiler, {
       isDev,
     });
-    emitClintResource(compiler, {
+    emitClientResource(compiler, {
       isDev,
       extra,
     });
@@ -118,7 +118,7 @@ lcap_changed_chunks.forEach(item => {
 }
 
 // 生成client.js
-function emitClintResource(compiler, options) {
+function emitClientResource(compiler, options) {
   const { isDev, extra } = options;
   compiler.hooks.compilation.tap(plugin, compilation => {
       rspack.HtmlRspackPlugin.getCompilationHooks(compilation).beforeAssetTagGeneration.tapPromise(plugin, async data => {
