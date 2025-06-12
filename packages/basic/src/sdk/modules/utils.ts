@@ -195,6 +195,14 @@ export class Utils {
     }
   }
 
+  JsonDeserialize(str) {
+    try {
+      return JSON.parse(str);
+    } catch (error) {
+      return;
+    }
+  }
+
   Split(str: string, separator: string, trail?: boolean) {
     if (Object.prototype.toString.call(str) === '[object String]') {
       const res = str.split(separator);
