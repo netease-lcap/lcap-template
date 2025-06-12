@@ -425,10 +425,6 @@ function resolveTypeReference(typeAnnotation: TypeAnnotation) {
 function exactMatchShapeAgainstDef(value, def: any): boolean {
   function isMatchForPrimitive(value, ty) {
     const valueTypeStr = Object.prototype.toString.call(value);
-    // 检查enum类型
-    if (ty.typeKind === "primitive") {
-      return valueTypeStr === "[object String]";
-    }
     if (ty.typeKind !== 'primitive') {
       return false;
     }
@@ -445,9 +441,9 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
   if (value === null) {
     return true;
   }
-  if (def.concept === "Enum") {
+  if (def.concept === 'Enum') {
     return def.enumItems?.some((item) => item.value === value);
-  } else if (def.typeKind === "primitive") {
+  } else if (def.typeKind === 'primitive') {
     return isMatchForPrimitive(value, def);
   } else if (def.typeKind === 'union') {
     for (const ty of def.typeArguments) {
