@@ -359,10 +359,6 @@ function unorderedArrayEqual<T>(a: T[], b: T[]) {
 function exactMatchShapeAgainstDef(value, def: any): boolean {
   function isMatchForPrimitive(value, ty) {
     const valueTypeStr = Object.prototype.toString.call(value);
-    // 检查enum类型
-    if (ty.typeKind === "primitive") {
-      return valueTypeStr === "[object String]";
-    }
     if (ty.typeKind !== "primitive") {
       return false;
     }
