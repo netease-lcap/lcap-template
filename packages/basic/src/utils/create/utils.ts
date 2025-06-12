@@ -32,7 +32,11 @@ export function stringifyWithLoopProtection(obj: any, replacer?: any, space?: an
         return undefined;
       }
 
-      return replacer(key, value);
+      if (typeof replacer === 'function') {
+        return replacer(key, value);
+      }
+
+      return value;
     },
     space,
   );
