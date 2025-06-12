@@ -111,15 +111,22 @@ export const safeNewDate = (dateStr) => {
     }
   }
 
+  const fallback = new Date(null);
   try {
-    const res = new Date(dateStr.replaceAll('-', '/'));
+    // 尝试第一次转日期
+    let res = new Date(dateStr);
+    // 如果是无效日期，则尝试替换 '-' 为 '/' 再转
     if (['Invalid Date', 'Invalid time value', 'invalid date'].includes(res.toString())) {
-      return new Date(dateStr);
+      res = new Date(dateStr.replaceAll('-', '/'));
+      // 如果还是无效日期，则返回 fallback
+      if (['Invalid Date', 'Invalid time value', 'invalid date'].includes(res.toString())) {
+        return fallback;
+      }
     } else {
       return res;
     }
   } catch (err) {
-    return new Date(dateStr);
+    return fallback;
   }
 };
 
