@@ -1,0 +1,11 @@
+name: Deploy Test Environment
+
+on:
+  push:
+    branches:
+      - test-v*
+
+jobs:
+  call-tyler:
+    uses: vusion-templates/giselle/.github/workflows/deploy-lcap-template.yml@master
+    secrets: inherit
