@@ -4,6 +4,7 @@ import moment from "moment";
 import { flatMap, xor } from "lodash";
 
 import { getAppTimezone, safeNewDate } from "../utils";
+import { type TypeAnnotation } from "./types";
 import Config from "../../config";
 
 function tryJSONParse(str) {
