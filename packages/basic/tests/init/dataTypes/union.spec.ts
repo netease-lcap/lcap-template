@@ -1,6 +1,5 @@
 import { genInitFromSchema, global, initDataTypes } from '../../../src';
-import { typeDefinitionMap } from '../../../src/init/dataTypes/tools';
-import { exactMatchShapeAgainstDef, genSortedTypeKey } from '../../../src/init/dataTypes/tools';
+import { exactMatchShapeAgainstDef, typeDefinitionMap } from '../../../src/init/dataTypes/tools';
 
 describe('genInitFromSchema支持tagged-union', () => {
   let sandbox: { singlyTypedDatabaseError: any; unionTypedDatabaseError: any };
@@ -719,7 +718,6 @@ describe('exactMatchShapeAgainstDef', () => {
       ],
     };
     // 注册类型
-    typeDefinitionMap[genSortedTypeKey(refType)] = refType;
     typeDefinitionMap['app.structures.Structure1'] = structure1Def;
     // 匹配正确
     expect(exactMatchShapeAgainstDef({ name: '小明', age: 18 }, refType)).toBe(true);
@@ -742,5 +740,60 @@ describe('exactMatchShapeAgainstDef', () => {
     expect(exactMatchShapeAgainstDef('D', enumDef)).toBe(false);
     // null 允许通过
     expect(exactMatchShapeAgainstDef(null, enumDef)).toBe(true);
+  });
+
+  test.only('支持包含 Enum 类型字段的数据结构的匹配', () => {
+    // 定义 Enum 类型
+    const enumDef = {
+      concept: 'Enum',
+      enumItems: [{ value: 'A' }, { value: 'B' }, { value: 'C' }],
+    };
+    // 定义包含 Enum 字段的结构体
+    const structDef = {
+      concept: 'Structure',
+      name: 'StructWithEnum',
+      properties: [
+        {
+          concept: 'StructureProperty',
+          name: 'foo',
+          typeAnnotation: {
+            concept: 'TypeAnnotation',
+            typeKind: 'primitive',
+            typeNamespace: 'nasl.core',
+            typeName: 'String',
+          },
+        },
+        {
+          concept: 'StructureProperty',
+          name: 'bar',
+          typeAnnotation: {
+            concept: 'TypeAnnotation',
+            typeKind: 'reference',
+            typeNamespace: 'app.enums',
+            typeName: 'MyEnum',
+          },
+        },
+      ],
+    };
+    // 注册类型
+    typeDefinitionMap['app.enums.MyEnum'] = enumDef;
+    typeDefinitionMap['app.structs.StructWithEnum'] = structDef;
+    // 定义 reference 类型
+    const refType = {
+      concept: 'TypeAnnotation',
+      typeKind: 'reference',
+      typeNamespace: 'app.structs',
+      typeName: 'StructWithEnum',
+    };
+
+    // 1. 完全匹配
+    expect(exactMatchShapeAgainstDef({ foo: 'hello', bar: 'A' }, refType)).toBe(true);
+    expect(exactMatchShapeAgainstDef({ foo: 'hello', bar: 'B' }, refType)).toBe(true);
+    // 2. Enum 字段值不在枚举内
+    expect(exactMatchShapeAgainstDef({ foo: 'hello', bar: 'D' }, refType)).toBe(false);
+    // 3. Enum 字段为 null
+    expect(exactMatchShapeAgainstDef({ foo: 'hello', bar: null }, refType)).toBe(true);
+    // 4. 缺少 Enum 字段
+    expect(exactMatchShapeAgainstDef({ foo: 'hello' }, refType)).toBe(false);
   });
 });
