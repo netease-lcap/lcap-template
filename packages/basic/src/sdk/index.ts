@@ -1,3 +1,5 @@
+import * as Formatters from './Formatters';
+import * as Helpers from './helper';
 import type { IOptions } from './types';
 import { Utils } from './modules/utils';
 
@@ -21,7 +23,6 @@ export default class NaslSDK {
   }
 }
 
-export * as Formatters from './Formatters';
 export type { Utils } from './modules/utils';
 
-export * as Helpers from './helper';
+export { Formatters, Helpers };
