@@ -727,22 +727,45 @@ describe('exactMatchShapeAgainstDef', () => {
     expect(exactMatchShapeAgainstDef({ name: '小明', age: '18' }, refType)).toBe(false);
   });
 
-  test('支持 Enum 类型的匹配', () => {
-    const enumDef = {
-      concept: 'Enum',
-      enumItems: [{ value: 'A' }, { value: 'B' }, { value: 'C' }],
-    };
-    // 注册类型
-    typeDefinitionMap['app.enums.MyEnum'] = enumDef;
-    // 匹配
-    expect(exactMatchShapeAgainstDef('A', enumDef)).toBe(true);
-    expect(exactMatchShapeAgainstDef('B', enumDef)).toBe(true);
-    expect(exactMatchShapeAgainstDef('D', enumDef)).toBe(false);
-    // null 允许通过
-    expect(exactMatchShapeAgainstDef(null, enumDef)).toBe(true);
+  describe('支持 Enum 匹配', () => {
+    test('Enum 定义匹配', () => {
+      const enumDef = {
+        concept: 'Enum',
+        enumItems: [{ value: 'A' }, { value: 'B' }, { value: 'C' }],
+      };
+      // 注册类型
+      typeDefinitionMap['app.enums.MyEnum'] = enumDef;
+      // 匹配
+      expect(exactMatchShapeAgainstDef('A', enumDef)).toBe(true);
+      expect(exactMatchShapeAgainstDef('B', enumDef)).toBe(true);
+      expect(exactMatchShapeAgainstDef('D', enumDef)).toBe(false);
+      // null 允许通过
+      expect(exactMatchShapeAgainstDef(null, enumDef)).toBe(true);
+    });
+
+    test('支持 Enum 引用类型匹配', () => {
+      const enumDef = {
+        concept: 'Enum',
+        enumItems: [{ value: 'A' }, { value: 'B' }, { value: 'C' }],
+      };
+      // 注册类型
+      typeDefinitionMap['app.enums.MyEnum'] = enumDef;
+      const refType = {
+        concept: 'TypeAnnotation',
+        typeKind: 'reference',
+        typeNamespace: 'app.enums',
+        typeName: 'MyEnum',
+      };
+      // 匹配
+      expect(exactMatchShapeAgainstDef('A', refType)).toBe(true);
+      expect(exactMatchShapeAgainstDef('B', refType)).toBe(true);
+      expect(exactMatchShapeAgainstDef('D', refType)).toBe(false);
+      // null 允许通过
+      expect(exactMatchShapeAgainstDef(null, refType)).toBe(true);
+    });
   });
 
-  test.only('支持包含 Enum 类型字段的数据结构的匹配', () => {
+  test('支持包含 Enum 类型字段的数据结构的匹配', () => {
     // 定义 Enum 类型
     const enumDef = {
       concept: 'Enum',
