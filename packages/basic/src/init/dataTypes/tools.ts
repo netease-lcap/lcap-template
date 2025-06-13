@@ -360,7 +360,7 @@ function unorderedArrayEqual<T>(a: T[], b: T[]) {
 /**
  * 解析类型引用到实际的类型定义
  * @param typeAnnotation 需要解析的类型标注
- * @returns 如果解析成功则返回解析后的类型属性，解析失败返回null
+ * @returns 如果解析成功则返回解析后的类型属性，解析失败返回undefined
  */
 function resolveTypeReference(typeAnnotation: TypeAnnotation) {
   if (typeAnnotation.typeKind === "reference") {
