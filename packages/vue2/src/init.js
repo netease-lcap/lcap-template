@@ -1,4 +1,6 @@
 import Vue from 'vue';
+import { createPinia, PiniaVuePlugin } from 'pinia';
+import VueCompositionAPI from '@vue/composition-api';
 import { installOptions, installFilters, installComponents, installDirectives } from '@vusion/utils';
 
 import '@/global';
@@ -171,10 +173,15 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   router.beforeEach(getTitleGuard(appConfig));
   router.beforeEach(microFrontend);
 
+  Vue.use(PiniaVuePlugin);
+  const pinia = createPinia();
+  Vue.use(VueCompositionAPI);
+
   const app = new Vue({
     name: 'app',
     router,
     i18n,
+    pinia,
     ...App,
   });
 
