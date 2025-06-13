@@ -356,6 +356,24 @@ function unorderedArrayEqual<T>(a: T[], b: T[]) {
   return xor(a, b).length === 0;
 }
 
+/**
+ * 解析类型引用到实际的类型定义
+ * @param typeAnnotation 需要解析的类型标注
+ * @returns 如果解析成功则返回解析后的类型属性，解析失败返回null
+ */
+function resolveTypeReference(typeAnnotation: TypeAnnotation) {
+  if (typeAnnotation.typeKind === "reference") {
+    const typeKey = genSortedTypeKey(typeAnnotation);
+    const candidateDef = typeDefinitionMap[typeKey];
+    // 如果仍然是type reference，那么视作失败
+    if (candidateDef?.concept === "TypeAnnotation" && candidateDef.typeKind === "reference") {
+      return undefined;
+    }
+    return candidateDef;
+  }
+  return undefined;
+}
+
 function exactMatchShapeAgainstDef(value, def: any): boolean {
   function isMatchForPrimitive(value, ty) {
     const valueTypeStr = Object.prototype.toString.call(value);
@@ -410,6 +428,11 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
       }
     }
     return false;
+  } else if (def.typeKind === "reference") {
+    const resolved = resolveTypeReference(def);
+    if (resolved) {
+      return exactMatchShapeAgainstDef(value, resolved);
+    }
   }
   return false;
 }
