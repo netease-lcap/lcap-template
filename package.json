@@ -37,5 +37,6 @@
     "!(**/source/**/*).{ts,tsx,jsx,js}": [
       "prettier --write"
     ]
-  }
+  },
+  "packageManager": "pnpm@9.10.0"
 }
