@@ -14,4 +14,19 @@ describe('JSONbig replacer', () => {
 
     expect(result).toBe('{"a":1,"b":null,"c":"test"}');
   });
+
+  it('should handle undefined', () => {
+    const result = JSONbig.stringify(undefined);
+    expect(result).toBe(undefined);
+  });
+
+  it('should handle null', () => {
+    const result = JSONbig.stringify(null);
+    expect(result).toBe('null');
+  });
+
+  it('should handle empty string', () => {
+    const result = JSONbig.stringify('');
+    expect(result).toBe('""');
+  });
 });
