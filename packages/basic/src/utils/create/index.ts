@@ -25,6 +25,7 @@ import {
   isFile,
   isBlob,
   isArrayBufferView,
+  isObject,
 } from './utils';
 import { default as builtInInterceptors } from './interceptors';
 
@@ -225,12 +226,13 @@ export function genBaseOptions(requestInfo) {
             return data.buffer;
           }
 
-          if (headers['Content-Type'] === 'application/json') {
+          if (isObject(data) || headers['Content-Type'].includes('application/json')) {
             // 对于 JSON 请求，序列化的时候保持对象的形状，不让 undefined 字段消失。便于服务端识别
             const replacerToKeepUndefinedFields = (_: string, value: unknown) => (value === undefined ? null : value);
             const request = JSONbig.stringify(data, replacerToKeepUndefinedFields);
             return request;
           }
+
           return data;
         } catch (error) {
           return data;
