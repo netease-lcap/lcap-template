@@ -16,7 +16,17 @@ import { createMockServiceByData } from './mockData';
 import { sseRequester } from './sseRequester';
 
 import Config from '../../config';
-import { overwriteErrorMsgFieldIfSpecified } from './utils';
+import {
+  overwriteErrorMsgFieldIfSpecified,
+  isFormData,
+  isArrayBuffer,
+  isBuffer,
+  isStream,
+  isFile,
+  isBlob,
+  isArrayBufferView,
+  isObject,
+} from './utils';
 import { default as builtInInterceptors } from './interceptors';
 
 const getData = (str) => new Function('return ' + str)();
@@ -160,7 +170,7 @@ function download(url) {
 function formatCallConnectorPath(path: string, connectionName: string): string {
   const sysPrefixPath = window.appInfo?.sysPrefixPath;
   if (sysPrefixPath) {
-    path = path?.replace(sysPrefixPath, "");
+    path = path?.replace(sysPrefixPath, '');
   }
 
   // /api/connectors/connector1/namespace1/getA
@@ -169,7 +179,7 @@ function formatCallConnectorPath(path: string, connectionName: string): string {
     throw Error('unexpected path when use CallConnector');
   }
   const [prefix1, prefix2, connectorName, ...rt] = pathItemList;
-  return `${sysPrefixPath ? sysPrefixPath : ""}/${prefix1}/${prefix2}/${connectorName}/${connectionName}/${rt.join('/')}`;
+  return `${sysPrefixPath ? sysPrefixPath : ''}/${prefix1}/${prefix2}/${connectorName}/${connectionName}/${rt.join('/')}`;
 }
 
 export function genBaseOptions(requestInfo) {
@@ -201,10 +211,28 @@ export function genBaseOptions(requestInfo) {
     transformRequest: [
       function (data, headers) {
         try {
-          if (headers['Content-Type'] !== 'application/x-www-form-urlencoded') {
-            const request = JSONbig.stringify(data);
+          if (
+            isFormData(data) ||
+            isArrayBuffer(data) ||
+            isBuffer(data) ||
+            isStream(data) ||
+            isFile(data) ||
+            isBlob(data)
+          ) {
+            return data;
+          }
+
+          if (isArrayBufferView(data)) {
+            return data.buffer;
+          }
+
+          if (isObject(data) || headers['Content-Type'].includes('application/json')) {
+            // 对于 JSON 请求，序列化的时候保持对象的形状，不让 undefined 字段消失。便于服务端识别
+            const replacerToKeepUndefinedFields = (_: string, value: unknown) => (value === undefined ? null : value);
+            const request = JSONbig.stringify(data, replacerToKeepUndefinedFields);
             return request;
           }
+
           return data;
         } catch (error) {
           return data;
