@@ -36,5 +36,6 @@ export const useGlobalVariables = () => {
     frontendVariables: $frontendVariables,
     userInfo,
     i18nInfo,
+    ...rest,
   };
 };
