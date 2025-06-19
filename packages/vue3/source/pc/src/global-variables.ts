@@ -5,7 +5,7 @@ import { useGlobalStore } from '@/store';
 export const useGlobalVariables = () => {
   const globalStore = useGlobalStore();
 
-  const { frontendVariables: $frontendVariables, ...rest } = globalStore;
+  const { frontendVariables: $frontendVariables, userInfo, i18nInfo, ...rest } = globalStore;
 
   onBeforeMount(() => {
     const variableSet = window.$localCacheVariableSet;
@@ -34,6 +34,7 @@ export const useGlobalVariables = () => {
 
   return {
     frontendVariables: $frontendVariables,
-    ...rest,
+    userInfo,
+    i18nInfo,
   };
 };
