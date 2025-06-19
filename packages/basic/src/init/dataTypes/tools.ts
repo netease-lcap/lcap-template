@@ -359,10 +359,6 @@ function unorderedArrayEqual<T>(a: T[], b: T[]) {
 function exactMatchShapeAgainstDef(value, def: any): boolean {
   function isMatchForPrimitive(value, ty) {
     const valueTypeStr = Object.prototype.toString.call(value);
-    // 检查enum类型
-    if (ty.typeKind === "primitive" && ty.concept === "Enum") {
-      return valueTypeStr === "[object String]";
-    }
     if (ty.typeKind !== "primitive") {
       return false;
     }
@@ -379,7 +375,9 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
   if (value === null) {
     return true;
   }
-  if (def.typeKind === "primitive") {
+  if (def.concept === "Enum") {
+    return def.enumItems?.some((item) => item.value === value);
+  } else if (def.typeKind === "primitive") {
     return isMatchForPrimitive(value, def);
   } else if (def.typeKind === "union") {
     for (const ty of def.typeArguments) {

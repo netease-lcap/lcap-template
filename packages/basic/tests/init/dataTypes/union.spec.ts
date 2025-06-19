@@ -1,10 +1,8 @@
-// @ts-check
-import { type } from "os";
 import { genInitFromSchema, global, initDataTypes } from "../../../src";
 import { typeDefinitionMap } from "../../../src/init/dataTypes/tools";
 
 describe("genInitFromSchema支持tagged-union", () => {
-  let sandbox = {};
+  let sandbox: { singlyTypedDatabaseError: any; unionTypedDatabaseError: any };
 
   const unionTypeKey = "nasl.error.InterfaceError | nasl.error.DatabaseError | nasl.core.String";
   beforeAll(() => {
