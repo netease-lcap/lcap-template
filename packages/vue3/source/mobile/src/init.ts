@@ -23,6 +23,7 @@ import { installComponents, installDirectives, installLibraries } from '@/common
 import { getTitleGuard } from '@/guards';
 
 import App from './App.vue';
+import { createI18nInstance } from './i18n';
 import { setConfig } from './setConfig';
 
 import './index.css';
@@ -119,6 +120,8 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   app.config.globalProperties.$frontendVariables = window.$global.frontendVariables;
 
   app.use(pinia);
+
+  app.use(createI18nInstance(appConfig));
 
   // rendered 事件
   if (typeof window?.rendered === 'function') {
