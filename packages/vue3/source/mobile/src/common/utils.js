@@ -25,7 +25,9 @@ export function installDirectives(vm, directives) {
 }
 
 export function installLibraries(vm, libraries) {
-  window.$libraries = {};
+  if (!window.$libraries) {
+    window.$libraries = {};
+  }
 
   Object.keys(libraries).forEach((key) => {
     window.$libraries[key] = libraries[key];
