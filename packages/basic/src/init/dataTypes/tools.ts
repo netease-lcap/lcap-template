@@ -4,6 +4,7 @@ import moment from "moment";
 import { flatMap, xor } from "lodash";
 
 import { getAppTimezone, safeNewDate } from "../utils";
+import { type TypeAnnotation } from "./types";
 import Config from "../../config";
 
 function tryJSONParse(str) {
@@ -356,6 +357,24 @@ function unorderedArrayEqual<T>(a: T[], b: T[]) {
   return xor(a, b).length === 0;
 }
 
+/**
+ * 解析类型引用到实际的类型定义
+ * @param typeAnnotation 需要解析的类型标注
+ * @returns 如果解析成功则返回解析后的类型属性，解析失败返回undefined
+ */
+function resolveTypeReference(typeAnnotation: TypeAnnotation) {
+  if (typeAnnotation.typeKind === "reference") {
+    const typeKey = genSortedTypeKey(typeAnnotation);
+    const candidateDef = typeDefinitionMap[typeKey];
+    // 如果仍然是type reference，那么视作失败
+    if (candidateDef?.concept === "TypeAnnotation" && candidateDef.typeKind === "reference") {
+      return undefined;
+    }
+    return candidateDef;
+  }
+  return undefined;
+}
+
 function exactMatchShapeAgainstDef(value, def: any): boolean {
   function isMatchForPrimitive(value, ty) {
     const valueTypeStr = Object.prototype.toString.call(value);
@@ -387,6 +406,25 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
     }
     return false;
   } else if (def.typeKind === "generic") {
+    if (def.typeName === "List" && def.typeNamespace === "nasl.collection") {
+      const targetTy: TypeAnnotation = def.typeArguments[0];
+      if (!targetTy || !Array.isArray(value)) {
+        return false;
+      }
+      return value.every((item) => exactMatchShapeAgainstDef(item, targetTy));
+    } else if (def.typeName === "Map" && def.typeNamespace === "nasl.collection") {
+      const keyTy = def.typeArguments[0];
+      const valueTy = def.typeArguments[1];
+      if (!keyTy || !valueTy || typeof value !== "object" || value === null || Array.isArray(value)) {
+        return false;
+      }
+      for (const [k, v] of Object.entries(value)) {
+        if (!exactMatchShapeAgainstDef(k, keyTy) || !exactMatchShapeAgainstDef(v, valueTy)) {
+          return false;
+        }
+      }
+      return true;
+    }
     return isInstanceOf(value, genSortedTypeKey(def));
   } else if (def.properties) {
     const properties = def.properties;
@@ -410,6 +448,11 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
       }
     }
     return false;
+  } else if (def.typeKind === "reference") {
+    const resolved = resolveTypeReference(def);
+    if (resolved) {
+      return exactMatchShapeAgainstDef(value, resolved);
+    }
   }
   return false;
 }
