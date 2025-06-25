@@ -19,6 +19,9 @@ export function createI18nInstance(appConfig) {
     messages: i18nInfo.messages || {},
   })
 
+  // 提供全局的 i18n 实例
+  window.$i18n = i18n?.global;
+
   return i18n;
 }
 
