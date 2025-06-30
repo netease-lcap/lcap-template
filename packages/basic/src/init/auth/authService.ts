@@ -48,6 +48,7 @@ let lowauthService;
 
 const Service: IService = {
   start() {
+    _map = null;
     authService = initAuthService();
     lowauthService = initLowauthService();
     window.authService = authService;
