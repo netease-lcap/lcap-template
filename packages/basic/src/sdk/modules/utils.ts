@@ -451,7 +451,7 @@ export class Utils {
     return result;
   }
 
-  ListRepeat<T>(item: T, count: number) {
+  ListRepeat<T>(item: T, length: number) {
     if (typeof length !== 'number') {
       return [];
     }
