@@ -10,7 +10,7 @@
 import VErrorBoundary from './VErrorBoundary.vue';
 import { getUserLanguage } from './i18n';
 
-const { ConfigProvider, transformKeys = v => v } = window.lcapStandardUI;
+const { ConfigProvider = 'div', transformKeys = v => v } = window.lcapStandardUI;
 
 const { appConfig } = window.appInfo;
 const { i18nInfo } = appConfig;
