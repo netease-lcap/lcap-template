@@ -117,17 +117,17 @@ module.exports = defineConfig({
 					enforce: true,
 					priority: 4,
 				},
-				source: {
-					test: /[\\/]src[\\/]/,
-					name: 'source',
-					enforce: true,
-					priority: 3,
-				},
 				vendor: {
 					test: /[\\/]node_modules[\\/]/,
 					name: 'vendor',
 					enforce: true,
-					priority: 1
+					priority: 2,
+				},
+        source: {
+					test: /[\\/]src[\\/]/,
+					name: 'source',
+					enforce: true,
+					priority: 1,
 				},
 			}
 		},
