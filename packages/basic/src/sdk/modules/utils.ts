@@ -62,6 +62,18 @@ import {
 import { dateFormatter } from '../Formatters';
 import type { IOptions } from '../types';
 
+function guessTypeKey(value: any): string | undefined {
+  if (typeof value === 'string') {
+    if (/^\d{4}-\d{2}-\d{2}(T| )\d{2}:\d{2}:\d{2}/.test(value)) {
+      return 'nasl.core.DateTime';
+    } else if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      return 'nasl.core.Date';
+    } else if (/^\d{2}:\d{2}:\d{2}$/.test(value)) {
+      return 'nasl.core.Time';
+    }
+  }
+}
+
 export class Utils {
   private helpers: IOptions;
 
@@ -88,15 +100,17 @@ export class Utils {
     return true;
   }
 
-  EnumItemToText(typeKey, value): string {
+  EnumItemToText(value, typeKey): string {
+    if (value?._text) return value._text;
     if (typeKey) {
       return this.helpers.toString(typeKey, value) || '';
     }
-
-    return '';
+    if (value === undefined || value === null) return '';
+    else return String(value);
   }
 
-  EnumItemToStructure(typeKey, value): { text: string; value: any } {
+  EnumItemToStructure(value, typeKey): { text: string; value: any } {
+    if (value?._text) return { text: value._text, value: value._value };
     if (typeKey) {
       const { typeName, typeNamespace } = this.helpers.typeDefinitionMap.get(typeKey) || {};
 
@@ -111,10 +125,10 @@ export class Utils {
       };
     }
 
-    return {
-      text: '',
-      value: '',
-    };
+    if (value === undefined || value === null) return { text: '', value };
+    else {
+      return { text: String(value), value };
+    }
   }
 
   ToEnumItem(value, typeAnnotation: Partial<TypeAnnotation>) {
@@ -1260,6 +1274,10 @@ export class Utils {
   }
 
   ToString(typeKey, value, tz?) {
+    if (!typeKey || typeKey === 'undefined') typeKey = guessTypeKey(value);
+    if (!typeKey) {
+      if (value?._text) return value._text;
+    }
     // v3.3 老应用升级的场景，使用全局配置（全局配置一般默认是‘用户时区’）
     // v3.4 新应用，使用默认时区时选项，tz 为空
     if (typeKey === 'nasl.core.DateTime' && !tz) {
