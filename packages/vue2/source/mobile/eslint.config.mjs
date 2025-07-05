@@ -63,6 +63,8 @@ export default [
       'lcap/no-var': 'warn',
       // lcap插件 no-empty-if-else
       'lcap/no-empty-if-else': 'warn',
+      // lcap插件 no-useless-template-literals
+      'lcap/no-unnecessary-template-literals': 'warn',
     }
   }
 ];
