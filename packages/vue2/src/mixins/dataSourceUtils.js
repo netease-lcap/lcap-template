@@ -27,14 +27,16 @@ export default () => ({
         }
       }
     },
-    __setDataSourceCacheFn(methodName, currentArray = [], fn) {
+    __setDataSourceCacheFn(methodName, currentArray, fn) {
+      currentArray = currentArray || [];
       if (!currentArray.length) {
         this.private_data_source_cache.set(methodName, fn);
         return;
       }
       this.private_data_source_cache.set([methodName, ...currentArray], fn);
     },
-    __getOrCreateDataSource(methodName, currentArray = [], newFn) {
+    __getOrCreateDataSource(methodName, currentArray, newFn) {
+      currentArray = currentArray || [];
       let fn = this.__getDataSourceCacheFn(methodName, currentArray);
       if (!fn) {
         fn = newFn;
