@@ -2,7 +2,7 @@ import js from '@eslint/js';
 import pluginVue from 'eslint-plugin-vue';
 import vueTsEslintConfig from '@vue/eslint-config-typescript';
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
-import globals from './eslint-config/globals.json' assert { type: 'json' };
+import globals from './eslint-config/globals.json' with { type: 'json' };
 import PluginLCAP from './eslint-config/plugins/lcap.js';
 
 export default [
