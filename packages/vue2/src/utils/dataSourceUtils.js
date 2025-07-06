@@ -30,14 +30,16 @@ export default (scope) => {
       }
     }
   }
-  function __setDataSourceCacheFn(methodName, currentArray = [], fn) {
+  function __setDataSourceCacheFn(methodName, currentArray, fn) {
+    currentArray = currentArray || [];
     if (!currentArray.length) {
       pageCahche.set(methodName, fn);
       return;
     }
     pageCahche.set([methodName, ...currentArray], fn);
   }
-  function __getOrCreateDataSource(methodName, currentArray = [], newFn) {
+  function __getOrCreateDataSource(methodName, currentArray, newFn) {
+    currentArray = currentArray || [];
     let fn = __getDataSourceCacheFn(methodName, currentArray);
     if (!fn) {
       fn = newFn;
