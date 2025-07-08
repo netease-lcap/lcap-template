@@ -9,7 +9,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@lcap/basic-template": "http://minio-api.codewave-test.163yun.com/lowcode-static/packages/%40lcap/basic-template%401.5.0/zip.tgz",
+    "@lcap/basic-template": "./lcap_modules/@lcap/basic-template@2.0.1/zip.tgz",
     "ahooks": "3.7.10",
     "antd": "5.14.0",
     "i18next": "23.11.5",
