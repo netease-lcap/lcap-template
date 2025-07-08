@@ -14,7 +14,9 @@
     "vue-router": "4.5.0",
     "vue-i18n": "11.1.2",
     "date-fns": "2.30.0",
-    "lodash": "4.17.21"
+    "lodash": "4.17.21",
+    "@lcap/basic-template": "./lcap_modules/@lcap/basic-template@2.0.1/zip.tgz",
+    "@lcap/vant": "./lcap_modules/@lcap/vant@1.0.0-beta.1/zip.tgz"
   },
   "devDependencies": {
     "@eslint/js": "9.22.0",
