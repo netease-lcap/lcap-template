@@ -1,7 +1,7 @@
-import cloneDeep from "lodash/cloneDeep";
-import _set from "lodash/set";
-import isEqual from "lodash/isEqual";
-import isObject from "lodash/isObject";
+import cloneDeep from 'lodash/cloneDeep';
+import _set from 'lodash/set';
+import isEqual from 'lodash/isEqual';
+import isObject from 'lodash/isObject';
 import {
   addDays,
   subDays,
@@ -39,17 +39,17 @@ import {
   isFriday,
   isSaturday,
   isSunday,
-} from "date-fns";
-import { formatInTimeZone } from "date-fns-tz";
-import momentTZ from "moment-timezone";
-import moment from "moment";
-import Decimal from "decimal.js";
+} from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+import momentTZ from 'moment-timezone';
+import moment from 'moment';
+import Decimal from 'decimal.js';
 
-import { dateFormatter } from "../../Formatters";
-import Global from "../../global";
-import Config from "../../config";
+import { dateFormatter } from '../../Formatters';
+import Global from '../../global';
+import Config from '../../config';
 
-import { genInitFromSchema } from "../dataTypes";
+import { genInitFromSchema } from '../dataTypes';
 import {
   toString,
   fromString,
@@ -59,7 +59,7 @@ import {
   isDefList,
   isDefMap,
   typeDefinitionMap,
-} from "../dataTypes/tools";
+} from '../dataTypes/tools';
 
 import {
   findAsync,
@@ -72,26 +72,26 @@ import {
   naslDateToLocalDate,
   convertJSDateInTargetTimeZone,
   sortRule,
-} from "./helper";
+} from './helper';
 
 let enumsMap = {};
 let dataTypesMap = {};
 
 function toValue(date, typeKey) {
   if (!date) return date;
-  if (typeKey === "format")
-    return moment(date).format("YYYY-MM-DD"); // value 的真实格式
-  else if (typeKey === "json") return this.JsonSerialize(date);
-  else if (typeKey === "timestamp") return date.getTime();
+  if (typeKey === 'format')
+    return moment(date).format('YYYY-MM-DD'); // value 的真实格式
+  else if (typeKey === 'json') return this.JsonSerialize(date);
+  else if (typeKey === 'timestamp') return date.getTime();
   else return date;
 }
 
 function isArrayInBounds(arr, index) {
   if (!Array.isArray(arr)) {
-    toastAndThrow("传入内容不是数组");
+    toastAndThrow('传入内容不是数组');
   }
-  if (typeof index !== "number" || isNaN(index)) {
-    toastAndThrow("传入下标不是数字");
+  if (typeof index !== 'number' || isNaN(index)) {
+    toastAndThrow('传入下标不是数字');
   }
   // 传入要找的下标，大于数组长度
   if (index + 1 > arr.length) {
@@ -127,15 +127,15 @@ export const utils = {
   // },
   EnumItemToText(typeKey, value) {
     if (typeKey) {
-      return toString(typeKey, value) || "";
+      return toString(typeKey, value) || '';
     }
-    return "";
+    return '';
   },
   EnumItemToStructure(typeKey, value) {
     if (typeKey) {
       const { typeName, typeNamespace } = typeDefinitionMap[typeKey] || {};
       let isToNumber = false;
-      if (typeName === "Long" && typeNamespace === "nasl.core") {
+      if (typeName === 'Long' && typeNamespace === 'nasl.core') {
         isToNumber = true;
       }
       return {
@@ -144,16 +144,16 @@ export const utils = {
       };
     }
     return {
-      text: "",
-      value: "",
+      text: '',
+      value: '',
     };
   },
   ToEnumItem(value, enumTypeAnnotation) {
     const { typeName, typeNamespace } = enumTypeAnnotation || {};
     if (typeName) {
       let enumName = typeName;
-      if (typeNamespace?.startsWith("extensions") || typeNamespace?.startsWith("nasl")) {
-        enumName = typeNamespace + "." + enumName;
+      if (typeNamespace?.startsWith('extensions') || typeNamespace?.startsWith('nasl')) {
+        enumName = typeNamespace + '.' + enumName;
       }
       if (enumsMap[enumName] && enumsMap[enumName].hasOwnProperty(value)) {
         return value;
@@ -167,22 +167,22 @@ export const utils = {
     let tempEnums = dataTypesMap[`${typeNamespace}.${typeName}`] || {};
     let tempName = tempEnums?.name;
     let enumName = typeName;
-    if (typeName && typeNamespace?.startsWith("extensions")) {
-      enumName = typeNamespace + "." + enumName;
+    if (typeName && typeNamespace?.startsWith('extensions')) {
+      enumName = typeNamespace + '.' + enumName;
       tempName = enumName;
     }
     let isToNumber = false;
     if (
       enumName === tempName &&
-      tempEnums.valueType?.typeName === "Long" &&
-      tempEnums.valueType?.typeNamespace === "nasl.core"
+      tempEnums.valueType?.typeName === 'Long' &&
+      tempEnums.valueType?.typeNamespace === 'nasl.core'
     ) {
       isToNumber = true;
     }
     if (!Array.isArray(tempEnums.enumItems)) return [];
     else {
       return tempEnums.enumItems.map((enumItem) => ({
-        text: toString(typeNamespace + "." + typeName, enumItem.value),
+        text: toString(typeNamespace + '.' + typeName, enumItem.value),
         value: isToNumber ? +enumItem.value : enumItem.value,
       }));
     }
@@ -194,24 +194,24 @@ export const utils = {
       // v3.3 老应用升级的场景，UTC 零时区，零时区展示上用 'Z'，后向兼容
       // v3.4 新应用，使用默认时区时选项，tz 为空
       if (!tz) {
-        const d = momentTZ.tz(v, "UTC").format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+        const d = momentTZ.tz(v, 'UTC').format('YYYY-MM-DDTHH:mm:ss.SSSZ');
         return JSON.stringify(d);
       }
       // 新应用，设置为零时区，零时区展示上用 'Z'，后向兼容.
-      if (tz === "UTC") {
+      if (tz === 'UTC') {
         // TODO: 想用 "+00:00" 展示零时区
-        const d = momentTZ.tz(v, "UTC").format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+        const d = momentTZ.tz(v, 'UTC').format('YYYY-MM-DDTHH:mm:ss.SSSZ');
         return JSON.stringify(d);
       }
       // 新应用，设置为其他时区
       if (tz) {
-        const d = momentTZ.tz(v, getAppTimezone(tz)).format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+        const d = momentTZ.tz(v, getAppTimezone(tz)).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
         return JSON.stringify(d);
       }
-    } else if (typeof v === "string" && /^\d{2}:\d{2}:\d{2}$/.test(v)) {
+    } else if (typeof v === 'string' && /^\d{2}:\d{2}:\d{2}$/.test(v)) {
       // test if the input v is a pure time-format string in the form of hh:mm:ss
       return JSON.stringify(v);
-    } else if (typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v)) {
+    } else if (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v)) {
       // test if the input v is a pure date-format string in the form of yyyy-MM-dd
       return JSON.stringify(v);
     } else {
@@ -219,7 +219,7 @@ export const utils = {
     }
   },
   Split(str, separator, trail) {
-    if (Object.prototype.toString.call(str) === "[object String]") {
+    if (Object.prototype.toString.call(str) === '[object String]') {
       const res = str.split(separator);
       if (trail === true) {
         return res;
@@ -243,14 +243,14 @@ export const utils = {
     }
   },
   Concat(...arr) {
-    return arr.join("");
+    return arr.join('');
   },
   Length(str1) {
     // Map类型
     if (isObject(str1)) {
       return Object.keys(str1).length;
     }
-    if (typeof str1 !== "undefined" && str1 !== null && typeof str1.length !== "undefined") {
+    if (typeof str1 !== 'undefined' && str1 !== null && typeof str1.length !== 'undefined') {
       return str1.length;
     }
     return null;
@@ -272,7 +272,7 @@ export const utils = {
   Set(arr, index, item) {
     if (isArrayInBounds(arr, index)) {
       // 兼容Vue版本的实现， 不知道为啥要用这个
-      if (Global.set && typeof Global.set === "function") {
+      if (Global.set && typeof Global.set === 'function') {
         return Global.set(arr, index, item);
       }
 
@@ -359,8 +359,8 @@ export const utils = {
           .reduce(
             (prev, cur) =>
               // decimal 可解决 0.1 + 0.2 的精度问题，下同
-              new Decimal(cur + "").plus(prev),
-            new Decimal("0"),
+              new Decimal(cur + '').plus(prev),
+            new Decimal('0'),
           )
           .toNumber();
   },
@@ -371,7 +371,7 @@ export const utils = {
     const nullRemoved = utils.ListFilter(arr, (elem) => elem !== null && elem !== undefined);
     return nullRemoved.length === 0
       ? null
-      : nullRemoved.reduce((prev, cur) => new Decimal(cur + "").mul(prev), new Decimal("1")).toNumber();
+      : nullRemoved.reduce((prev, cur) => new Decimal(cur + '').mul(prev), new Decimal('1')).toNumber();
   },
   ListAverage: (arr) => {
     if (!Array.isArray(arr)) {
@@ -415,7 +415,7 @@ export const utils = {
     return result;
   },
   ListRepeat(item, length) {
-    if (typeof length !== "number") {
+    if (typeof length !== 'number') {
       return [];
     }
     if (length <= 0) {
@@ -425,42 +425,42 @@ export const utils = {
   },
   ListFind(arr, by) {
     if (Array.isArray(arr)) {
-      if (typeof by === "function") {
+      if (typeof by === 'function') {
         const value = arr.find(by);
-        return typeof value === "undefined" ? null : value;
+        return typeof value === 'undefined' ? null : value;
       }
     }
   },
   async ListFindAsync(arr, by) {
     if (Array.isArray(arr)) {
-      if (typeof by === "function") {
+      if (typeof by === 'function') {
         const value = await findAsync(arr, by);
-        return typeof value === "undefined" ? null : value;
+        return typeof value === 'undefined' ? null : value;
       }
     }
   },
   ListFilter(arr, by) {
-    if (!Array.isArray(arr) || typeof by !== "function") {
+    if (!Array.isArray(arr) || typeof by !== 'function') {
       return null;
     }
     return arr.filter(by);
   },
   async ListFilterAsync(arr, by) {
-    if (!Array.isArray(arr) || typeof by !== "function") {
+    if (!Array.isArray(arr) || typeof by !== 'function') {
       return null;
     }
     return await filterAsync(arr, by);
   },
   ListFindIndex(arr, callback) {
     if (Array.isArray(arr)) {
-      if (typeof callback === "function") {
+      if (typeof callback === 'function') {
         return arr.findIndex(callback);
       }
     }
   },
   async ListFindIndexAsync(arr, callback) {
     if (Array.isArray(arr)) {
-      if (typeof callback === "function") {
+      if (typeof callback === 'function') {
         return await findIndexAsync(arr, callback);
       }
     }
@@ -490,7 +490,7 @@ export const utils = {
       // eslint-disable-next-line no-return-await
       const hashArr = listGetVal.map((fn) => fn(item));
       // eslint-disable-next-line no-await-in-loop
-      const hash = hashArr.join("");
+      const hash = hashArr.join('');
       if (!vis.has(hash)) {
         vis.add(hash);
         res.push(item);
@@ -516,7 +516,7 @@ export const utils = {
       // eslint-disable-next-line no-return-await
       const hashArr = listGetVal.map(async (fn) => await fn(item));
       // eslint-disable-next-line no-await-in-loop
-      const hash = (await Promise.all(hashArr)).join("");
+      const hash = (await Promise.all(hashArr)).join('');
       if (!vis.has(hash)) {
         vis.add(hash);
         res.push(item);
@@ -526,7 +526,7 @@ export const utils = {
   },
   ListGroupBy(arr, getVal) {
     // getVal : <A,B> . A => B 给一个 A 类型的数据，返回 A 类型中被用户选中的 field 的 value
-    if (!arr || typeof getVal !== "function") {
+    if (!arr || typeof getVal !== 'function') {
       return null;
     }
     const res = {};
@@ -543,7 +543,7 @@ export const utils = {
   },
   async ListGroupByAsync(arr, getVal) {
     // getVal : <A,B> . A => B 给一个 A 类型的数据，返回 A 类型中被用户选中的 field 的 value
-    if (!arr || typeof getVal !== "function") {
+    if (!arr || typeof getVal !== 'function') {
       return null;
     }
     const res = {};
@@ -565,12 +565,12 @@ export const utils = {
         return null;
       }
       const value = map[key];
-      return typeof value === "undefined" ? null : value;
+      return typeof value === 'undefined' ? null : value;
     }
   },
   MapPut(map, key, value) {
     if (isObject(map)) {
-      if (Global.prototype.$set && typeof Global.prototype.$set === "function") {
+      if (Global.prototype.$set && typeof Global.prototype.$set === 'function') {
         Global.prototype.$set(map, key, value);
         return;
       }
@@ -580,7 +580,7 @@ export const utils = {
   },
   MapRemove(map, key) {
     if (isObject(map)) {
-      if (Global.delete && typeof Global.delete === "function") {
+      if (Global.delete && typeof Global.delete === 'function') {
         Global.delete(map, key);
         return;
       }
@@ -603,7 +603,7 @@ export const utils = {
     if (!isObject(map)) {
       return [];
     }
-    if ("values" in Object) {
+    if ('values' in Object) {
       return Object.values(map);
     } else {
       const res = [];
@@ -617,7 +617,7 @@ export const utils = {
     }
   },
   MapFilter(map, by) {
-    if (!isObject(map) || typeof by !== "function") {
+    if (!isObject(map) || typeof by !== 'function') {
       return null;
     }
     const res = {};
@@ -629,7 +629,7 @@ export const utils = {
     return res;
   },
   async MapFilterAsync(map, by) {
-    if (!isObject(map) || typeof by !== "function") {
+    if (!isObject(map) || typeof by !== 'function') {
       return null;
     }
     const res = {};
@@ -641,7 +641,7 @@ export const utils = {
     return res;
   },
   MapTransform(map, toKey, toValue) {
-    if (!isObject(map) || typeof toKey !== "function" || typeof toValue !== "function") {
+    if (!isObject(map) || typeof toKey !== 'function' || typeof toValue !== 'function') {
       return null;
     }
     const res = {};
@@ -651,7 +651,7 @@ export const utils = {
     return res;
   },
   async MapTransformAsync(map, toKey, toValue) {
-    if (!isObject(map) || typeof toKey !== "function" || typeof toValue !== "function") {
+    if (!isObject(map) || typeof toKey !== 'function' || typeof toValue !== 'function') {
       return null;
     }
     const res = {};
@@ -661,7 +661,7 @@ export const utils = {
     return res;
   },
   ListToMap(arr, toKey, toValue) {
-    if (!Array.isArray(arr) || typeof toKey !== "function" || typeof toValue !== "function") {
+    if (!Array.isArray(arr) || typeof toKey !== 'function' || typeof toValue !== 'function') {
       return null;
     }
     const res = {};
@@ -675,7 +675,7 @@ export const utils = {
     return res;
   },
   async ListToMapAsync(arr, toKey, toValue) {
-    if (!Array.isArray(arr) || typeof toKey !== "function" || typeof toValue !== "function") {
+    if (!Array.isArray(arr) || typeof toKey !== 'function' || typeof toValue !== 'function') {
       return null;
     }
     const res = {};
@@ -697,7 +697,7 @@ export const utils = {
   ListSort(arr, ...callbacks) {
     if (!Array.isArray(arr) || !Array.isArray(callbacks)) return arr;
     return arr.sort((a, b) => {
-      if (typeof a === "object" && typeof b === "object") {
+      if (typeof a === 'object' && typeof b === 'object') {
         for (let cb of callbacks) {
           const { by: valueA, asc } = cb(a);
           const { by: valueB } = cb(b);
@@ -728,7 +728,7 @@ export const utils = {
     );
 
     list.sort((a, b) => {
-      if (typeof a?.item === "object" && typeof b?.item === "object") {
+      if (typeof a?.item === 'object' && typeof b?.item === 'object') {
         for (let i = 0; i < callbacks.length; i++) {
           const { by: byA, asc: ascA } = a.criteria[i];
           const { by: byB } = b.criteria[i];
@@ -752,7 +752,7 @@ export const utils = {
   },
   ListFindAll(arr, callback) {
     if (Array.isArray(arr)) {
-      if (typeof callback === "function") {
+      if (typeof callback === 'function') {
         return arr.filter(callback);
       }
     }
@@ -807,33 +807,33 @@ export const utils = {
   },
   CurrDate(tz) {
     if (!tz) {
-      return this.CurrDate("global");
+      return this.CurrDate('global');
     }
     const localDate = convertJSDateInTargetTimeZone(new Date(), tz);
-    return moment(localDate).format("YYYY-MM-DD");
+    return moment(localDate).format('YYYY-MM-DD');
   },
   CurrTime(tz) {
     if (!tz) {
-      return this.CurrTime("global");
+      return this.CurrTime('global');
     }
     const localDate = convertJSDateInTargetTimeZone(new Date(), tz);
-    return moment(localDate).format("HH:mm:ss");
+    return moment(localDate).format('HH:mm:ss');
   },
   CurrDateTime(tz) {
     if (!tz) {
-      return this.CurrDateTime("global");
+      return this.CurrDateTime('global');
     }
     const localDate = convertJSDateInTargetTimeZone(new Date(), tz);
     return localDate.toJSON();
   },
-  AddDays(date = new Date(), amount = 1, converter = "json") {
+  AddDays(date = new Date(), amount = 1, converter = 'json') {
     return toValue(addDays(safeNewDate(date), amount), converter);
   },
-  AddMonths(date = new Date(), amount = 1, converter = "json") {
+  AddMonths(date = new Date(), amount = 1, converter = 'json') {
     /** 传入的值为标准的时间格式 */
     return toValue(addMonths(safeNewDate(date), amount), converter);
   },
-  SubDays(date = new Date(), amount = 1, converter = "json") {
+  SubDays(date = new Date(), amount = 1, converter = 'json') {
     return toValue(subDays(safeNewDate(date), amount), converter);
   },
   // 兼容性策略：老应用升级到 3.10，保持老行为不变
@@ -842,7 +842,7 @@ export const utils = {
     if (this.isInputValidNaslDateTime(dateStr) && !tz) {
       // v3.3 老应用升级的场景，使用全局配置（全局配置一般默认是‘用户时区’）
       // v3.4 新应用，使用默认时区时选项，tz 为空
-      date = convertJSDateInTargetTimeZone(dateStr, getAppTimezone("global"));
+      date = convertJSDateInTargetTimeZone(dateStr, getAppTimezone('global'));
     } else if (this.isInputValidNaslDateTime(dateStr) && tz) {
       // v3.4 新应用，指定了默认值之外的时区选项，必然有时区参数 tz
       date = convertJSDateInTargetTimeZone(dateStr, tz);
@@ -851,7 +851,7 @@ export const utils = {
       date = naslDateToLocalDate(dateStr);
     }
 
-    const [metric1, metric2] = metric.split("-");
+    const [metric1, metric2] = metric.split('-');
     // 获取当年的最后一天的所在周会返回1，需要额外判断一下
     function getCurrentWeek(value) {
       let count = getWeek(value, { weekStartsOn: 1 });
@@ -861,34 +861,34 @@ export const utils = {
       return count;
     }
     switch (metric1) {
-      case "day":
+      case 'day':
         switch (metric2) {
-          case "week":
+          case 'week':
             return differenceInDays(date, startOfWeek(date, { weekStartsOn: 1 })) + 1;
-          case "month":
+          case 'month':
             return getDate(date);
-          case "quarter":
+          case 'quarter':
             return differenceInDays(date, startOfQuarter(date)) + 1;
-          case "year":
+          case 'year':
             return getDayOfYear(date);
         }
-      case "week":
+      case 'week':
         switch (metric2) {
-          case "month":
+          case 'month':
             return getWeekOfMonth(date);
-          case "quarter":
+          case 'quarter':
             return getCurrentWeek(date) - getWeek(startOfQuarter(date)) + 1;
-          case "year":
+          case 'year':
             return getCurrentWeek(date);
         }
-      case "month":
+      case 'month':
         switch (metric2) {
-          case "quarter":
+          case 'quarter':
             return getMonth(date) + 1 - (getQuarter(date) - 1) * 3;
-          case "year":
+          case 'year':
             return getMonth(date) + 1;
         }
-      case "quarter":
+      case 'quarter':
         return getQuarter(date);
       default:
         return null;
@@ -899,7 +899,7 @@ export const utils = {
     if (this.isInputValidNaslDateTime(dateStr) && !tz) {
       // v3.3 老应用升级的场景，使用全局配置（全局配置一般默认是‘用户时区’）
       // v3.4 新应用，使用默认时区时选项，tz 为空
-      date = convertJSDateInTargetTimeZone(dateStr, getAppTimezone("global")); // date : Date
+      date = convertJSDateInTargetTimeZone(dateStr, getAppTimezone('global')); // date : Date
     } else if (this.isInputValidNaslDateTime(dateStr) && tz) {
       // v3.4 新应用，指定了默认值之外的时区选项，必然有时区参数 tz
       date = convertJSDateInTargetTimeZone(dateStr, tz);
@@ -908,7 +908,7 @@ export const utils = {
       date = naslDateToLocalDate(dateStr);
     }
 
-    const [metric1, metric2] = metric.split("-");
+    const [metric1, metric2] = metric.split('-');
     // 获取当年的最后一天的所在周会返回1，需要额外判断一下
     function getCurrentWeek(value) {
       let count = getWeek(value, { weekStartsOn: 1 });
@@ -918,22 +918,22 @@ export const utils = {
       return count;
     }
     switch (metric1) {
-      case "day":
+      case 'day':
         switch (metric2) {
-          case "week":
+          case 'week':
             return differenceInDays(date, startOfWeek(date, { weekStartsOn: 1 })) + 1;
-          case "month":
+          case 'month':
             return getDate(date);
-          case "quarter":
+          case 'quarter':
             return differenceInDays(date, startOfQuarter(date)) + 1;
-          case "year":
+          case 'year':
             return getDayOfYear(date);
         }
-      case "week":
+      case 'week':
         switch (metric2) {
-          case "month": {
+          case 'month': {
             // 构造 date 所在月的第一天
-            const startOfMonth = new Date(moment(date).startOf("month").format("YYYY-MM-DD hh:mm:ss"));
+            const startOfMonth = new Date(moment(date).startOf('month').format('YYYY-MM-DD hh:mm:ss'));
             // 获取该天是周几
             let wod = startOfMonth.getDay(); // 以为返回 1-7，实际返回 0-6；0 是星期天
             wod = wod === 0 ? 7 : wod;
@@ -945,19 +945,19 @@ export const utils = {
               return Math.ceil((date.getDate() - daysOfFirstWeek) / 7) + 1;
             }
           }
-          case "quarter":
+          case 'quarter':
             return getCurrentWeek(date) - getWeek(startOfQuarter(date)) + 1;
-          case "year":
+          case 'year':
             return getCurrentWeek(date);
         }
-      case "month":
+      case 'month':
         switch (metric2) {
-          case "quarter":
+          case 'quarter':
             return getMonth(date) + 1 - (getQuarter(date) - 1) * 3;
-          case "year":
+          case 'year':
             return getMonth(date) + 1;
         }
-      case "quarter":
+      case 'quarter':
         return getQuarter(date);
       default:
         return null;
@@ -965,45 +965,45 @@ export const utils = {
   },
   AlterDateTime(dateString, option, count, unit) {
     const date = safeNewDate(dateString);
-    const amount = option === "Increase" ? count : -count;
+    const amount = option === 'Increase' ? count : -count;
     let addDate;
     switch (unit) {
-      case "second":
+      case 'second':
         addDate = addSeconds(date, amount);
         break;
-      case "minute":
+      case 'minute':
         addDate = addMinutes(date, amount);
         break;
-      case "hour":
+      case 'hour':
         addDate = addHours(date, amount);
         break;
-      case "day":
+      case 'day':
         addDate = addDays(date, amount);
         break;
-      case "week":
+      case 'week':
         addDate = addWeeks(date, amount);
         break;
-      case "month":
+      case 'month':
         addDate = addMonths(date, amount);
         break;
-      case "quarter":
+      case 'quarter':
         addDate = addQuarters(date, amount);
         break;
-      case "year":
+      case 'year':
         addDate = addYears(date, amount);
         break;
     }
-    if (typeof dateString === "object" || this.isInputValidNaslDateTime(dateString)) {
+    if (typeof dateString === 'object' || this.isInputValidNaslDateTime(dateString)) {
       return format(addDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
     } else {
-      return format(addDate, "yyyy-MM-dd");
+      return format(addDate, 'yyyy-MM-dd');
     }
   },
   isInputValidNaslDateTime(inp) {
     return (
       inp instanceof Date ||
-      (typeof inp === "string" && /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/.test(inp)) ||
-      (typeof inp === "string" && /^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})/.test(inp))
+      (typeof inp === 'string' && /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/.test(inp)) ||
+      (typeof inp === 'string' && /^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})/.test(inp))
     );
   },
   GetSpecificDaysOfWeek(startdatetr, enddatetr, arr, tz) {
@@ -1018,8 +1018,8 @@ export const utils = {
     if (this.isInputValidNaslDateTime(startdatetr) && !tz) {
       // v3.3 老应用升级的场景，使用全局配置（全局配置一般默认是‘用户时区’）
       // v3.4 新应用，使用默认时区时选项，tz 为空
-      startDate = convertJSDateInTargetTimeZone(startdatetr, getAppTimezone("global"));
-      endDate = convertJSDateInTargetTimeZone(enddatetr, getAppTimezone("global"));
+      startDate = convertJSDateInTargetTimeZone(startdatetr, getAppTimezone('global'));
+      endDate = convertJSDateInTargetTimeZone(enddatetr, getAppTimezone('global'));
     } else if (this.isInputValidNaslDateTime(startdatetr) && tz) {
       // v3.4 新应用，指定了默认值之外的时区选项，必然有时区参数 tz
       startDate = convertJSDateInTargetTimeZone(startdatetr, getAppTimezone(tz));
@@ -1039,21 +1039,21 @@ export const utils = {
     arr = arr.map((item) => Number(item));
     const isDays = fns.filter((_, index) => arr.includes(index + 1));
     const filtereddate = dateInRange.filter((day) => isDays.some((fn) => fn(day)));
-    if (typeof startdatetr === "object" || startdatetr.includes("T")) {
-      return filtereddate.map((date) => moment(date).format("YYYY-MM-DDTHH:mm:ss.SSSZ"));
+    if (typeof startdatetr === 'object' || startdatetr.includes('T')) {
+      return filtereddate.map((date) => moment(date).format('YYYY-MM-DDTHH:mm:ss.SSSZ'));
     } else {
-      return filtereddate.map((date) => moment(date).format("YYYY-MM-DD"));
+      return filtereddate.map((date) => moment(date).format('YYYY-MM-DD'));
     }
   },
   FormatDate(value, formatter) {
     if (!value) {
-      return "-";
+      return '-';
     }
     return dateFormatter.format(naslDateToLocalDate(value), formatter);
   },
   FormatTime(value, formatter) {
     if (!value) {
-      return "-";
+      return '-';
     }
     // 使用正则表达式提取时、分、秒
     const parts = value.match(/(\d{1,2}):(\d{1,2}):(\d{1,2})/);
@@ -1070,20 +1070,20 @@ export const utils = {
 
     // 根据需要格式化时、分、秒
     let formattedTime = formatter
-      .replace("HH", hours.toString().padStart(2, "0"))
-      .replace("H", hours.toString())
-      .replace("mm", minutes.toString().padStart(2, "0"))
-      .replace("m", minutes.toString())
-      .replace("ss", seconds.toString().padStart(2, "0"))
-      .replace("s", seconds.toString());
+      .replace('HH', hours.toString().padStart(2, '0'))
+      .replace('H', hours.toString())
+      .replace('mm', minutes.toString().padStart(2, '0'))
+      .replace('m', minutes.toString())
+      .replace('ss', seconds.toString().padStart(2, '0'))
+      .replace('s', seconds.toString());
     return formattedTime;
   },
   FormatDateTime(value, formatter, tz) {
     if (!value) {
-      return "-";
+      return '-';
     }
     if (!tz) {
-      return this.FormatDateTime(value, formatter, "global");
+      return this.FormatDateTime(value, formatter, 'global');
     }
     const date = convertJSDateInTargetTimeZone(value, tz);
     return dateFormatter.format(date, formatter);
@@ -1107,13 +1107,13 @@ export const utils = {
 
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
-          if (typeof obj[key] === "object" && obj[key] !== null) {
+          if (typeof obj[key] === 'object' && obj[key] !== null) {
             obj[key] = clearDeep(obj[key], seen);
           } else if (
             Array.isArray(obj[key]) ||
-            typeof obj[key] === "number" ||
-            typeof obj[key] === "string" ||
-            typeof obj[key] === "boolean"
+            typeof obj[key] === 'number' ||
+            typeof obj[key] === 'string' ||
+            typeof obj[key] === 'boolean'
           ) {
             obj[key] = null;
           }
@@ -1122,8 +1122,8 @@ export const utils = {
 
       return obj;
     }
-    let isMap = objType && ["nasl.collection.Map", "nasl.collection.List"].find((t) => objType?.includes(t));
-    if (mode && mode === "deep" && !isMap) {
+    let isMap = objType && ['nasl.collection.Map', 'nasl.collection.List'].find((t) => objType?.includes(t));
+    if (mode && mode === 'deep' && !isMap) {
       return clearDeep(obj);
     }
     if (Array.isArray(obj)) {
@@ -1161,8 +1161,8 @@ export const utils = {
       min = 0;
     }
 
-    if (typeof min !== "number" || typeof max !== "number") {
-      throw new TypeError("Expected all arguments to be numbers");
+    if (typeof min !== 'number' || typeof max !== 'number') {
+      throw new TypeError('Expected all arguments to be numbers');
     }
 
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -1177,22 +1177,22 @@ export const utils = {
     return result;
   },
   Convert(value, tyAnn) {
-    if (tyAnn && tyAnn.typeKind === "primitive") {
-      if (tyAnn.typeName === "DateTime") return format(safeNewDate(value), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
-      else if (tyAnn.typeName === "Date") return format(safeNewDate(value), "yyyy-MM-dd");
-      else if (tyAnn.typeName === "Time") {
+    if (tyAnn && tyAnn.typeKind === 'primitive') {
+      if (tyAnn.typeName === 'DateTime') return format(safeNewDate(value), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+      else if (tyAnn.typeName === 'Date') return format(safeNewDate(value), 'yyyy-MM-dd');
+      else if (tyAnn.typeName === 'Time') {
         if (/^\d{2}:\d{2}:\d{2}$/.test(value))
           // 纯时间 12:30:00
-          return format(safeNewDate("2022/01/01 " + value), "HH:mm:ss");
-        else return format(safeNewDate(value), "HH:mm:ss");
-      } else if (tyAnn.typeName === "String") return String(value);
-      else if (tyAnn.typeName === "Double" || tyAnn.typeName === "Decimal")
+          return format(safeNewDate('2022/01/01 ' + value), 'HH:mm:ss');
+        else return format(safeNewDate(value), 'HH:mm:ss');
+      } else if (tyAnn.typeName === 'String') return String(value);
+      else if (tyAnn.typeName === 'Double' || tyAnn.typeName === 'Decimal')
         // 小数
         return parseFloat(String(+value));
-      else if (tyAnn.typeName === "Integer" || tyAnn.typeName === "Long")
+      else if (tyAnn.typeName === 'Integer' || tyAnn.typeName === 'Long')
         // 日期时间格式特殊处理; 整数： format 'int' ; 长整数: format: 'long'
         return /^\d{4}-\d{2}-\d{2}(.*)+/.test(value) ? safeNewDate(value).getTime() : Math.round(+value);
-      else if (tyAnn.typeName === "Boolean")
+      else if (tyAnn.typeName === 'Boolean')
         // 布尔值
         return !!value;
     }
@@ -1202,8 +1202,8 @@ export const utils = {
   ToString(typeKey, value, tz) {
     // v3.3 老应用升级的场景，使用全局配置（全局配置一般默认是‘用户时区’）
     // v3.4 新应用，使用默认时区时选项，tz 为空
-    if (typeKey === "nasl.core.DateTime" && !tz) {
-      return toString(typeKey, value, "global");
+    if (typeKey === 'nasl.core.DateTime' && !tz) {
+      return toString(typeKey, value, 'global');
     } else {
       // v3.4 新应用，指定了默认值之外的时区选项，必然有时区参数 tz
       return toString(typeKey, value, getAppTimezone(tz));
@@ -1223,36 +1223,36 @@ export const utils = {
    */
   FormatNumber(value, digits, omit, showGroup, fix, unit) {
     if (!value) return value;
-    if (parseFloat(value) === 0) return "0";
+    if (parseFloat(value) === 0) return '0';
     if (isNaN(parseFloat(value)) || isNaN(parseInt(digits))) return;
     if (digits !== undefined) {
       value = new Decimal(value).toFixed(parseInt(digits));
       if (omit) {
-        value = parseFloat(value) + ""; // 转字符串
+        value = parseFloat(value) + ''; // 转字符串
       }
     }
     if (showGroup) {
-      const temp = ("" + value).split(".");
+      const temp = ('' + value).split('.');
       const right = temp[1];
       let left = temp[0]
-        .split("")
+        .split('')
         .reverse()
-        .join("")
+        .join('')
         .match(/(\d{1,3})/g)
-        .join(",")
-        .split("")
+        .join(',')
+        .split('')
         .reverse()
-        .join("");
-      if (temp[0][0] === "-") left = "-" + left;
-      if (right) left = left + "." + right;
+        .join('');
+      if (temp[0][0] === '-') left = '-' + left;
+      if (right) left = left + '.' + right;
       value = left;
     }
     if (fix && unit) {
       switch (fix) {
-        case "prefix":
+        case 'prefix':
           value = unit + value;
           break;
-        case "suffix":
+        case 'suffix':
           value = value + unit;
           break;
         default:
@@ -1260,7 +1260,7 @@ export const utils = {
           break;
       }
     }
-    return "" + value;
+    return '' + value;
   },
   /**
    * 百分数格式化
@@ -1269,33 +1269,33 @@ export const utils = {
    * @param {showGroup} 是否显示千位分割（默认逗号分隔）
    */
   FormatPercent(value, digits, omit, showGroup) {
-    if (parseFloat(value) === 0) return "0%";
+    if (parseFloat(value) === 0) return '0%';
     if (!value) return value;
     if (isNaN(parseFloat(value)) || isNaN(parseInt(digits))) return;
     value = value * 100;
     if (digits !== undefined) {
       value = Number(value).toFixed(parseInt(digits));
       if (omit) {
-        value = parseFloat(value) + ""; // 转字符串
+        value = parseFloat(value) + ''; // 转字符串
       }
     }
     if (showGroup) {
-      const temp = ("" + value).split(".");
+      const temp = ('' + value).split('.');
       const right = temp[1];
       let left = temp[0]
-        .split("")
+        .split('')
         .reverse()
-        .join("")
+        .join('')
         .match(/(\d{1,3})/g)
-        .join(",")
-        .split("")
+        .join(',')
+        .split('')
         .reverse()
-        .join("");
-      if (temp[0][0] === "-") left = "-" + left;
-      if (right) left = left + "." + right;
+        .join('');
+      if (temp[0][0] === '-') left = '-' + left;
+      if (right) left = left + '.' + right;
       value = left;
     }
-    return value + "%";
+    return value + '%';
   },
   /**
    * 时间差
@@ -1352,7 +1352,7 @@ export const utils = {
    * @returns {number} 查找到的位置，没找到返回-1
    */
   IndexOf(str, search, fromIndex, ignoreCase) {
-    if (typeof str !== "string" || typeof search !== "string") {
+    if (typeof str !== 'string' || typeof search !== 'string') {
       return -1;
     }
     if (fromIndex === undefined || fromIndex < 0 || fromIndex % 1 !== 0) {
@@ -1372,7 +1372,7 @@ export const utils = {
    * @returns {number} 查找到的位置，没找到返回-1
    */
   LastIndexOf(str, search, ignoreCase) {
-    if (typeof str !== "string" || typeof search !== "string") {
+    if (typeof str !== 'string' || typeof search !== 'string') {
       return -1;
     }
     if (ignoreCase) {
@@ -1389,11 +1389,11 @@ export const utils = {
    * @returns {string} 替换后的字符串
    */
   Replace(str, search, replace) {
-    if (typeof str !== "string" || typeof search !== "string") {
+    if (typeof str !== 'string' || typeof search !== 'string') {
       return str;
     }
-    replace = replace.replace(/\$/g, "$$$$");
-    return str.replace(new RegExp(search.replace(/([/,!\\^${}[\]().*+?|<>\-&])/g, "\\$&"), "g"), replace);
+    replace = replace.replace(/\$/g, '$$$$');
+    return str.replace(new RegExp(search.replace(/([/,!\\^${}[\]().*+?|<>\-&])/g, '\\$&'), 'g'), replace);
   },
   /**
    *
@@ -1403,7 +1403,7 @@ export const utils = {
    * @returns {string} 截取后的字符串
    */
   SubString(str, start, length) {
-    if (typeof str !== "string") {
+    if (typeof str !== 'string') {
       return str;
     }
     if (start !== undefined && (start < 0 || start % 1 !== 0)) {
@@ -1459,7 +1459,7 @@ export const utils = {
     };
 
     if (!value) {
-      console.warn("Round 函数的 value 参数不能为空:", value);
+      console.warn('Round 函数的 value 参数不能为空:', value);
       return 0;
     }
 
@@ -1474,20 +1474,20 @@ export const utils = {
     const hasValue = (value, typeKey) => {
       const typeDefinition = typeDefinitionMap[typeKey] || {};
 
-      if (["nasl.core.Null"].includes(typeKey) || value === undefined || value === null) {
+      if (['nasl.core.Null'].includes(typeKey) || value === undefined || value === null) {
         return false;
       }
-      if (["nasl.core.Boolean"].includes(typeKey) || value === true || value === false) {
+      if (['nasl.core.Boolean'].includes(typeKey) || value === true || value === false) {
         return true;
       }
-      if (["nasl.core.DateTime"].includes(typeKey)) {
+      if (['nasl.core.DateTime'].includes(typeKey)) {
         return !!value;
       }
       if (isDefString(typeKey)) {
-        return String(value).trim() !== "";
+        return String(value).trim() !== '';
       }
       if (isDefNumber(typeKey)) {
-        if ([""].includes(value)) {
+        if ([''].includes(value)) {
           return false;
         }
         return !isNaN(Number(value));
@@ -1503,11 +1503,11 @@ export const utils = {
         return false;
       }
 
-      if (typeof value === "string") {
-        return value.trim() !== "";
+      if (typeof value === 'string') {
+        return value.trim() !== '';
       }
 
-      if (typeof value === "number") {
+      if (typeof value === 'number') {
         return !isNaN(value);
       }
 
@@ -1518,6 +1518,17 @@ export const utils = {
       // structure/entity
       return !Object.keys(value).every((key) => {
         const v = value[key];
+
+        // 空数组
+        if (Array.isArray(v)) {
+          return v.length === 0;
+        }
+
+        // 空对象
+        if (typeof v === 'object' && v !== null) {
+          return Object.keys(v).length === 0;
+        }
+
         return v === null || v === undefined;
       });
     };
@@ -1540,7 +1551,7 @@ export const utils = {
     x = +x;
 
     if (isNaN(x)) {
-      throw new Error("SystemIllegalArgumentError");
+      throw new Error('SystemIllegalArgumentError');
     }
 
     return Math.ceil(x);
@@ -1550,7 +1561,7 @@ export const utils = {
     x = +x;
 
     if (isNaN(x)) {
-      throw new Error("SystemIllegalArgumentError");
+      throw new Error('SystemIllegalArgumentError');
     }
 
     return Math.floor(x);
@@ -1560,7 +1571,7 @@ export const utils = {
     x = +x;
 
     if (isNaN(x)) {
-      throw new Error("SystemIllegalArgumentError");
+      throw new Error('SystemIllegalArgumentError');
     }
 
     return Math.trunc(x);
@@ -1571,11 +1582,11 @@ export const utils = {
     y = +y;
 
     if (isNaN(x) || isNaN(y)) {
-      throw new Error("SystemIllegalArgumentError");
+      throw new Error('SystemIllegalArgumentError');
     }
 
     if (y === 0) {
-      throw new Error("SystemArithmeticError");
+      throw new Error('SystemArithmeticError');
     }
 
     // 余数
@@ -1588,7 +1599,7 @@ export const utils = {
     x = +x;
 
     if (isNaN(x)) {
-      throw new Error("SystemIllegalArgumentError");
+      throw new Error('SystemIllegalArgumentError');
     }
 
     return Math.abs(x);
@@ -1599,7 +1610,7 @@ export const utils = {
     y = +y;
 
     if (isNaN(x) || isNaN(y)) {
-      throw new Error("SystemIllegalArgumentError");
+      throw new Error('SystemIllegalArgumentError');
     }
 
     return Math.pow(x, y);
@@ -1609,7 +1620,7 @@ export const utils = {
     x = +x;
 
     if (isNaN(x)) {
-      throw new Error("SystemIllegalArgumentError");
+      throw new Error('SystemIllegalArgumentError');
     }
 
     return Math.sqrt(x);
@@ -1619,7 +1630,7 @@ export const utils = {
     x = +x;
 
     if (isNaN(x)) {
-      throw new Error("SystemIllegalArgumentError");
+      throw new Error('SystemIllegalArgumentError');
     }
 
     return Math.cbrt(x);
@@ -1629,14 +1640,14 @@ export const utils = {
     x = +x;
 
     if (isNaN(x)) {
-      throw new Error("SystemIllegalArgumentError");
+      throw new Error('SystemIllegalArgumentError');
     }
 
     return Math.log(x);
   },
 
   PadStart(str: string, targetLength: number, padString: string) {
-    if (typeof str !== "string") {
+    if (typeof str !== 'string') {
       return str;
     }
 
@@ -1644,7 +1655,7 @@ export const utils = {
   },
 
   PadEnd(str: string, targetLength: number, padString: string) {
-    if (typeof str !== "string") {
+    if (typeof str !== 'string') {
       return str;
     }
 
@@ -1652,7 +1663,7 @@ export const utils = {
   },
 
   TrimStart(str: string) {
-    if (typeof str !== "string") {
+    if (typeof str !== 'string') {
       return str;
     }
 
@@ -1660,7 +1671,7 @@ export const utils = {
   },
 
   TrimEnd(str: string) {
-    if (typeof str !== "string") {
+    if (typeof str !== 'string') {
       return str;
     }
 
@@ -1677,7 +1688,7 @@ function initUtils(
   enumsMap = options.enumsMap;
   dataTypesMap = options.dataTypesMap;
 
-  Config.globalProperties.set("$utils", utils);
+  Config.globalProperties.set('$utils', utils);
 
   return {
     utils: utils,
@@ -1686,4 +1697,4 @@ function initUtils(
 
 export { initUtils };
 
-export * from "./helper";
+export * from './helper';
