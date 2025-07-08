@@ -1591,6 +1591,17 @@ export class Utils {
       // structure/entity
       return !Object.keys(value).every((key) => {
         const v = value[key];
+
+        // 空数组
+        if (Array.isArray(v)) {
+          return v.length === 0;
+        }
+
+        // 空对象
+        if (typeof v === 'object' && v !== null) {
+          return Object.keys(v).length === 0;
+        }
+
         return v === null || v === undefined;
       });
     };
