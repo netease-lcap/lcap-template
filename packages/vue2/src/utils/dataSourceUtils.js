@@ -9,11 +9,17 @@ export default (scope) => {
   }
 
   function __isShallowEqualArray(arr1, arr2) {
-    if (arr1.length !== arr2.length) return false;
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
     return arr1.every((current, i) => {
       const other = arr2[i];
-      if (typeof current !== typeof other) return false;
-      if (typeof current === 'string') return current === other;
+      if (typeof current !== typeof other) {
+        return false;
+      }
+      if (typeof current === 'string') {
+        return current === other;
+      }
       if (typeof current === 'object') {
         return ['item', 'index', 'rowIndex', 'columnIndex', 'value'].every((key) => current[key] === other[key]);
       }
