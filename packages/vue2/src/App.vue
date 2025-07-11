@@ -6,7 +6,7 @@
 
 <script>
 import { localCacheVariableMixin } from '@/common';
-import ErrorBoundary from './VErrorBoundary.vue';
+import ErrorBoundary from './ErrorBoundary.vue';
 
 export default {
     mixins: [localCacheVariableMixin],
