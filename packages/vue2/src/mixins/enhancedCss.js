@@ -7,7 +7,9 @@ export default (css) => ({
   },
   methods: {
     _addDynamicStyle() {
-      if (!css) return;
+      if (!css) {
+        return;
+      }
 
       this.styleTag = document.createElement('style');
       this.styleTag.type = 'text/css';
@@ -15,7 +17,9 @@ export default (css) => ({
       document.head.appendChild(this.styleTag);
     },
     _removeDynamicStyle() {
-      if (this.styleTag) document.head.removeChild(this.styleTag);
+      if (this.styleTag) {
+        document.head.removeChild(this.styleTag);
+      }
     },
   },
 });

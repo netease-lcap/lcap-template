@@ -17,20 +17,23 @@ export async function mount(props) {
   window.LcapMicro = window.LcapMicro || {};
   Object.assign(window.LcapMicro, __properties__);
 
-  if (window.LcapMicro.noAuthUrl && !window.LcapMicro.noAuthFn)
+  if (window.LcapMicro.noAuthUrl && !window.LcapMicro.noAuthFn) {
     window.LcapMicro.noAuthFn = () => {
       location.href = window.LcapMicro.noAuthUrl;
     };
+  }
 
-  if (window.LcapMicro.loginUrl && !window.LcapMicro.loginFn)
+  if (window.LcapMicro.loginUrl && !window.LcapMicro.loginFn) {
     window.LcapMicro.loginFn = () => {
       location.href = window.LcapMicro.loginUrl;
     };
+  }
 
-  if (window.LcapMicro.notFoundUrl && !window.LcapMicro.notFoundFn)
+  if (window.LcapMicro.notFoundUrl && !window.LcapMicro.notFoundFn) {
     window.LcapMicro.notFoundFn = () => {
       location.href = window.LcapMicro.notFoundUrl;
     };
+  }
 
   const { container } = props;
   window.LcapMicro.container = container.querySelector("#app");
