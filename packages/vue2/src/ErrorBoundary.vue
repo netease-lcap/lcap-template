@@ -84,7 +84,7 @@ export default {
   },
 }
 </script>
-<style>
+<style scoped>
 .lcap-verror-item-root {
   position: fixed;
   margin:0 auto;

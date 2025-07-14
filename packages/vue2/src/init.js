@@ -71,10 +71,13 @@ const init = (appConfig, platformConfig, routes, metaData) => {
     if (
       document.currentScript &&
       (!document.head.contains(document.currentScript) || document.currentScript.active === false)
-    )
+    ) {
       return;
+    }
 
-    if (Vue.prototype.$auth?._map) Vue.prototype.$auth._map = undefined;
+    if (Vue.prototype.$auth?._map) {
+      Vue.prototype.$auth._map = undefined;
+    }
   }
 
   window.appInfo = Object.assign(appConfig, platformConfig);
@@ -203,7 +206,9 @@ const init = (appConfig, platformConfig, routes, metaData) => {
     container.innerHTML = '';
     app.$mount();
     container.appendChild(app.$el);
-  } else app.$mount('#app');
+  } else {
+    app.$mount('#app');
+  }
 
   return app;
 };
