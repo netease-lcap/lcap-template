@@ -2,15 +2,13 @@
   "name": "@lcap/basic-template",
   "version": "2.0.1",
   "description": "",
-  "main": "cjs/index.js",
-  "module": "esm/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
   "types": "typings/index.d.ts",
   "scripts": {
     "build:types": "tsc -p build/tsconfig.types.json",
-    "build:esm": "tsc -p build/tsconfig.esm.json",
-    "build:cjs": "tsc -p build/tsconfig.cjs.json",
-    "build:umd": "rollup -c build/rollup.config.mjs",
-    "build": "npm run build:esm && npm run build:cjs && npm run build:umd && npm run build:types",
+    "build:rollup": "rollup -c build/rollup.config.mjs",
+    "build": "npm run build:rollup && npm run build:types",
     "dev": "nodemon --watch src -e 'ts,js,mjs,cjs,json' --exec 'yalc publish --push'",
     "zip": "npm pack",
     "prepublish": "npm run clean && npm run build && npm run test",
@@ -22,8 +20,6 @@
     "doc": "typedoc --out ../../docs src"
   },
   "files": [
-    "esm",
-    "cjs",
     "dist",
     "typings"
   ],
