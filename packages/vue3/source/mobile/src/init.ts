@@ -23,6 +23,7 @@ import { installComponents, installDirectives, installLibraries } from '@/common
 import { getTitleGuard } from '@/guards';
 
 import App from './App.vue';
+import { createI18nInstance } from './i18n';
 import { setConfig } from './setConfig';
 
 import './index.css';
@@ -120,6 +121,8 @@ const init = (appConfig, platformConfig, routes, metaData) => {
 
   app.use(pinia);
 
+  app.use(createI18nInstance(appConfig));
+
   // rendered 事件
   if (typeof window?.rendered === 'function') {
     window.rendered();
@@ -128,18 +131,8 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   // ------ router begin ------
   const baseResourcePaths = platformConfig.baseResourcePaths || [];
   const authResourcePaths = platformConfig.authResourcePaths || [];
-  const baseRoutes = filterRoutes(routes, null, (route, ancestorPaths) => {
-    const routePath = route.path;
-    const completePath = [...ancestorPaths, routePath].join('/');
-    let completeRedirectPath = '';
-    const redirectPath = route.redirect;
-    if (redirectPath) {
-      completeRedirectPath = [...ancestorPaths, redirectPath].join('/');
-    }
-    return baseResourcePaths.includes(completePath) || completeRedirectPath;
-  });
 
-  const router = createRouterInstance(baseRoutes);
+  const router = createRouterInstance(routes);
 
   window.VueRouterInstance = router;
 

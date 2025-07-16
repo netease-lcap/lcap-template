@@ -31,7 +31,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@lcap/nasl-sdk": "0.0.1-beta.5",
     "@microsoft/fetch-event-source": "^2.0.1",
     "axios": "0.21.4",
     "bignumber.js": "9.1.2",
@@ -48,6 +47,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
+    "@lcap/nasl": "3.13.2-beta.13",
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",

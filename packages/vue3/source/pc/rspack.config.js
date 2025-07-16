@@ -108,37 +108,26 @@ module.exports = defineConfig({
 						const moduleName = /[\\/]pages[\\/](.*)\.vue?/.exec(resource)[1].split(/[\\/]/g).join('_');
 						return `${cacheGroupKey}_${moduleName}`;
 					},
-					chunks: 'all',
 					enforce: true,
 					priority: 5,
 				},
 				routes: {
 					test: /src[\\/]router\.ts/,
 					name: 'routes',
-					chunks: 'initial',
 					enforce: true,
 					priority: 4,
-				},
-				source: {
-					test: /[\\/]src[\\/]/,
-					name: 'source',
-					chunks: 'all',
-					enforce: true,
-					priority: 3,
-				},
-				lcap: {
-					test: /[\\/]node_modules[\\/](lcap|@lcap)/,
-					name: 'lcap',
-					chunks: 'all',
-					enforce: true,
-					priority: 2
 				},
 				vendor: {
 					test: /[\\/]node_modules[\\/]/,
 					name: 'vendor',
-					chunks: 'all',
 					enforce: true,
-					priority: 1
+					priority: 2,
+				},
+        source: {
+					test: /[\\/]src[\\/]/,
+					name: 'source',
+					enforce: true,
+					priority: 1,
 				},
 			}
 		},
@@ -158,37 +147,15 @@ module.exports = defineConfig({
     port: 8810,
 		historyApiFallback: true,
     compress: false,
-    proxy: {
-      "/assets": {
-        target: backendUrl,
-        changeOrigin: true,
-        autoRewrite: true,
-      },
-      "/api": {
-        target: backendUrl,
-        changeOrigin: true,
-        autoRewrite: true,
-      },
-      "/rest": {
-        target: backendUrl,
-        changeOrigin: true,
-        autoRewrite: true,
-      },
-      "^/gateway/": {
-        target: backendUrl,
-        changeOrigin: true,
-        autoRewrite: true,
-      },
-      "^/gw/": {
-        target: `http://localhost:8080`,
-        changeOrigin: true,
-        autoRewrite: true,
-      },
-      "^/upload": {
-        target: backendUrl,
-        changeOrigin: true,
-        autoRewrite: true,
-      },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
     },
+    proxy: [
+      {
+        context: ["/assets", "/api", "/rest", "/gateway", "/gw", "/upload"],
+        target: backendUrl,
+        changeOrigin: true,
+      },
+    ],
   },
 });

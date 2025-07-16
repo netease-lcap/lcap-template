@@ -25,7 +25,7 @@ module.exports = class LcapPlugin {
     emitChunksMapResource(compiler, {
       isDev,
     });
-    emitClintResource(compiler, {
+    emitClientResource(compiler, {
       isDev,
       extra,
     });
@@ -100,7 +100,16 @@ function emitChunksMapResource(compiler, options) {
     const { RawSource } = compiler.webpack.sources;
 
     const code = `window.lcapChunksNameMap = ${JSON.stringify(ChunksNameMap)};
-window.lcapChunksHashMap = ${JSON.stringify(ChunksHashMap)};`;
+window.lcapChunksHashMap = ${JSON.stringify(ChunksHashMap)};
+
+var lcap_changed_chunks = [];
+
+// lcap_changed_chunks placeholder
+
+lcap_changed_chunks.forEach(item => {
+  window.lcapChunksNameMap[item.id] = item.name;
+  window.lcapChunksHashMap[item.id] = item.hash;
+});`;
 
     compilation.emitAsset('router.min.js', new RawSource(Buffer.from(code)), { minimized: true })
 
@@ -109,7 +118,7 @@ window.lcapChunksHashMap = ${JSON.stringify(ChunksHashMap)};`;
 }
 
 // 生成client.js
-function emitClintResource(compiler, options) {
+function emitClientResource(compiler, options) {
   const { isDev, extra } = options;
   compiler.hooks.compilation.tap(plugin, compilation => {
       rspack.HtmlRspackPlugin.getCompilationHooks(compilation).beforeAssetTagGeneration.tapPromise(plugin, async data => {
@@ -159,15 +168,16 @@ function addIncrementalBuild(compiler, options) {
 
     // 只保留pages相关的chunk 资源
     const pagesAssets = [];
-    const changedChunkMap = {};
+    const changedChunks = [];
 
     statsJson.chunks.filter(chunk => {
       if (chunk.idHints?.includes('page')) {
         pagesAssets.push(...chunk.files);
-        changedChunkMap[chunk.id] = {
+        changedChunks.push({
+          id: chunk.id,
           name: chunk.names[0] || chunk.id,
           hash: chunk.hash.substring(0, 8),
-        }
+        });
       }
     });
 
@@ -180,12 +190,13 @@ function addIncrementalBuild(compiler, options) {
 
     // 生成增量变更的chunks-map.js
     let code = chunksMapCode;
-    for (const chunkId in changedChunkMap) {
-      const { hash: chunkHash } = changedChunkMap[chunkId];
-      const hashReg = new RegExp(`(["']?)${chunkId}(["']?):\\s?["']([0-9a-zA-Z]+)["']`, 'g');
-      code = code
-        .replace(hashReg, ($0, $1, $2) => `${$1}${chunkId}${$2}:"${chunkHash}"`);
+
+    const placeholderIdx = code.indexOf('// lcap_changed_chunks placeholder');
+    // 前面插入代码
+    if (placeholderIdx !== -1) {
+      code = code.slice(0, placeholderIdx) + `lcap_changed_chunks.push(...${JSON.stringify(changedChunks)});\n` + code.slice(placeholderIdx);
     }
+
     const { RawSource } = compiler.webpack.sources;
     compilation.emitAsset('router.min.js', new RawSource(Buffer.from(code)), { minimized: true })
 
