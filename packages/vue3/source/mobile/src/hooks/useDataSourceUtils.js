@@ -1,4 +1,6 @@
 import { ref } from 'vue';
+import _isEqual from 'lodash/isEqual';
+
 export function useDataSourceUtils() {
   const cache = ref(new Map());
 
@@ -9,7 +11,7 @@ export function useDataSourceUtils() {
       if (typeof current !== typeof other) return false;
       if (typeof current === 'string') return current === other;
       if (typeof current === 'object') {
-        return ['item', 'index', 'rowIndex', 'columnIndex', 'value'].every((key) => current[key] === other[key]);
+        return _isEqual(current, other);
       }
       return false;
     });
