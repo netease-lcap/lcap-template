@@ -1,21 +1,21 @@
-import { Decimal } from 'decimal.js';
-import CryptoJS from 'crypto-js';
+import { Decimal } from "decimal.js";
+import CryptoJS from "crypto-js";
 
-import { initService as initConfigurationService } from '../../apis/configuration';
-import { initService as initIoService } from '../../apis/io';
-import { initService as initLowauthService } from '../../apis/lowauth';
-import { initService as initLogService } from '../../apis/log';
+import { initService as initConfigurationService } from "../../apis/configuration";
+import { initService as initIoService } from "../../apis/io";
+import { initService as initLowauthService } from "../../apis/lowauth";
+import { initService as initLogService } from "../../apis/log";
 
-import Config from '../../config';
+import Config from "../../config";
 
-import { authService } from '../auth';
+import { authService } from "../auth";
 
-import { navigateToUserInfoPage, navigateToUserPhonePage, navigateScanCodePage, navigateLocationPage } from './wx';
+import { navigateToUserInfoPage, navigateToUserPhonePage, navigateScanCodePage, navigateLocationPage } from "./wx";
 
 window.CryptoJS = CryptoJS;
 
 export function add(x, y) {
-  if (typeof x !== 'number' || typeof y !== 'number') {
+  if (typeof x !== "number" || typeof y !== "number") {
     return x + y;
   }
   if (!x) {
@@ -24,8 +24,8 @@ export function add(x, y) {
   if (!y) {
     y = 0;
   }
-  const xx = new Decimal(x + '');
-  const yy = new Decimal(y + '');
+  const xx = new Decimal(x + "");
+  const yy = new Decimal(y + "");
   return xx.plus(yy).toNumber();
 }
 
@@ -36,8 +36,8 @@ export function minus(x, y) {
   if (!y) {
     y = 0;
   }
-  const xx = new Decimal(x + '');
-  const yy = new Decimal(y + '');
+  const xx = new Decimal(x + "");
+  const yy = new Decimal(y + "");
   return xx.minus(yy).toNumber();
 }
 
@@ -48,8 +48,8 @@ export function multiply(x, y) {
   if (!y) {
     y = 0;
   }
-  const xx = new Decimal(x + '');
-  const yy = new Decimal(y + '');
+  const xx = new Decimal(x + "");
+  const yy = new Decimal(y + "");
   return xx.mul(yy).toNumber();
 }
 
@@ -60,27 +60,9 @@ export function divide(x, y) {
   if (!y) {
     y = 0;
   }
-  const xx = new Decimal(x + '');
-  const yy = new Decimal(y + '');
+  const xx = new Decimal(x + "");
+  const yy = new Decimal(y + "");
   return xx.div(yy).toNumber();
-}
-
-// && 操作符
-export function And(...args: any[]) {
-  if (!Array.isArray(args) || args.length === 0) {
-    return false;
-  }
-
-  return args.every(Boolean);
-}
-
-// || 操作符
-export function Or(...args: any[]) {
-  if (!Array.isArray(args) || args.length === 0) {
-    return false;
-  }
-
-  return args.some(Boolean);
 }
 
 export function isEqual(x, y) {
@@ -96,7 +78,7 @@ export function exitFullscreen() {
   return document.exitFullscreen();
 }
 
-const aesKey = ';Z#^$;8+yhO!AhGo';
+const aesKey = ";Z#^$;8+yhO!AhGo";
 export function encryptByAES({ string: message }, key = aesKey) {
   const keyHex = CryptoJS.enc.Utf8.parse(key); //
   const messageHex = CryptoJS.enc.Utf8.parse(message);
@@ -132,20 +114,20 @@ export function getLocation() {
     function showError(error) {
       switch (error.code) {
         case error.PERMISSION_DENIED:
-          Config.toast.error('用户禁止获取地理定位');
-          rej({ code: error.code, msg: '用户禁止获取地理定位' });
+          Config.toast.error("用户禁止获取地理定位");
+          rej({ code: error.code, msg: "用户禁止获取地理定位" });
           break;
         case error.POSITION_UNAVAILABLE:
-          Config.toast.error('地理定位信息无法获取');
-          rej({ code: error.code, msg: '地理定位信息无法获取' });
+          Config.toast.error("地理定位信息无法获取");
+          rej({ code: error.code, msg: "地理定位信息无法获取" });
           break;
         case error.TIMEOUT:
-          Config.toast.error('地理定位信息获取超时');
-          rej({ code: error.code, msg: '地理定位信息获取超时' });
+          Config.toast.error("地理定位信息获取超时");
+          rej({ code: error.code, msg: "地理定位信息获取超时" });
           break;
         case error.UNKNOWN_ERROR:
-          Config.toast.error('未知错误');
-          rej({ code: error.code, msg: '未知错误' });
+          Config.toast.error("未知错误");
+          rej({ code: error.code, msg: "未知错误" });
           break;
       }
     }
@@ -153,8 +135,8 @@ export function getLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(showPosition, showError);
     } else {
-      Config.toast.error('当前系统不支持地理定位');
-      rej({ code: 666, msg: '当前系统不支持地理定位' });
+      Config.toast.error("当前系统不支持地理定位");
+      rej({ code: 666, msg: "当前系统不支持地理定位" });
     }
   });
 }
@@ -163,10 +145,10 @@ export function getDistance(s1, s2) {
   function deg2rad(deg) {
     return deg * (Math.PI / 180);
   }
-  const lat1t = s1.split(',')[1];
-  const lng1t = s1.split(',')[0];
-  const lat2t = s2.split(',')[1];
-  const lng2t = s2.split(',')[0];
+  const lat1t = s1.split(",")[1];
+  const lng1t = s1.split(",")[0];
+  const lat2t = s2.split(",")[1];
+  const lng2t = s2.split(",")[0];
 
   const R = 6371; // Radius of the earth in km
   const dLat = deg2rad(lat2t - lat1t); // deg2rad below
@@ -179,14 +161,14 @@ export function getDistance(s1, s2) {
   return d * 1000;
 }
 
-export async function getCustomConfig(configKey = '') {
-  const configKeys = configKey.split('.');
+export async function getCustomConfig(configKey = "") {
+  const configKeys = configKey.split(".");
   const finalConfigKey = configKeys.pop();
   const groupName = configKeys[configKeys.length - 2];
   const query = {
     group: groupName,
   };
-  if (configKey.startsWith('extensions.')) {
+  if (configKey.startsWith("extensions.")) {
     query.group = `${configKeys[0]}.${configKeys[1]}.${groupName}`;
   }
   const res = await initConfigurationService().getCustomConfig({
@@ -212,16 +194,16 @@ export function compareKeyboardInput(event, target) {
     ctrlKey: false,
     metaKey: false,
     shiftKey: false,
-    code: '',
+    code: "",
   };
   target.forEach((item) => {
-    if (item === 'Alt') {
+    if (item === "Alt") {
       targetEvent.altKey = true;
-    } else if (item === 'Meta') {
+    } else if (item === "Meta") {
       targetEvent.metaKey = true;
-    } else if (item === 'Control') {
+    } else if (item === "Control") {
       targetEvent.ctrlKey = true;
-    } else if (item === 'Shift') {
+    } else if (item === "Shift") {
       targetEvent.shiftKey = true;
     } else {
       targetEvent.code = item;
@@ -266,8 +248,8 @@ export async function downloadFiles(urls, fileName) {
 
 export async function getUserList(query) {
   const appEnv = window.appInfo.env;
-  const cookies = document.cookie.split('; ');
-  const token = cookies.find((cookie) => cookie.split('=')[0] === 'authorization')?.split('=')[1];
+  const cookies = document.cookie.split("; ");
+  const token = cookies.find((cookie) => cookie.split("=")[0] === "authorization")?.split("=")[1];
   const res = await initLowauthService().getUserList({
     body: {
       appEnv,
@@ -317,34 +299,34 @@ export function go(delta) {
 
 // 下方为H5端的方法
 export function getIsMiniApp() {
-  return window.__wxjs_environment === 'miniprogram';
+  return window.__wxjs_environment === "miniprogram";
 }
 
 export function getWeChatOpenid() {
-  return localStorage.getItem('_wx_openid');
+  return localStorage.getItem("_wx_openid");
 }
 
 export function getWeChatHeadImg() {
-  return localStorage.getItem('_wx_headimg');
+  return localStorage.getItem("_wx_headimg");
 }
 
 export function getWeChatNickName() {
-  return localStorage.getItem('_wx_nickname');
+  return localStorage.getItem("_wx_nickname");
 }
 
 export function getWeChatPhone() {
-  return localStorage.getItem('_wx_phone');
+  return localStorage.getItem("_wx_phone");
 }
 
 export function getWeChatScanCode() {
-  const data = localStorage.getItem('_wx_scan_code');
-  localStorage.setItem('_wx_scan_code', '');
+  const data = localStorage.getItem("_wx_scan_code");
+  localStorage.setItem("_wx_scan_code", "");
   return data;
 }
 
 export function getWeChatLocation() {
-  const data = localStorage.getItem('_wx_location');
-  localStorage.setItem('_wx_location', '');
+  const data = localStorage.getItem("_wx_location");
+  localStorage.setItem("_wx_location", "");
   return data;
 }
 
