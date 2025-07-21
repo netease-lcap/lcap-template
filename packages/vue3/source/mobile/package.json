@@ -35,5 +35,8 @@
     "@rspack/core": "1.3.10",
     "vue-loader": "17.4.2",
     "tar": "7.4.3"
+  },
+  "lcap_modules": {
+    "@lcap/swc-plugin-import": "./lcap_modules/@lcap/swc-plugin-import@0.0.1/zip.tgz"
   }
 }
