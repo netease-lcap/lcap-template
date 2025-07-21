@@ -47,6 +47,19 @@ module.exports = defineConfig({
 			{
 				test: /\.[mc]?js$/,
 				type: 'javascript/auto',
+        use: [
+          {
+            loader: 'builtin:swc-loader',
+            options: {
+              jsc: {
+                parser: {
+                  syntax: 'ecmascript',
+                },
+                // swc plugin placeholder
+              },
+            },
+          }
+        ],
 			},
 			{
 				test: /\.ts$/,

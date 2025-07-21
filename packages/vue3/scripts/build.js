@@ -35,8 +35,18 @@ function fileWriter(inputPath, outputPath) {
       });
     } else {
       const p = '/' + path.relative(inputPath, _path);
+
+      let content;
+
+      // zip.tgz 文件处理
+      if (_path.endsWith('zip.tgz')) {
+        content = fs.readFileSync(_path);
+      } else {
+        content = fs.readFileSync(_path, 'utf8');
+      }
+
       info[p] = {
-        code: fs.readFileSync(_path, 'utf8'),
+        code: content,
       };
     }
   }
