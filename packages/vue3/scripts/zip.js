@@ -18,7 +18,7 @@ const distPath = path.resolve(__dirname, '../dist');
   execSync(`mkdir -p ${output}/package`);
 
   // 拷贝文件
-  execSync(`cp -r ${packageRoot}/source/${type} ${output}/package/source`);
+  execSync(`cp -r ${packageRoot}/source ${output}/package/source`);
 
   // 打包
   if (isMac) {

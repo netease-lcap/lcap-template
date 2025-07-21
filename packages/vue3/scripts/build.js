@@ -1,7 +1,9 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-function fileWriter(inputPath, outputPath) {
+function fileWriter(inputPath, outputPath, item) {
+  const { type, exclude } = item;
+
   function init(path) {
     const info = {
       files: {},
@@ -34,7 +36,17 @@ function fileWriter(inputPath, outputPath) {
         dirTree(_path + '/' + child, info);
       });
     } else {
-      const p = '/' + path.relative(inputPath, _path);
+      const extname = path.extname(_path);
+
+      if (_path.endsWith(`.${exclude}${extname}`)) {
+        return;
+      }
+
+      let p = '/' + path.relative(inputPath, _path);
+
+      if (_path.endsWith(`.${type}${extname}`)) {
+        p = p.replace(`.${type}${extname}`, `${extname}`);
+      }
 
       let content;
 
@@ -64,13 +76,15 @@ const distDir = path.resolve(__dirname, '../dist');
 [
   {
     type: 'pc',
+    exclude: 'mobile',
   },
   {
     type: 'mobile',
+    exclude: 'pc',
   },
 ].forEach((item) => {
   fs.ensureDirSync(`${distDir}/${item.type}`);
 
-  const writer = fileWriter(`${sourceDir}/${item.type}`, `${distDir}/${item.type}/sandbox-template.json`);
+  const writer = fileWriter(`${sourceDir}`, `${distDir}/${item.type}/sandbox-template.json`, item);
   writer();
 });
