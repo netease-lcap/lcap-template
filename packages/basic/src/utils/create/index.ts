@@ -119,6 +119,8 @@ function download(url) {
     data: formatContentType(headers['Content-Type'], body),
     responseType: 'blob',
     timeout,
+    // 允许跨域请求携带 cookie
+    withCredentials: true,
   })
     .then((res) => {
       // 包含 content-disposition， 从中解析名字，不包含 content-disposition 的获取请求地址的后缀
