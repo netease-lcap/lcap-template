@@ -30,7 +30,7 @@ module.exports = defineConfig({
 		chunkFilename: '[name].[chunkhash:8].js',
 	},
 	resolve: {
-		extensions: ["...", ".ts", ".vue"],
+		extensions: ["...", '.mjs', ".ts", ".vue"],
 		alias: {
 			"@": path.resolve(__dirname, './src'),
 		}
