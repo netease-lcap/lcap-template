@@ -70,7 +70,8 @@ module.exports = defineConfig({
 							jsc: {
 								parser: {
 									syntax: "typescript"
-								}
+								},
+                // swc plugin placeholder
 							},
 							env: { targets }
 						},

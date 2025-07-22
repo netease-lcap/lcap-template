@@ -7,12 +7,13 @@ function generateSwcImportPluginConfig(libs) {
     try {
       const manifest = require(manifestPath);
       if (manifest && manifest.modules) {
-        const modules = manifest.modules[0];
-        const modulesPath = `${lib}/${modules}`;
-
-        config[lib] = {
-          esDir: 'es',
-          modules: require(modulesPath).exports,
+        const modules = manifest.modules.find(x => x.endsWith('/modules.json'));
+        if (modules) {
+          const modulesPath = `${lib}/${modules}`;
+          config[lib] = {
+            esDir: 'es',
+            modules: require(modulesPath).exports,
+          }
         }
       } else {
         console.warn(`Manifest in ${manifestPath} does not contain a valid name.`);
