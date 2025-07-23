@@ -22,8 +22,9 @@ export default {
     const vAuth = {
       async handle(el, binding) {
         // 初始化操作，防止先出现后消失
-        if (el.__vue__ && el.__vue__.$options.name === 'u-table-view-column') el.__vue__.currentHidden = false;
-        else {
+        if (el.__vue__ && el.__vue__.$options.name === 'u-table-view-column') {
+          el.__vue__.currentHidden = false;
+        } else {
           el && (el.style.display = 'none');
         }
         const data = {
@@ -36,8 +37,9 @@ export default {
         const visible = await authService.has(authPath);
 
         // 表格列不起作用，特殊处理
-        if (el.__vue__ && el.__vue__.$options.name === 'u-table-view-column') el.__vue__.currentHidden = !visible;
-        else {
+        if (el.__vue__ && el.__vue__.$options.name === 'u-table-view-column') {
+          el.__vue__.currentHidden = !visible;
+        } else {
           el && (el.style.display = visible ? '' : 'none');
         }
       },
@@ -60,17 +62,29 @@ export default {
       },
       methods: {
         _updateVisibleByAuth() {
-          if (!(options.autoHide && this.to)) return;
-          // 有 v-auth 了就不处理 to 的了。
-          if (this.$vnode.data.directives && this.$vnode.data.directives.some((directive) => directive.name === 'auth'))
+          if (!(options.autoHide && this.to)) {
             return;
-          if (!authService.isInit()) return;
+          }
+          // 有 v-auth 了就不处理 to 的了。
+          if (
+            this.$vnode.data.directives &&
+            this.$vnode.data.directives.some((directive) => directive.name === 'auth')
+          ) {
+            return;
+          }
+
+          if (!authService.isInit()) {
+            return;
+          }
 
           let visible = true;
           if (options.autoHide && this.to) {
             let toPath;
-            if (typeof this.to === 'object') toPath = this.to.path;
-            else if (typeof this.to === 'string') toPath = this.to.split('?')[0];
+            if (typeof this.to === 'object') {
+              toPath = this.to.path;
+            } else if (typeof this.to === 'string') {
+              toPath = this.to.split('?')[0];
+            }
             // 去掉末尾的 / 导致的权限不匹配
             const fullPath = (base + toPath).replace(/\/+$/, '');
             visible = visible && authService.has(fullPath);

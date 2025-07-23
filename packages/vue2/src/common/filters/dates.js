@@ -1,7 +1,9 @@
 import { format, isYesterday, startOfToday, addDays, isSameDay } from 'date-fns';
 
 const formatDate = function (value) {
-  if (!value) return;
+  if (!value) {
+    return;
+  }
   const timestamp = isNaN(+value) ? Date.parse(value) : +value;
   if (isNaN(timestamp)) {
     return;
@@ -16,7 +18,9 @@ const dateFormat = (value, formatter = 'yyyy-MM-dd HH:mm:ss') => {
   if (timestamp === undefined) {
     return fallback;
   }
-  if (!formatter) return value;
+  if (!formatter) {
+    return value;
+  }
 
   return format(timestamp, formatter);
 };
