@@ -10,27 +10,28 @@ async function main() {
   const packageJsonPath = path.resolve(__dirname, '../package.json');
   const packageJson = require(packageJsonPath);
 
-  if (Object.keys(packageJson.lcap_modules).length > 0 && !fs.existsSync(lcapModulesPath)) {
-    console.error(`Directory ${lcapModulesPath} does not exist.`);
-    return;
-  }
+  if (packageJson.lcap_modules && Object.keys(packageJson.lcap_modules).length > 0 && fs.existsSync(lcapModulesPath)) {
+    const root = path.resolve(__dirname, '../');
 
-  const root = path.resolve(__dirname, '../');
+    for (const moduleName of Object.keys(packageJson.lcap_modules)) {
+      const value = packageJson.lcap_modules[moduleName];
+      const tgz = path.resolve(root, value);
 
-  for (const moduleName of Object.keys(packageJson.lcap_modules)) {
-    const value = packageJson.lcap_modules[moduleName];
-    const tgz = path.resolve(root, value);
+      const target = path.resolve(nodeModulesPath, moduleName);
+      if (!fs.existsSync(target)) {
+        fs.mkdirSync(target, { recursive: true });
+      }
 
-    const target = path.resolve(nodeModulesPath, moduleName);
-    if (!fs.existsSync(target)) {
-      fs.mkdirSync(target, { recursive: true });
+      try {
+        await tar.x({
+          file: tgz,
+          cwd: target,
+          strip: 1
+        });
+      } catch (error) {
+        console.error(`Error extracting ${tgz}:`, error);
+      }
     }
-
-    await tar.x({
-      file: tgz,
-      cwd: target,
-      strip: 1
-    });
   }
 
   console.log('Postinstall script completed successfully.');
