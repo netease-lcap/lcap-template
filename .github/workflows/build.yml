@@ -21,7 +21,7 @@ jobs:
         run: npm install -g pnpm@9.10.0
 
       - name: Install Dependencies
-        run: pnpm i --registry=https://registry.npmmirror.com
+        run: pnpm i
 
       - name: Get current branch name
         run: echo "BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
