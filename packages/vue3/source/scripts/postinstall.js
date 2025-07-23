@@ -26,11 +26,15 @@ async function main() {
       fs.mkdirSync(target, { recursive: true });
     }
 
-    await tar.x({
-      file: tgz,
-      cwd: target,
-      strip: 1
-    });
+    try {
+      await tar.x({
+        file: tgz,
+        cwd: target,
+        strip: 1
+      });
+    } catch (error) {
+      console.error(`Failed to extract ${tgz}`);
+    }
   }
 
   console.log('Postinstall script completed successfully.');

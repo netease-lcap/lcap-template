@@ -30,7 +30,7 @@ module.exports = defineConfig({
 		chunkFilename: '[name].[chunkhash:8].js',
 	},
 	resolve: {
-		extensions: ["...", ".ts", ".vue"],
+		extensions: ["...", '.mjs', ".ts", ".vue"],
 		alias: {
 			"@": path.resolve(__dirname, './src'),
 		}
@@ -47,6 +47,19 @@ module.exports = defineConfig({
 			{
 				test: /\.[mc]?js$/,
 				type: 'javascript/auto',
+        use: [
+          {
+            loader: 'builtin:swc-loader',
+            options: {
+              jsc: {
+                parser: {
+                  syntax: 'ecmascript',
+                },
+                // swc plugin placeholder
+              },
+            },
+          }
+        ],
 			},
 			{
 				test: /\.ts$/,
@@ -57,7 +70,8 @@ module.exports = defineConfig({
 							jsc: {
 								parser: {
 									syntax: "typescript"
-								}
+								},
+                // swc plugin placeholder
 							},
 							env: { targets }
 						},

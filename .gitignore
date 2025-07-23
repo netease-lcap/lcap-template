@@ -23,7 +23,7 @@ node_modules/
 .vscode/
 .idea/
 
-*.tgz
+packages/basic/**/*.tgz
 temp/
 
 dist/
