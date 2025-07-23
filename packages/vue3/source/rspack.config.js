@@ -19,7 +19,7 @@ const targets = ["last 2 versions", "> 0.2%", "not dead", "Firefox ESR"];
 module.exports = defineConfig({
 	mode: isDev ? "development" : "production",
 	context: __dirname,
-	devtool: isDev ? 'source-map' : false,
+	devtool: false, // source-map
 	entry: {
 		main: "./src/main.ts"
 	},
