@@ -38,5 +38,10 @@
       "prettier --write"
     ]
   },
-  "packageManager": "pnpm@9.10.0"
+  "packageManager": "pnpm@9.10.0",
+  "pnpm": {
+    "overrides": {
+      "stylus": "github:stylus/stylus#0.55.0"
+    }
+  }
 }
