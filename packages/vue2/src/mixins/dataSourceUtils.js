@@ -6,11 +6,17 @@ export default () => ({
   },
   methods: {
     __isShallowEqualArray(arr1, arr2) {
-      if (arr1.length !== arr2.length) return false;
+      if (arr1.length !== arr2.length) {
+        return false;
+      }
       return arr1.every((current, i) => {
         const other = arr2[i];
-        if (typeof current !== typeof other) return false;
-        if (typeof current === 'string') return current === other;
+        if (typeof current !== typeof other) {
+          return false;
+        }
+        if (typeof current === 'string') {
+          return current === other;
+        }
         if (typeof current === 'object') {
           return ['item', 'index', 'rowIndex', 'columnIndex', 'value'].every((key) => current[key] === other[key]);
         }
@@ -27,14 +33,16 @@ export default () => ({
         }
       }
     },
-    __setDataSourceCacheFn(methodName, currentArray = [], fn) {
+    __setDataSourceCacheFn(methodName, currentArray, fn) {
+      currentArray = currentArray || [];
       if (!currentArray.length) {
         this.private_data_source_cache.set(methodName, fn);
         return;
       }
       this.private_data_source_cache.set([methodName, ...currentArray], fn);
     },
-    __getOrCreateDataSource(methodName, currentArray = [], newFn) {
+    __getOrCreateDataSource(methodName, currentArray, newFn) {
+      currentArray = currentArray || [];
       let fn = this.__getDataSourceCacheFn(methodName, currentArray);
       if (!fn) {
         fn = newFn;

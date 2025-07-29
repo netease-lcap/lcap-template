@@ -14,9 +14,12 @@ const library = 'cloudAdminDesigner';
 
 const extensions = ['.vue', '.js', '.ts', '.json', '.css'];
 
+const isRelease = process.env.LCAP_RELEASE == 1;
+
 const baseConfig = (type) => {
   return {
-    mode: 'production',
+    mode: isRelease ? 'production' : 'development',
+    context: path.resolve(root, 'src'),
     devtool: 'source-map',
     entry: [path.resolve(root, `./src/assets/css/index.${type}.css`), path.resolve(root, './src/init.js')],
     output: {

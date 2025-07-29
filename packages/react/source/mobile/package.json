@@ -3,13 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
+    "postinstall": "node ./scripts/postinstall.js",
     "dev": "rspack serve -c ./rspack.config.js",
     "build": "rspack build -c ./rspack.config.js",
     "lint": "eslint . --fix",
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@lcap/basic-template": "http://minio-api.codewave-test.163yun.com/lowcode-static/packages/%40lcap/basic-template%401.5.0/zip.tgz",
     "ahooks": "3.7.10",
     "antd": "5.14.0",
     "i18next": "23.11.5",
@@ -37,6 +37,7 @@
     "prettier": "3.5.3",
     "react-refresh": "0.14.0",
     "typescript": "5.4.4",
-    "typescript-eslint": "8.26.1"
+    "typescript-eslint": "8.26.1",
+    "tar": "7.4.3"
   }
 }
