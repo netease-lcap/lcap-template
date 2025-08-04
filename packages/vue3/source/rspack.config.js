@@ -19,7 +19,7 @@ const targets = ["last 2 versions", "> 0.2%", "not dead", "Firefox ESR"];
 module.exports = defineConfig({
 	mode: isDev ? "development" : "production",
 	context: __dirname,
-	devtool: false, // source-map
+	devtool: isDev ? 'eval' : false,
 	entry: {
 		main: "./src/main.ts"
 	},
@@ -33,8 +33,11 @@ module.exports = defineConfig({
 		extensions: ["...", '.mjs', ".ts", ".vue"],
 		alias: {
 			"@": path.resolve(__dirname, './src'),
-		}
+		},
 	},
+  externals: {
+    // LcapStandardUI external placeholder
+  },
 	module: {
 		rules: [
 			{
