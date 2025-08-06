@@ -69,7 +69,7 @@ export default {
         } else {
           this.$toast && this.$toast.success && this.$toast.success('复制成功')
         }
-      } catch {
+      } catch(e) {
         document.body.removeChild(input)
         this.$toast && this.$toast.warning && this.$toast.warning('当前浏览器不支持复制功能，请检查更新或更换其他浏览器操作')
       }

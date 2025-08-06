@@ -66,7 +66,7 @@ function onCopy() {
     } else {
       $toast?.success?.('复制成功');
     }
-  } catch {
+  } catch(e) {
     document.body.removeChild(input);
     $toast?.warning?.('当前浏览器不支持复制功能，请检查更新或更换其他浏览器操作');
   }
