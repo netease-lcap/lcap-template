@@ -1,4 +1,4 @@
-import "./public-path";
+import './public-path';
 import cloudAdminDesigner from './init';
 import metaData from './metaData';
 import platformConfig from './platform.config.json';
