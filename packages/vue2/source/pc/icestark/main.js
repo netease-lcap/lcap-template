@@ -1,8 +1,11 @@
-import metaData from "./metaData.js";
+import cloudAdminDesigner from "./init";
+import metaData from "./metaData";
 import platformConfig from "./platform.config.json";
 import { routes } from "./router/routes";
+
 import "./library";
-import cloudAdminDesigner from "./init";
+
+import "@/assets/css/index.css";
 
 window.ICESTARK = window.ICESTARK || {};
 if (!window.ICESTARK.root) {
