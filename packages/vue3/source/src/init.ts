@@ -10,7 +10,6 @@ import {
   RouterPlugin,
   ServicesPlugin,
   UtilsPlugin,
-  ProcessPlugin,
   createRouterInstance,
   microFrontend,
   filterRoutes,
@@ -114,7 +113,6 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   app.use(AuthPlugin);
   app.use(UtilsPlugin, metaData);
   app.use(DataTypesPlugin, { ...metaData, i18nInfo: appConfig.i18nInfo });
-  app.use(ProcessPlugin);
 
   // 兼容$frontendVariables
   app.config.globalProperties.$frontendVariables = window.$global.frontendVariables;
