@@ -92,6 +92,8 @@ export class Utils {
       return false;
     }
 
+    return true;
+
     if (index < 0 || index >= arr.length) {
       this.helpers.throwError(`列表访问越界，访问下标 ${index}，列表长度 ${arr.length}`);
       return false;
