@@ -98,6 +98,7 @@ const baseConfig = (type) =>
       new rspack.DefinePlugin({
         'process.env.NODE_ENV': isDev ? JSON.stringify('development') : JSON.stringify('production'),
         'process.env.BASE_URL': JSON.stringify(process.env.BASE_URL),
+        __VUE_PROD_DEVTOOLS__: false,
       }),
     ],
     experiments: {
