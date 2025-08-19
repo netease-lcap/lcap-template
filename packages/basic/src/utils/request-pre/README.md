@@ -650,20 +650,22 @@ mindmap
 #### 技术方案对比雷达图
 
 ```mermaid
-%%{init: {"themeVariables": {"primaryColor": "#ff6b6b", "primaryTextColor": "#fff", "primaryBorderColor": "#ff4757", "lineColor": "#5f27cd"}}}%%
-gitgraph
-    commit id: "Request-Pre"
-    branch axios
-    checkout axios
-    commit id: "Axios"
-    checkout main
-    branch fetch  
-    checkout fetch
-    commit id: "Fetch API"
-    checkout main
-    merge axios
-    merge fetch
+radar
+    title 技术方案能力对比
+    xAxis 中间件支持 : 类型安全 : Mock支持 : 配置管理 : 性能表现 : 学习成本
+    "Request-Pre" : [5, 5, 5, 5, 4, 3]
+    "Axios" : [4, 2, 1, 2, 4, 5]
+    "Fetch API" : [1, 1, 1, 1, 5, 5]
 ```
+
+> **评分说明**: 1-差 2-较差 3-一般 4-良好 5-优秀
+> 
+> - **中间件支持**: Request-Pre支持洋葱模型，Axios有拦截器，Fetch无支持
+> - **类型安全**: Request-Pre完整TypeScript支持，Axios部分支持，Fetch无支持  
+> - **Mock支持**: Request-Pre内置Mock系统，其他方案需要额外工具
+> - **配置管理**: Request-Pre多层级配置，Axios简单配置，Fetch无配置
+> - **性能表现**: 原生Fetch最快，Axios和Request-Pre相当
+> - **学习成本**: Fetch和Axios学习成本低，Request-Pre需要理解架构概念
 
 #### 详细对比表格
 
