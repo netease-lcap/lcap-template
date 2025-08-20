@@ -16,7 +16,7 @@ export const utils = {
         try {
           await authService.logout();
         } catch (error) {
-          console.warn(error);
+          console.warn('authService.logout error: ', error);
         }
         storage.set('Authorization', '');
         // cookie.eraseAll();
