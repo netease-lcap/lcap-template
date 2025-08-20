@@ -21,6 +21,8 @@ import {
 } from '@/common';
 import { installComponents, installDirectives, installLibraries } from '@/common/utils';
 import { getTitleGuard } from '@/guards';
+import * as hooks from '@/hooks';
+import * as globalVariables from './global-variables';
 
 import App from './App.vue';
 import { createI18nInstance } from './i18n';
@@ -196,3 +198,6 @@ const init = (appConfig, platformConfig, routes, metaData) => {
 export default {
   init,
 };
+
+window.$hooks = hooks;
+window.$globalVariables = globalVariables;
