@@ -19,7 +19,7 @@ const baseConfig = (type) =>
     context: path.resolve(__dirname, '../source'),
     devtool: 'source-map',
     entry: {
-      main: path.resolve(__dirname, '../source/src/init.ts'),
+      main: [path.resolve(__dirname, '../source/src/init.ts')],
     },
     output: {
       publicPath,
@@ -44,6 +44,12 @@ const baseConfig = (type) =>
         commonjs: 'vue',
         commonjs2: 'vue',
         amd: 'vue',
+      },
+      'vue-router': {
+        root: 'VueRouter',
+        commonjs: 'vue-router',
+        commonjs2: 'vue-router',
+        amd: 'vue-router',
       },
     },
     module: {
