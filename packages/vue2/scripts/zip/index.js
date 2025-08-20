@@ -5,10 +5,15 @@ const path = require('path');
 const glob = require('glob');
 
 const isMac = process.platform === 'darwin';
-const packageRoot = path.resolve(__dirname, '..');
-const distPath = path.resolve(__dirname, '../dist');
+const root = path.resolve(__dirname, '../..');
+const distPath = path.resolve(root, './dist');
+const overridesFiles = require('./overrides');
 
 const ext = '{vue,js,ts,json,css}';
+
+/**
+ * 打包目录
+ */
 
 [
   {
@@ -26,8 +31,8 @@ const ext = '{vue,js,ts,json,css}';
 
   console.log(`${output}/package`);
   // 拷贝文件
-  execSync(`cp -r ${packageRoot}/src ${output}/package`);
-  execSync(`cp -r ${packageRoot}/source/${type} ${output}/package/source`);
+  execSync(`cp -r ${root}/src ${output}/package`);
+  execSync(`cp -r ${root}/source/${type} ${output}/package/source`);
 
   // 删除文件
   const excludeFiles = glob.globSync(`${output}/package/**/${exclude}`, {
@@ -44,6 +49,23 @@ const ext = '{vue,js,ts,json,css}';
   files.forEach((filePath) => {
     const newFilePath = filePath.replace(`.${type}.`, '.');
     execSync(`mv ${filePath} ${newFilePath}`);
+  });
+
+  // override
+  const finalFiles = glob.globSync(`${output}/package/**/*.${ext}`, {
+    nodir: true,
+  });
+  finalFiles.forEach((filePath) => {
+    overridesFiles.forEach((item) => {
+      const isTarget = filePath.endsWith(item.path);
+      if (isTarget) {
+        if (item.action === 'modify') {
+          fs.writeFileSync(filePath, item.content, 'utf-8');
+        } else if (item.action === 'remove') {
+          fs.unlinkSync(filePath);
+        }
+      }
+    });
   });
 
   // 打包
