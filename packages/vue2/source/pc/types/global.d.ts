@@ -1,44 +1,111 @@
-// 类型声明
+/**
+ * 低代码平台全局类型声明
+ * 
+ * 本文件定义了低代码平台中所有全局可用的类型、接口和扩展
+ * 
+ * @fileoverview 全局类型定义文件
+ * @author LCAP Team
+ */
+
 import type { ComponentOptions } from 'vue';
 import type { Route, RouteConfig } from 'vue-router';
 
-declare global {
-  interface Window {
-    appVue: typeof import('vue').default;
-    Vue: typeof import('vue').default;
-    VueRouterInstance: typeof import('vue-router').default;
+/**
+ * Window 对象的扩展接口
+ * 定义了低代码平台在 Window 对象上添加的所有属性和方法
+ * 
+ * @group Window Extensions
+ */
+export interface WindowExtensions {
+  /** Vue.js 应用实例 */
+  appVue: typeof import('vue').default;
+  
+  /** Vue.js 构造函数 */
+  Vue: typeof import('vue').default;
+  
+  /** Vue Router 实例 */
+  VueRouterInstance: typeof import('vue-router').default;
 
-    // 端事件
-    rendered: () => Promise<void>;
-    beforeRouter: (event: BeforeRouterEvent) => Promise<void>;
-    afterRouter: (to: Route, from: Route) => Promise<void>;
-    preRequest: (event: PreRequestEvent, data: any) => Promise<any>;
-    postRequest: (event: PostRequestEvent) => Promise<void>;
+  // ============ 生命周期事件 ============
+  
+  /** 应用渲染完成事件 */
+  rendered: () => Promise<void>;
+  
+  /** 路由跳转前事件 */
+  beforeRouter: (event: BeforeRouterEvent) => Promise<void>;
+  
+  /** 路由跳转后事件 */
+  afterRouter: (to: Route, from: Route) => Promise<void>;
+  
+  /** 请求发送前事件 */
+  preRequest: (event: PreRequestEvent, data: any) => Promise<any>;
+  
+  /** 请求完成后事件 */
+  postRequest: (event: PostRequestEvent) => Promise<void>;
 
+  // ============ 平台配置 ============
+  
+  /** 应用和平台配置信息 */
+  appInfo: AppConfig & PlatformConfig;
 
-    appInfo: AppConfig & PlatformConfig;
-
-    $global: LcapGlobal;
-    $mixins: LcapMixins;
-    $logics: Record<string, LcapService>;
-    $service: Record<string, LcapService>;
-    $auth: LcapAuth;
-    $utils: LcapUtils;
-    $genInitFromSchema: GenInitFromSchema;
-    $i18n: typeof import('vue-i18n').default;
-    $destination: (url: string, target?: string, replace?: boolean) => void;
-    $link: (url: string, target?: string) => void;
+  // ============ 全局服务 ============
+  
+  /** 全局状态和方法 */
+  $global: LcapGlobal;
+  
+  /** 全局混入对象 */
+  $mixins: LcapMixins;
+  
+  /** 业务逻辑服务集合 */
+  $logics: Record<string, LcapService>;
+  
+  /** API 服务集合 */
+  $service: Record<string, LcapService>;
+  
+  /** 权限服务 */
+  $auth: LcapAuth;
+  
+  /** 工具函数集合 */
+  $utils: LcapUtils;
+  
+  /** 从 Schema 生成初始化数据的函数 */
+  $genInitFromSchema: GenInitFromSchema;
+  
+  /** 国际化实例 */
+  $i18n: typeof import('vue-i18n').default;
+  
+  /** 页面跳转函数 */
+  $destination: (url: string, target?: string, replace?: boolean) => void;
+  
+  /** 链接跳转函数 */
+  $link: (url: string, target?: string) => void;
 
     $sleep: (ms: number) => Promise<void>;
 
-    // 微前端
-    LcapMicro?: {
-      routePrefix: string;
-      container: HTMLElement;
-    }
+  
+  // ============ 微前端支持 ============
+  
+  /** 微前端配置（可选） */
+  LcapMicro?: {
+    /** 路由前缀 */
+    routePrefix: string;
+    /** 容器元素 */
+    container: HTMLElement;
   }
 }
 
+/**
+ * 全局类型扩展声明
+ */
+declare global {
+  interface Window extends WindowExtensions {}
+}
+
+/**
+ * 国际化配置信息
+ * 
+ * @group Platform Types
+ */
 export type I18nInfo = {
   locale: string;
   currentLocale: string;

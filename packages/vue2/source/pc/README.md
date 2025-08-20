@@ -1,5 +1,3 @@
-# 低代码平台前端项目
-
 ## 项目概述
 
 基于 Vue.js 2.6 构建的低代码平台前端项目，集成了 LCAP（Low Code Application Platform）生态系统，提供完整的企业级应用开发能力。
@@ -79,6 +77,7 @@
 - **auth/** - 权限认证插件
 - **dataTypes/** - 数据类型处理插件
 - **logic/** - 业务逻辑插件
+- **process/** - 流程处理插件
 - **router/** - 路由插件
 - **service/** - 服务接口插件
 - **utils/** - 工具函数插件
