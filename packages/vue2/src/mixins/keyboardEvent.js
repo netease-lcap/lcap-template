@@ -1,5 +1,7 @@
 /**
- * fns: { name: string, type: 'keydown' | 'keyup' }[]
+ * 键盘事件mixin
+ *
+ * @param fns: { name: string, type: 'keydown' | 'keyup' }[]
  */
 export default (fns) => ({
   mounted() {

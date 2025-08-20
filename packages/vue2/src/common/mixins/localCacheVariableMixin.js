@@ -1,3 +1,7 @@
+/**
+ * 前端全局变量，本地化缓存mixin
+ */
+
 import { storage } from '@lcap/basic-template';
 import isEmpty from 'lodash/isEmpty';
 

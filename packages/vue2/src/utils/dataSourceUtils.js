@@ -1,3 +1,7 @@
+/**
+ * 组件数据源工具函数
+ */
+
 const private_data_source_cache = new Map();
 
 export default (scope) => {

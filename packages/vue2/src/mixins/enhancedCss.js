@@ -1,3 +1,7 @@
+/**
+ * 页面组件高级样式mixin
+ */
+
 export default (css) => ({
   mounted() {
     this._addDynamicStyle();

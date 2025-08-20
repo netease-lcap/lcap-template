@@ -29,7 +29,7 @@ const timeFormat = (value, type = 'day') => {
   // type 取值 day、minute, 默认day
   const timestamp = formatDate(value);
   if (timestamp === undefined) {
-    return fallback;
+    return '-';
   }
   const today = startOfToday();
   let [day, hm] = format(timestamp, 'yyyy-MM-dd HH:mm').split(' ');

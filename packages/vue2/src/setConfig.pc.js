@@ -5,7 +5,11 @@ import { utils } from './plugins/dataTypes/index';
 import { destination, back, go } from './plugins/router';
 import { createRouter } from './router';
 
+/**
+ * 给基础库设置当前平台（PC端）相关特性配置
+ */
 setConfig({
+  // 全局toast
   toast: {
     show(msg) {
       if (typeof Vue.prototype?.$toast?.show === 'function') {
@@ -22,12 +26,14 @@ setConfig({
       console.warn('请在Vue.prototype上挂载$toast.error方法');
     },
   },
+  // 路由跳转
   router: {
     destination,
     back,
     go,
     createRouter,
   },
+  // 工具函数
   utils: {
     ...utils,
     showMessage(msg) {
@@ -38,6 +44,10 @@ setConfig({
       console.warn('请在Vue.prototype上挂载$toast.show方法');
     },
   },
+  /**
+   * 构造响应式对象
+   * 主要给全局变量提供响应式支持
+   */
   reactive: (obj) => {
     return new Vue({
       data: {
@@ -45,6 +55,9 @@ setConfig({
       },
     });
   },
+  /**
+   * 全局属性设置
+   */
   globalProperties: {
     set(key, value) {
       window[key] = value;
@@ -54,6 +67,10 @@ setConfig({
       return Vue.prototype[key];
     },
   },
+  /**
+   * 自定义配置axios
+   * 可覆盖基础库内置的axios配置
+   */
   configureRequest(_options, _axios) {
     /**
      * options配置参考

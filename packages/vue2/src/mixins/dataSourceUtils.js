@@ -1,3 +1,7 @@
+/**
+ * 组件数据源mixin
+ */
+
 export default () => ({
   data() {
     return {

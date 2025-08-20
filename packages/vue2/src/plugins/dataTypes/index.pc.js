@@ -2,6 +2,9 @@ import Vue from 'vue';
 import { cookie } from '@/common';
 
 export const utils = {
+  /**
+   * 退出登录
+   */
   logout() {
     const $confirm = typeof Vue.prototype.$confirm === 'function' ? Vue.prototype.$confirm : () => Promise.resolve();
     $confirm({
