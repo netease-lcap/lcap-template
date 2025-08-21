@@ -134,7 +134,12 @@ npm run format
 ```
 
 ### 变更日志
+> [推荐流程](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog#recommended-workflow)
 ```bash
+# 初始化
+npm run changelog:init
+
+
 # 生成 CHANGELOG.md
 npm run changelog
 ```

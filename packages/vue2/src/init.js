@@ -51,7 +51,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   /**
    * Vue全局错误捕获
    */
-  Vue.config.errorHandler = (err) => {
+  Vue.config.errorHandler = (err, vm, info) => {
     if (err.name === 'Error' && err.message === '程序中止') {
       console.error('程序中止');
     } else {
