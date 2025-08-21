@@ -361,7 +361,7 @@ export type LcapMixins = {
   localCacheVariableMixin: ComponentOptions;
 } 
 
-export type GenInitFromSchema<T> = (type: string, value?: any, parentLevel?: number) => T;
+export type GenInitFromSchema = <T>(type: string, value?: any, parentLevel?: number) => T;
 
 export type LcapService = (request?: {
   config?: {
