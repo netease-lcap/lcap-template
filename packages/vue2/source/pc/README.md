@@ -30,6 +30,7 @@
 - **Conventional Changelog** - 自动生成变更日志
 
 ## 项目架构
+> 全局类型声明[文档](https://netease-lcap.github.io/lcap-template/ )
 
 ### 目录结构
 
