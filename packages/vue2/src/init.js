@@ -194,7 +194,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
 
   const getAuthGuard = (params) => async (to, from, next) => {
     try {
-      if (beforeRouter) {
+      if (typeof beforeRouter === 'function') {
         await beforeRouter({
           ...params,
           to,
@@ -236,7 +236,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
    */
   router.afterEach(async (to, from) => {
     try {
-      if (afterRouter) {
+      if (typeof afterRouter === 'function') {
         await afterRouter(to, from);
       }
     } catch (err) {
