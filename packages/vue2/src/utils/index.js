@@ -1,4 +1,4 @@
-import dataSourceUtils from './dataSourceUtils';
+import dataSourceUtils from './datasource-utils';
 
 export function unsafeEval(code) {
   try {

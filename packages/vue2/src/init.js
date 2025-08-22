@@ -4,9 +4,7 @@ import VueCompositionAPI from '@vue/composition-api';
 import { installOptions, installFilters, installComponents, installDirectives } from '@vusion/utils';
 
 import '@/global';
-
-import '@/setConfig';
-
+import '@/set-config';
 import {
   filters,
   directives,
@@ -17,7 +15,6 @@ import {
   ServicesPlugin,
   UtilsPlugin,
   ProcessPlugin,
-  createRouter,
   microFrontend,
   filterRoutes,
   parsePath,
@@ -25,14 +22,12 @@ import {
   filterAuthResources,
   findNoAuthView,
 } from '@/common';
-
 import * as Components from '@/components';
-
-import { getTitleGuard } from './router';
 
 import App from './App.vue';
 import { setI18nLocale } from './i18n';
 import { unsafeEval, setFavicon } from './utils';
+import { getTitleGuard, createRouter } from './router';
 
 /**
  * 初始化函数
