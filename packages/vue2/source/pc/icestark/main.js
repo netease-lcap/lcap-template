@@ -1,5 +1,5 @@
 import cloudAdminDesigner from "./init";
-import metaData from "./metaData.js";
+import metaData from './meta-data';
 import platformConfig from "./platform.config.json";
 import { routes } from "./router/routes";
 import "./library";

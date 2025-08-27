@@ -1,6 +1,6 @@
 import "./public-path";
 import cloudAdminDesigner from "./init.js";
-import metaData from "./metaData.js";
+import metaData from './meta-data';
 import platformConfig from "./platform.config.json";
 import { routes } from "./router/routes.js";
 import "./library.js";
