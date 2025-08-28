@@ -4,5 +4,14 @@ module.exports = {
   trailingComma: 'all',
   tabWidth: 2,
   semi: true,
-  singleQuote: true
+  singleQuote: true,
+  overrides: [
+    {
+      files: '*.vue',
+      options: {
+        printWidth: 300,
+        singleAttributePerLine: true,
+      },
+    },
+  ],
 };
