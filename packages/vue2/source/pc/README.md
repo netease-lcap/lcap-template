@@ -134,13 +134,16 @@ npm run lint
 npm run format
 ```
 
+### 代码提交
+> 使用 git-cz 提交代码, 便于生成规范的 changelog
+```bash
+# 使用 git-cz 提交代码
+npm run git-cz
+```
+
 ### 变更日志
 > [推荐流程](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog#recommended-workflow)
 ```bash
-# 初始化
-npm run changelog:init
-
-
 # 生成 CHANGELOG.md
 npm run changelog
 ```
