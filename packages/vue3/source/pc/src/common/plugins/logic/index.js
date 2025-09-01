@@ -1,16 +1,13 @@
-import { initLogic } from '@lcap/basic-template';
-import { initLogicOverwrite } from './overwrite';
+import * as Basic from '@lcap/basic-template'
 
 export default {
   install(vm, options = {}) {
-    const { naslAPP } = options;
-
-    // 判断如果有 naslApp，就使用 overwrite 逻辑
-    if (naslAPP) {
-      return initLogicOverwrite(options);
+    // 使用 override 逻辑
+    if (options?.override?.enabled) {
+      return options.override.initLogic(options, Basic);
     }
 
     // 否则使用原来的逻辑
-    initLogic(options);
+    Basic.initLogic(options);
   },
 };
