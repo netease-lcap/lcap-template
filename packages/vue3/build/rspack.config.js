@@ -19,7 +19,7 @@ const baseConfig = (type) =>
     context: path.resolve(__dirname, '../source'),
     devtool: 'source-map',
     entry: {
-      main: [path.resolve(__dirname, '../source/src/init.ts')],
+      main: [path.resolve(__dirname, '../source/pc/src/init.ts')],
     },
     output: {
       publicPath,
@@ -35,7 +35,7 @@ const baseConfig = (type) =>
     resolve: {
       extensions: ['...', '.mjs', '.ts', '.vue'],
       alias: {
-        '@': path.resolve(__dirname, '../source/src'),
+        '@': path.resolve(__dirname, '../source/pc/src'),
       },
     },
     externals: {
