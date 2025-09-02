@@ -35,3 +35,6 @@ pnpm run deploy --platform a --username b --password c
 ```
 pnpm change:version --version 1.0.0
 ```
+
+
+123
