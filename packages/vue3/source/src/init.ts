@@ -1,5 +1,7 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
+
+import '@/global';
 import * as Components from '@/components';
 import * as Libraries from '@/libraries';
 import {
