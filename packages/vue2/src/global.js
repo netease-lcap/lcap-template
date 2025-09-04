@@ -4,7 +4,7 @@
 
 import Vue from 'vue';
 import { install } from '@vusion/utils';
-import { createService } from '@/common';
+import { createService, request as LcapRequest } from '@/common';
 import mixins from '@/mixins';
 import appUtils from '@/utils';
 
@@ -31,6 +31,8 @@ Vue.prototype.$sleep = window.$sleep;
 window.$mixins = mixins;
 
 window.$appUtils = appUtils;
+
+window.LcapRequest = LcapRequest;
 
 window._lcapCreateService = createService;
 window.LcapInstall = install;
