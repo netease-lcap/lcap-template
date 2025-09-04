@@ -184,10 +184,8 @@ const init = (appConfig, platformConfig, routes, metaData) => {
    */
   const router = createRouter(baseRoutes);
 
-  const beforeRouter = window.beforeRouter || Vue.prototype.beforeRouter;
-  const afterRouter = window.afterRouter || Vue.prototype.afterRouter;
-
   const getAuthGuard = (params) => async (to, from, next) => {
+    const beforeRouter = window.beforeRouter || Vue.prototype.beforeRouter;
     try {
       if (typeof beforeRouter === 'function') {
         await beforeRouter({
@@ -230,6 +228,8 @@ const init = (appConfig, platformConfig, routes, metaData) => {
    * 执行‘端事件---页面进入前’
    */
   router.afterEach(async (to, from) => {
+    const afterRouter = window.afterRouter || Vue.prototype.afterRouter;
+
     try {
       if (typeof afterRouter === 'function') {
         await afterRouter(to, from);
