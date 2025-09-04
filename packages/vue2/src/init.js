@@ -72,8 +72,12 @@ const init = (appConfig, platformConfig, routes, metaData) => {
     for (let index = 0; index < endEventLists.length; index++) {
       const name = endEventLists[index];
       if (metaData && name && metaData.frontendEvents[name]) {
-        // 确保事件函数中的this指向Vue.prototype
+        // 事件函数中的this指向Vue.prototype
         unsafeEval.bind(Vue.prototype)(metaData.frontendEvents[name]);
+        Vue.prototype[name] = window[name];
+      } else if (window[name] && typeof window[name] === 'function') {
+        // 事件函数中的this指向Vue.prototype
+        window[name] = window[name].bind(Vue.prototype);
         Vue.prototype[name] = window[name];
       }
     }
