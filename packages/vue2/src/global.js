@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import VueCompositionAPI from '@vue/composition-api';
+import * as VueCompositionAPI from '@vue/composition-api';
 import { install } from '@vusion/utils';
 
 import { createService } from '@/common';
