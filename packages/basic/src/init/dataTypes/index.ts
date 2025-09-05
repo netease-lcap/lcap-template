@@ -1,12 +1,12 @@
-import { processPorts } from "../process";
+import { processPorts } from '../process';
 
-import Config from "../../config";
-import Global from "../../global";
+import Config from '../../config';
+import Global from '../../global';
 
-import { initApplicationConstructor, genInitData, isInstanceOf, genSortedTypeKey } from "./tools";
-import * as Utils from "./utils";
-import * as Tools from "./tools";
-import * as wx from "./wx";
+import { initApplicationConstructor, genInitData, isInstanceOf, genSortedTypeKey } from './tools';
+import * as Utils from './utils';
+import * as Tools from './tools';
+import * as wx from './wx';
 
 function initDataTypes(options) {
   const dataTypesMap = options.dataTypesMap || {};
@@ -14,7 +14,7 @@ function initDataTypes(options) {
   initApplicationConstructor(dataTypesMap, genInitFromSchema);
 
   // 一定要放在getFrontendVariables之前，因为Vue应用翻译的代码会用到这个
-  Config.globalProperties.set("$genInitFromSchema", genInitFromSchema);
+  Config.globalProperties.set('$genInitFromSchema', genInitFromSchema);
   const { frontendVariables, localCacheVariableSet } = getFrontendVariables(options);
 
   const $global = {
@@ -35,28 +35,28 @@ function initDataTypes(options) {
 
   // Vue版本需要响应式
   try {
-    if (typeof Config.reactive === "function") {
+    if (typeof Config.reactive === 'function') {
       Config.reactive($global);
     }
   } catch (error) {
-    console.error("Vue版本给$global创建响应式失败", error);
+    console.error('Vue版本给$global创建响应式失败', error);
   }
 
-  Config.globalProperties.set("$global", $global);
-  Config.globalProperties.set("$localCacheVariableSet", localCacheVariableSet);
+  Config.globalProperties.set('$global', $global);
+  Config.globalProperties.set('$localCacheVariableSet', localCacheVariableSet);
 
-  Config.globalProperties.set("$isInstanceOf", isInstanceOf);
+  Config.globalProperties.set('$isInstanceOf', isInstanceOf);
   // 判断两个对象是否相等，不需要引用完全一致
-  Config.globalProperties.set("$isLooseEqualFn", isLooseEqualFn);
-  Config.globalProperties.set("$resolveRequestData", resolveRequestData);
+  Config.globalProperties.set('$isLooseEqualFn', isLooseEqualFn);
+  Config.globalProperties.set('$resolveRequestData', resolveRequestData);
 
   const enumsMap = options.enumsMap || {};
-  Config.globalProperties.set("$enums", (key, value) => {
-    if (!key || !value) return "";
+  Config.globalProperties.set('$enums', (key, value) => {
+    if (!key || !value) return '';
     if (enumsMap[key]) {
       return enumsMap[key][value];
     } else {
-      return "";
+      return '';
     }
   });
 
@@ -77,7 +77,7 @@ function getFrontendVariables(options) {
       const { name, typeAnnotation, defaultValueFn, defaultCode, localCache } = frontendVariable;
       localCache && localCacheVariableSet.add(name); // 本地存储的全局变量集合
       let defaultValue = defaultCode?.code;
-      if (Object.prototype.toString.call(defaultValueFn) === "[object Function]") {
+      if (Object.prototype.toString.call(defaultValueFn) === '[object Function]') {
         defaultValue = defaultValueFn(Global);
       }
       frontendVariables[name] = genInitFromSchema(genSortedTypeKey(typeAnnotation), defaultValue);
@@ -115,7 +115,7 @@ function isLooseEqualFn(obj1, obj2, cache = new Map()) {
     const val1 = obj1[key];
     const val2 = obj2[key];
     // 递归
-    if (typeof val1 === "object" && typeof val2 === "object") {
+    if (typeof val1 === 'object' && typeof val2 === 'object') {
       if (!isLooseEqualFn(val1, val2, cache)) {
         return false;
       }
@@ -135,25 +135,34 @@ function resolveRequestData(root) {
   // console.log(root.concept)
   delete root.folded;
 
-  if (root.concept === "NumericLiteral") {
+  if (root.concept === 'NumericLiteral') {
     // eslint-disable-next-line no-self-assign
     root.value = root.value;
-  } else if (root.concept === "StringLiteral") {
+  } else if (root.concept === 'StringLiteral') {
     // eslint-disable-next-line no-self-assign
     root.value = root.value;
-  } else if (root.concept === "NullLiteral") {
+  } else if (root.concept === 'NullLiteral') {
     delete root.value;
-  } else if (root.concept === "BooleanLiteral") {
-    root.value = root.value === "true";
-  } else if (root.concept === "Identifier") {
-    parseRequestDataType.call(this, root, "expression");
-  } else if (root.concept === "MemberExpression") {
+  } else if (root.concept === 'BooleanLiteral') {
+    root.value = root.value === 'true';
+  } else if (root.concept === 'Identifier') {
+    parseRequestDataType.call(this, root, 'expression');
+  } else if (root.concept === 'MemberExpression') {
     if (root.expression) {
-      parseRequestDataType.call(this, root, "expression");
+      parseRequestDataType.call(this, root, 'expression');
     }
   }
-  resolveRequestData.call(this, root.left);
-  resolveRequestData.call(this, root.right);
+
+  // 默认处理二元表达式
+  if (root.concept === 'BinaryExpression') {
+    resolveRequestData.call(this, root.left);
+    resolveRequestData.call(this, root.right);
+  } else if (root.concept === 'VariadicExpression') {
+    root.expressions?.forEach((item) => {
+      resolveRequestData.call(this, item);
+    });
+  }
+
   return root;
 }
 
@@ -161,33 +170,33 @@ function resolveRequestData(root) {
 function parseRequestDataType(root, _prop) {
   let value;
   try {
-    value = new Function("return " + root[_prop]).call(this); // 3042436782510848: 设置行列权限by接口报500
+    value = new Function('return ' + root[_prop]).call(this); // 3042436782510848: 设置行列权限by接口报500
   } catch (err) {
     value = root.value;
   }
   const type = typeof value;
   // console.log('type:', type, value)
-  if (type === "number") {
-    root.concept = "NumericLiteral";
-    root.value = value + "";
-  } else if (type === "string") {
-    root.concept = "StringLiteral";
+  if (type === 'number') {
+    root.concept = 'NumericLiteral';
+    root.value = value + '';
+  } else if (type === 'string') {
+    root.concept = 'StringLiteral';
     root.value = value;
-  } else if (type === "boolean") {
-    root.concept = "BooleanLiteral";
+  } else if (type === 'boolean') {
+    root.concept = 'BooleanLiteral';
     root.value = value;
-  } else if (type === "object") {
+  } else if (type === 'object') {
     if (Array.isArray(value)) {
       const itemValue = value[0];
       if (itemValue !== undefined) {
         const itemType = typeof itemValue;
-        root.concept = "ListLiteral";
-        if (itemType === "number") {
-          root.value = value.map((v) => v + "").join(",");
-        } else if (itemType === "string") {
-          root.value = value.map((v) => "'" + v + "'").join(",");
-        } else if (itemType === "boolean") {
-          root.value = value.join(",");
+        root.concept = 'ListLiteral';
+        if (itemType === 'number') {
+          root.value = value.map((v) => v + '').join(',');
+        } else if (itemType === 'string') {
+          root.value = value.map((v) => "'" + v + "'").join(',');
+        } else if (itemType === 'boolean') {
+          root.value = value.join(',');
         }
       }
     }
