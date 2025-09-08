@@ -73,7 +73,7 @@ for (let line of lines) {
     let message = commitMatch[2]
 
     // 清理消息格式，但保留链接信息
-    message = message.replace(/^[🎸💄🐛📝✨🔧⚡️🚚✅🔥💚👷🔀⏪\s]+/, '') // 移除emoji
+    message = message.replace(/^[🎸💄🐛📝✨🔧⚡️🚚✅🔥💚👷🔀⏪\s]+/u, ''); // 移除emoji
     // 不再移除链接信息，保留 conventional-changelog 生成的链接
 
     const chineseType = typeMap[type] || '其他'
