@@ -76,6 +76,9 @@ module.exports = {
     // 强制在 v-on 指令使用 exact 修饰符，当同一个标签上有另一个带修饰符的 v-on 指令
     'vue/use-v-on-exact': 'error',
 
+    // 强制在 v-bind 指令使用缩写
+    'vue/no-useless-v-bind': 'error',
+
     // 检查指令的合法性
     'vue/valid-template-root': 'error',
     'vue/valid-v-bind': 'error',

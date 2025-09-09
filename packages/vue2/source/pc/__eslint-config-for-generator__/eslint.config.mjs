@@ -65,8 +65,6 @@ export default [
       'vue/no-mutating-props': 'off',
 
       // 自定义规则
-      'lcap/no-unnecessary-template-literals': 'error',
-
       'lcap/no-unused-vars': 'error',
       'lcap/no-lone-blocks': 'error',
       'lcap/no-empty-function': 'error',

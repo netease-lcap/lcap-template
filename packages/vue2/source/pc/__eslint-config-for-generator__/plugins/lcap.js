@@ -8,9 +8,6 @@ module.exports = {
     name: 'eslint-plugin-lcap',
   },
   rules: {
-    // 不必要的字符串模板使用
-    'no-unnecessary-template-literals': require('./rules/no-unnecessary-template-literals.js'),
-
     'no-unused-vars': require('./rules/no-unused-vars.js'),
     'no-lone-blocks': require('./rules/no-lone-blocks.js'),
     'no-empty-function': require('./rules/no-empty-function.js'),
