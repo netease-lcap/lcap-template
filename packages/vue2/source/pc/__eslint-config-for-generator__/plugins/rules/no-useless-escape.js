@@ -124,13 +124,7 @@ module.exports = {
 				messageId: "unnecessaryEscape",
 				data: { character },
         fix: (fixer) => {
-          if (astUtils.isDirective(node.parent)) {
-            return fixer.removeRange(range);
-          }
-
-          if (!disableEscapeBackslashSuggest) {
-            return fixer.insertTextBeforeRange(range, "\\");
-          }
+          return fixer.removeRange(range);
         },
 				suggest: [
 					{
