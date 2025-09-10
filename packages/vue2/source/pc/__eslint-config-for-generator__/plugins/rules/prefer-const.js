@@ -478,8 +478,6 @@ module.exports = {
 					 */
 					nodesToReport.length === nodes.length;
 
-
-
 				if (
 					!isVarDecParentNull &&
 					varDeclParent.declarations &&
@@ -518,9 +516,8 @@ module.exports = {
 				}
 
 				nodesToReport.forEach(node => {
-          let fix;
-          if (shouldFix) {
-            fix = (fixer) => {
+          const fix = (fixer) => {
+            if (shouldFix) {
               const letKeywordToken =
                 sourceCode.getFirstToken(
                   varDeclParent,
@@ -538,31 +535,33 @@ module.exports = {
                   letKeywordToken.range,
                   "const",
                 );
-            }
-          } else if (nodes[0]) {
-            const scope = sourceCode.getScope(nodes[0]);
-            const scopeVariable = findVariableInScope(scope, nodes[0].name);
+            } else if (node && node.parent?.type === 'AssignmentExpression' && node.parent.left === node) {
+              const name = node.name;
+              const scope = sourceCode.getScope(node);
+              const scopeVariable = findVariableInScope(scope, name);
 
-            // 如果作用内找到了变量
-            if (scopeVariable) {
-              // 找到变量声明
-              let varDeclParent = null;
-              for (const def of scopeVariable.defs) {
-                if (def.node && def.node.parent && def.node.parent.type === 'VariableDeclaration') {
-                  varDeclParent = def.node.parent;
-                  break;
+              // 如果作用内找到了变量
+              if (scopeVariable) {
+                // 找到变量声明限制条件为 let xxx;
+                for (const def of scopeVariable.defs) {
+                  if (def.node?.parent?.type === 'VariableDeclaration') {
+                    varDeclParent = def.node.parent;
+                    break;
+                  }
+                }
+
+                if (varDeclParent?.declarations.length === 1
+                  && varDeclParent.declarations[0].id.name === name
+                  && !varDeclParent.declarations[0].init
+                ) {
+                  return [
+                    fixer.removeRange(varDeclParent.range),
+                    fixer.insertTextBefore(node, "const "),
+                  ];
                 }
               }
-              if (varDeclParent === null) {
-                return;
-              }
 
-              fix = (fixer) => {
-                return [
-                  fixer.removeRange(varDeclParent.range),
-                  fixer.insertTextBefore(node, "const "),
-                ];
-              }
+              return [];
             }
           }
 
