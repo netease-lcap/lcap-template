@@ -112,7 +112,7 @@
 
 ### 安装依赖
 ```bash
-npm install
+npm install --legacy-peer-deps
 ```
 
 ### 开发服务器

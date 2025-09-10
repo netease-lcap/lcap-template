@@ -70,6 +70,7 @@ export default [
       'lcap/no-empty-function': 'error',
       'lcap/no-empty': 'error',
       'lcap/no-useless-escape': 'error',
+      'lcap/prefer-const': 'error',
       'lcap/vue-no-useless-template-attributes': 'error',
       'lcap/vue-no-unused-vars': 'error',
 
@@ -79,6 +80,7 @@ export default [
       'no-empty-function': 'off',
       'no-empty': 'off',
       'no-useless-escape': 'off',
+      'prefer-const': 'off',
       'vue/no-useless-template-attributes': 'off',
       'vue/no-unused-vars': 'off',
     },

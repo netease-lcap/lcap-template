@@ -13,6 +13,7 @@ module.exports = {
     'no-empty-function': require('./rules/no-empty-function.js'),
     'no-empty': require('./rules/no-empty.js'),
     'no-useless-escape': require('./rules/no-useless-escape.js'),
+    'prefer-const': require('./rules/prefer-const.js'),
 
     'vue-no-useless-template-attributes': require('./rules/vue/no-useless-template-attributes.js'),
     'vue-no-unused-vars': require('./rules/vue/no-unused-vars.js'),
