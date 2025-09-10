@@ -32,6 +32,7 @@ const timeFormat = (value, type = 'day') => {
     return '-';
   }
   const today = startOfToday();
+  // eslint-disable-next-line prefer-const
   let [day, hm] = format(timestamp, 'yyyy-MM-dd HH:mm').split(' ');
   if (isSameDay(timestamp, today)) {
     return '今天 ' + hm;
