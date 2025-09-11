@@ -48,7 +48,7 @@
 │   │   ├── mixins/            # Vue 混入
 │   │   └── plugins/           # 插件系统
 │   ├── components/            # 业务组件
-│   ├── metaData/              # 元数据定义
+│   ├── meta-data/              # 元数据定义
 │   ├── mixins/                # 全局混入
 │   ├── router/                # 路由配置
 │   ├── utils/                 # 工具函数
@@ -66,7 +66,7 @@
 - 负责整个低代码平台的初始化
 - 集成 Vue 实例配置、路由、状态管理等核心功能
 
-#### 2. 元数据系统 (`src/metaData/`)
+#### 2. 元数据系统 (`src/meta-data/`)
 - **dataTypesMap/** - 数据类型定义
 - **enumsMap/** - 枚举类型定义
 - **servicesMap/** - 服务接口定义
