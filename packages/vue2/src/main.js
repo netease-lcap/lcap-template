@@ -11,6 +11,6 @@ import { routes } from './router/routes';
 import './library';
 
 import '@/style/index.css';
-/// theme placeholder ///
+import '@/style/theme.css';
 
 cloudAdminDesigner.init(platformConfig?.appConfig, platformConfig, routes, metaData);

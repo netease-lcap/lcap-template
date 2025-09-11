@@ -1,9 +1,13 @@
 import "./public-path";
-import cloudAdminDesigner from "./init.js";
+import cloudAdminDesigner from "./init";
 import metaData from './meta-data';
 import platformConfig from "./platform.config.json";
-import { routes } from "./router/routes.js";
-import "./library.js";
+import { routes } from "./router/routes";
+
+import "./library";
+
+import '@/style/index.css';
+import '@/style/theme.css';
 
 if (!window.__POWERED_BY_WUJIE__) {
   cloudAdminDesigner.init(platformConfig?.appConfig, platformConfig, routes, metaData);
