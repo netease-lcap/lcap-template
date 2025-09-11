@@ -9,7 +9,7 @@ const root = path.resolve(__dirname, '../..');
 const distPath = path.resolve(root, './dist');
 const overridesFiles = require('./overrides');
 
-const ext = '{vue,js,ts,json,css}';
+const ext = '{vue,js,ts,json,css,dir}';
 
 /**
  * 打包目录
@@ -32,11 +32,11 @@ const ext = '{vue,js,ts,json,css}';
   console.log(`${output}/package`);
   // 拷贝文件
   execSync(`cp -r ${root}/src ${output}/package`);
-  execSync(`cp -r ${root}/source/${type} ${output}/package/source`);
+  execSync(`cp -r ${root}/source ${output}/package/source`);
 
   // 删除文件
   const excludeFiles = glob.globSync(`${output}/package/**/${exclude}`, {
-    nodir: true,
+    nodir: false,
   });
   excludeFiles.forEach((filePath) => {
     execSync(`rm -rf ${filePath}`);
@@ -44,11 +44,17 @@ const ext = '{vue,js,ts,json,css}';
 
   // 修改后缀
   const files = glob.globSync(`${output}/package/**/*.${type}.${ext}`, {
-    nodir: true,
+    nodir: false,
   });
   files.forEach((filePath) => {
-    const newFilePath = filePath.replace(`.${type}.`, '.');
-    execSync(`mv ${filePath} ${newFilePath}`);
+    // directory
+    if (fs.statSync(filePath).isDirectory()) {
+      const newDirPath = filePath.replace(`.${type}.dir`, '');
+      execSync(`mv ${filePath} ${newDirPath}`);
+    } else {
+      const newFilePath = filePath.replace(`.${type}.`, '.');
+      execSync(`mv ${filePath} ${newFilePath}`);
+    }
   });
 
   // override
