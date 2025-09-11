@@ -10,6 +10,7 @@ import { routes } from './router/routes';
 
 import './library';
 
-import '@/assets/css/index.css';
+import '@/style/index.css';
+/// theme placeholder ///
 
 cloudAdminDesigner.init(platformConfig?.appConfig, platformConfig, routes, metaData);
