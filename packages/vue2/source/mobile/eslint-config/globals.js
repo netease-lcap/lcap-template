@@ -1,4 +1,4 @@
-{
+module.exports = {
   "amd": {
     "define": false,
     "require": false
