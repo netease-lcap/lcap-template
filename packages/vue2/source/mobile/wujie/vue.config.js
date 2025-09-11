@@ -8,6 +8,12 @@ module.exports = {
 
     config.output.libraryTarget = "umd";
     config.output.library = __microAppName__;
+
+    /// cloud-ui-alias-start
+    config.resolve.alias["@lcap/pc-ui$"] = path.resolve(__dirname, "node_modules/@lcap/pc-ui/dist-theme/index.js");
+    config.resolve.alias["@lcap/pc-ui/css$"] = path.resolve(__dirname, "node_modules/@lcap/pc-ui/dist-theme/index.css");
+    config.resolve.alias["cloud-ui.vusion"] = "@lcap/pc-ui";
+    /// cloud-ui-alias-end
   },
   chainWebpack(config) {
     // 构建产物中删除console相关代码

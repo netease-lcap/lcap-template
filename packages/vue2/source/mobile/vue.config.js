@@ -6,10 +6,25 @@ module.exports = {
     if (process.env.NODE_ENV === "production") {
       config.devtool = false;
     }
+
+    /// cloud-ui-alias-start
+    config.resolve.alias["@lcap/pc-ui$"] = path.resolve(__dirname, "node_modules/@lcap/pc-ui/dist-theme/index.js");
+    config.resolve.alias["@lcap/pc-ui/css$"] = path.resolve(__dirname, "node_modules/@lcap/pc-ui/dist-theme/index.css");
+    config.resolve.alias["cloud-ui.vusion"] = "@lcap/pc-ui";
+    /// cloud-ui-alias-end
+  },
+  chainWebpack(config) {
+    // 构建产物中删除console相关代码
+    config.optimization.minimizer('terser')
+        .tap((args) => {
+            args[0].terserOptions.compress.drop_console = ['info', 'log', 'warn'];
+            return args;
+        });
   },
   lintOnSave: false,
   runtimeCompiler: true,
   devServer: {
+    compress: true,
     port: 8810,
     proxy: {
       "/assets": {
@@ -34,6 +49,11 @@ module.exports = {
       },
       "^/gw/": {
         target: `http://localhost:8080`,
+        changeOrigin: true,
+        autoRewrite: true,
+      },
+      "^/upload": {
+        target: "http://localhost:8080",
         changeOrigin: true,
         autoRewrite: true,
       },
