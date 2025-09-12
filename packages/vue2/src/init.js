@@ -4,7 +4,7 @@ import VueCompositionAPI from '@vue/composition-api';
 import { installOptions, installFilters, installComponents, installDirectives } from '@vusion/utils';
 
 import '@/global';
-import '@/set-config';
+import '@/config';
 import {
   filters,
   directives,
