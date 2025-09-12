@@ -1,3 +1,3 @@
 import platformConfig from '@/platform.config.json';
 
-export default platformConfig.i18nInfo || {};
+export default platformConfig.appConfig.i18nInfo || {};

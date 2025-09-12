@@ -15,6 +15,6 @@ import '@/style/index.css';
 import '@/style/theme.css';
 
 // 写入国际化配置
-platformConfig.i18nInfo = i18nInfo;
+platformConfig.appConfig.i18nInfo = i18nInfo;
 
 cloudAdminDesigner.init(platformConfig?.appConfig, platformConfig, routes, metaData);
