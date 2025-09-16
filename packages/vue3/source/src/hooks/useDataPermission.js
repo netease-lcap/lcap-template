@@ -1,7 +1,11 @@
 import { ref, provide, inject, onBeforeMount } from 'vue';
 import { LcapDataPermission } from '@/libraries';
 
-const { checkDataPermission = () => true } = LcapDataPermission ?? {};
+const checkable = typeof LcapDataPermission !== 'undefined';
+if (!checkable) {
+  console.warn('LcapDataPermission is not defined, please make sure you have installed the data permission library.');
+}
+
 const provideKey = '__permissionData__';
 
 export const useInitDataPermission = () => {
@@ -12,6 +16,10 @@ export const useInitDataPermission = () => {
 
 
   onBeforeMount(async () => {
+    if (!checkable) {
+      return;
+    }
+
     const sysPrefixPath = window.appInfo?.sysPrefixPath ?? '';
     const [entityAllRes, logicAllRes] = await Promise.all([
       fetch(`${sysPrefixPath}/api/system/annotation/entityAll`).then((response) => response.json()),
@@ -39,7 +47,11 @@ export const useCheckDataPermission = () => {
 
 
   const checkPermission = (dataRefList) => {
-    return checkDataPermission(permissionData.value, dataRefList);
+    if (!checkable) {
+      return true;
+    }
+
+    return LcapDataPermission?.checkDataPermission?.(permissionData.value, dataRefList);
   };
 
 
