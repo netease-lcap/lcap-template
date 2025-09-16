@@ -2,9 +2,6 @@ import { ref, provide, inject, onBeforeMount } from 'vue';
 import { LcapDataPermission } from '@/libraries';
 
 const checkable = typeof LcapDataPermission !== 'undefined';
-if (!checkable) {
-  console.warn('LcapDataPermission is not defined, please make sure you have installed the data permission library.');
-}
 
 const provideKey = '__permissionData__';
 
@@ -48,6 +45,7 @@ export const useCheckDataPermission = () => {
 
   const checkPermission = (dataRefList) => {
     if (!checkable) {
+      console.warn('LcapDataPermission is not defined, please make sure you have installed the data permission library.');
       return true;
     }
 
