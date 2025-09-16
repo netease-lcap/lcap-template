@@ -1,5 +1,3 @@
-import './types/global';
-
 import Config, { setConfig } from './config';
 
 export * from './apis';

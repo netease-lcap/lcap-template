@@ -1,5 +1,8 @@
-import { getComponentOption } from "@/common";
+import { getComponentOption } from '@/common';
 
+/**
+ * 路由标题守卫
+ */
 export const getTitleGuard = (appConfig) => (to, from, next) => {
   const metaTitle = to.matched
     .concat()
@@ -10,7 +13,7 @@ export const getTitleGuard = (appConfig) => (to, from, next) => {
     })
     .filter((i) => i)[0];
   if (metaTitle) {
-    if (typeof metaTitle === "function") {
+    if (typeof metaTitle === 'function') {
       document.title = metaTitle(to, from);
     } else {
       if (appConfig.documentTitle) {

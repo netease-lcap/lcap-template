@@ -1,6 +1,11 @@
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 
+/**
+ * 设置国际化语言环境
+ * @param {*} appConfig
+ * @returns
+ */
 export function setI18nLocale(appConfig) {
   let locale = 'zh-CN';
   if (appConfig.i18nInfo) {
@@ -32,6 +37,12 @@ export function setI18nLocale(appConfig) {
   return i18n;
 }
 
+/**
+ * 获取用户语言
+ * @param {*} appConfig
+ * @param {*} messages
+ * @returns
+ */
 function getUserLanguage(appConfig, messages = {}) {
   let locale = localStorage.i18nLocale;
   // 如果local里没有就读主应用的默认语言
