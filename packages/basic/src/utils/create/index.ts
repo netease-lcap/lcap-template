@@ -4,6 +4,7 @@ import { stringify } from 'qs';
 import JSONbig from '../json-bigint';
 import BigNumber from 'bignumber.js';
 import get from 'lodash/get';
+import pick from 'lodash/pick';
 
 import Service from '../request-pre';
 import { formatMicroFrontUrl } from '../../init/router/microFrontUrl'; // 微前端路由方法
@@ -649,3 +650,61 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
   }
   return mockInstance;
 };
+
+export function createLogics(logicsMap) {
+  const apis = Object.assign({}, logicsMap);
+
+  Object.keys(apis)
+    .filter((key) =>
+      /app\.dataSources\.[^.]+.entities.[^.]+.logics.(update|updateBy|createOrUpdate|batchUpdate)/.test(key),
+    )
+    .forEach((key) => {
+      apis[key].config.preprocess = (info) => {
+        const body = info.url.body;
+        if (body.properties) {
+          if (body.entity) body.entity = pick(body.entity, body.properties);
+          if (body.entities) body.entities = body.entities.map((entity) => pick(entity, body.properties));
+        }
+        return info;
+      };
+    });
+
+  const logics = createLogicService(apis);
+
+  return logics;
+}
+
+interface LCAPRequestOptions {
+  url: string;
+  method: string;
+  headers: Record<string, any>;
+  data: Record<string, any>;
+  params: Record<string, string | number | boolean>;
+
+  pathSlot?: Record<string, string>;
+  extraConfig: Record<string, any>;
+}
+
+export function request(options: LCAPRequestOptions) {
+  // 注册接口
+  const key = `${options.method}:${options.url}`;
+  const api = {
+    config: options.extraConfig || {},
+    url: {
+      path: options.url,
+      method: options.method,
+    },
+  };
+
+  // 判断是否是外部接口
+  const isExternal = options.extraConfig?.serviceType === 'external';
+
+  const service = isExternal ? createService({ [key]: api }) : createLogics({ [key]: api });
+
+  return service[key]({
+    headers: options.headers,
+    body: options.data,
+    query: options.params,
+    path: options.pathSlot,
+  });
+}

@@ -32,10 +32,10 @@ export default {
   errorCaptured(err, vm, info) {
     // 仅在 dev 环境下捕获 render 错误
     if (window.appInfo.env === 'dev' && ['render'].includes(info)) {
-      console.log('errorCaptured: 👇');
-      console.log('err:', err);
-      console.log('vm:', vm);
-      console.log('info:', info);
+      console.warn('errorCaptured: 👇');
+      console.warn('err:', err);
+      console.warn('vm:', vm);
+      console.warn('info:', info);
       this.err$ = err;
       this.info$ = info;
       this.showToast();

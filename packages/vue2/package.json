@@ -7,7 +7,7 @@
     "build": "webpack --config build/webpack.config.js",
     "prebuild": "rimraf ./dist",
     "postbuild": "npm run zip",
-    "zip": "node ./scripts/zip.js",
+    "zip": "node ./scripts/zip/index.js",
     "deploy": "node ./scripts/deploy.js"
   },
   "keywords": [
