@@ -1,7 +1,7 @@
 import { ref, provide, inject, onBeforeMount } from 'vue';
-import { LcapDataPermission } from '@/libraries';
+import { enableLcapDataPermission, LcapDataPermission } from '@/libraries';
 
-const enabled = typeof LcapDataPermission !== 'undefined';
+const enabled = enableLcapDataPermission;
 
 const provideKey = '__permissionData__';
 
