@@ -8,14 +8,19 @@ function isShalldowEqualArray(arr1, arr2) {
   return index === -1;
 }
 
+/**
+ * 依赖收集指令 v-dependencies
+ * 用途：数据源依赖监听
+ * 作用：组件监听依赖项触发重新渲染
+ */
 function dependencies(el, binding, vnode) {
   if (!vnode || !vnode.componentInstance) {
     return;
   }
 
   const vueIns = vnode.componentInstance;
-  const action = binding.modifiers["reload"] ? "reload" : "";
-  if (!action || !vueIns || typeof vueIns[action] !== "function") {
+  const action = binding.modifiers['reload'] ? 'reload' : '';
+  if (!action || !vueIns || typeof vueIns[action] !== 'function') {
     return;
   }
 
@@ -33,6 +38,6 @@ function dependencies(el, binding, vnode) {
 }
 
 export default {
-  name: "dependencies",
+  name: 'dependencies',
   update: dependencies,
 };

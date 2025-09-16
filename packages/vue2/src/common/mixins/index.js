@@ -1,1 +1,1 @@
-export * from "./localCacheVariableMixin";
+export * from './cache-variable';
