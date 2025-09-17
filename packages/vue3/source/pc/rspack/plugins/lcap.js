@@ -126,13 +126,15 @@ function emitClientResource(compiler, options) {
         const { publicPath, js, css } = assets;
 
         const allJS = [
+          ...(extra.preJS || []),
           ...js,
-          ...(extra.js || []),
+          ...(extra.postJS || []),
         ];
 
         const allCSS = [
+          ...(extra.preCSS || []),
           ...css,
-          ...(extra.css || []),
+          ...(extra.postCSS || []),
         ];
 
         const clientCode = `(function() {
