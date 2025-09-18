@@ -5,7 +5,6 @@
 // 修改该文件时，需要同步修改 source/icestark/main.js 和 source/qiankun/main.js 和 source/wujie/main.js
 import cloudAdminDesigner from './init';
 import metaData from './meta-data';
-import platformConfig from './platform.config.json';
 import { routes } from './router/routes';
 
 import './library';
