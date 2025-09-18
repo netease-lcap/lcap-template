@@ -17,5 +17,5 @@ const { i18nInfo } = appConfig;
 // 获取当前语言
 const lang = getUserLanguage(appConfig, i18nInfo.messages);
 // 拿到messages
-const locale = i18nInfo.enabled ? transformKeys(i18nInfo.messages[lang]) : undefined;
+const locale = i18nInfo.enabled ? transformKeys(i18nInfo.messages[lang], lang) : undefined;
 </script>
