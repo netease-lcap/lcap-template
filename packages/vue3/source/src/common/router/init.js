@@ -3,7 +3,7 @@ import { createRouter, createWebHistory, createMemoryHistory, createWebHashHisto
 export function createRouterInstance(routes) {
   const fnMap = {
     history: createWebHistory,
-    memory: createMemoryHistory,
+    abstract: createMemoryHistory,
     hash: createWebHashHistory,
   }
   const mode = window.LcapVueRouterConfig?.mode || 'history';
