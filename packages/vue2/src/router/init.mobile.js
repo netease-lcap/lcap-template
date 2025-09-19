@@ -5,7 +5,7 @@ export function createRouter(routes) {
   Vue.use(VueRouter);
 
   const router = new VueRouter({
-    mode: 'history',
+    mode: window.LcapVueRouterConfig?.mode || 'history',
     base: window.LcapMicro?.routePrefix,
     routes,
   });
@@ -34,6 +34,10 @@ export function createRouter(routes) {
       }
     }
   });
+
+  if (window.LcapVueRouterConfig?.initRoute) {
+    router.replace(window.LcapVueRouterConfig.initRoute);
+  }
 
   return router;
 }
