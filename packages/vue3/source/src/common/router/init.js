@@ -3,10 +3,15 @@ import { createRouter, createWebHistory, createMemoryHistory, createWebHashHisto
 export function createRouterInstance(routes) {
   const fnMap = {
     history: createWebHistory,
-    abstract: createMemoryHistory,
+    memory: createMemoryHistory,
     hash: createWebHashHistory,
   }
-  const createHistory = fnMap[window.LcapVueRouterConfig?.mode || 'history']
+  const mode = window.LcapVueRouterConfig?.mode || 'history';
+  const createHistory = fnMap[mode] || fnMap.history;
+  if (!fnMap[mode]) {
+    console.warn(`Unknown router mode: ${mode}, falling back to history mode`);
+  }
+
   const router = createRouter({
     history: createHistory(window.LcapMicro?.routePrefix),
     routes,
