@@ -330,6 +330,8 @@ const requester = function (requestInfo) {
 };
 
 const service = new Service(requester);
+// 注入配置，但是不会默认启用
+addConfigs(service);
 
 // 调整请求路径
 const adjustPathWithSysPrefixPath = (apiSchemaList) => {
@@ -356,14 +358,21 @@ const adjustPathWithSysPrefixPath = (apiSchemaList) => {
   return newApiSchemaMap;
 };
 
-export const createService = function createService(apiSchemaList, serviceConfig?, dynamicServices?) {
-  addConfigs(service);
-  const fixServiceConfig = serviceConfig || {};
-  fixServiceConfig.config = fixServiceConfig.config || {};
-  Object.assign(fixServiceConfig.config, {
+export function createService(apiSchemaList, serviceConfig?, dynamicServices?) {
+  // 配置兼容空值
+  serviceConfig = serviceConfig || {};
+  // config 兼容空值
+  serviceConfig.config = serviceConfig.config || {};
+  Object.assign(serviceConfig.config, {
     httpCode: true,
     httpError: true,
     shortResponse: true,
+    postRequestError: true,
+
+    priority: {
+      ...(serviceConfig.config.priority ?? {}),
+      postRequestError: 10,
+    },
   });
 
   {
@@ -418,17 +427,8 @@ export const createService = function createService(apiSchemaList, serviceConfig
         throw err;
       },
     });
-    fixServiceConfig.config = {
-      ...fixServiceConfig.config,
-      priority: {
-        ...(fixServiceConfig.config.priority ? fixServiceConfig.config.priority : {}),
-        postRequestError: 10,
-      },
-    };
-    fixServiceConfig.config.postRequestError = true;
   }
 
-  serviceConfig = fixServiceConfig;
   const newApiSchemaMap = adjustPathWithSysPrefixPath(apiSchemaList);
   let logicsInstance = service.generator(newApiSchemaMap, dynamicServices, serviceConfig);
   let mockInstance = {};
@@ -448,16 +448,29 @@ export const createService = function createService(apiSchemaList, serviceConfig
     mockInstance = logicsInstance;
   }
   return mockInstance;
-};
+}
 
 export const createLogicService = function createLogicService(apiSchemaList, serviceConfig?, dynamicServices?) {
-  const fixServiceConfig = serviceConfig || {};
-  fixServiceConfig.config = fixServiceConfig.config || {};
-  Object.assign(fixServiceConfig.config, {
-    shortResponse: true,
+  // 配置兼容空值
+  serviceConfig = serviceConfig || {};
+  // config 兼容空值
+  serviceConfig.config = serviceConfig.config || {};
+  Object.assign(serviceConfig.config, {
     concept: 'Logic',
+    shortResponse: true,
+    preRequest: true,
+    postRequest: true,
+    postRequestError: true,
+    lcapLocation: true,
+
+    priority: {
+      ...(serviceConfig.config.priority ?? {}),
+      lcapLocation: 1,
+      postRequest: 10,
+      postRequestError: 10,
+    },
   });
-  serviceConfig = fixServiceConfig;
+
   const newApiSchemaMap = adjustPathWithSysPrefixPath(apiSchemaList);
 
   if (window.preRequest) {
@@ -482,7 +495,6 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
         return data || preData;
       },
     });
-    serviceConfig.config.preRequest = true;
   }
 
   if (window.postRequest) {
@@ -604,16 +616,6 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
         throw err;
       },
     });
-    serviceConfig.config = {
-      ...serviceConfig.config,
-      priority: {
-        ...(serviceConfig.config.priority ? serviceConfig.config.priority : {}),
-        postRequest: 10,
-        postRequestError: 10,
-      },
-    };
-    serviceConfig.config.postRequest = true;
-    serviceConfig.config.postRequestError = true;
   }
 
   service.postConfig.set('lcapLocation', (response, params, requestInfo) => {
@@ -623,15 +625,6 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
     }
     return response;
   });
-
-  serviceConfig.config = {
-    ...serviceConfig.config,
-    priority: {
-      ...(serviceConfig.config.priority ? serviceConfig.config.priority : {}),
-      lcapLocation: 1,
-    },
-  };
-  serviceConfig.config.lcapLocation = true;
 
   let logicsInstance = service.generator(newApiSchemaMap, dynamicServices, serviceConfig);
   let mockInstance = {};
