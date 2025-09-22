@@ -14,6 +14,7 @@ export function formatResponse(response) {
 
   // 兼容大小写Code、Data、Message
   response.data = {
+    ...(result || {}),
     data,
     Data: data,
 
