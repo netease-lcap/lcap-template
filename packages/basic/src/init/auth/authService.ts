@@ -83,18 +83,36 @@ const Service: IService = {
       .then((result) => {
         // 兼容新的返回格式
         let userInfo;
-        if (result?.data?.Data) {
-          userInfo = result.data.Data;
+        if (result?.data?.Data || result?.data?.data) {
+          userInfo = result.data.Data ?? result.data.data;
         } else {
           userInfo = result?.Data;
         }
 
-        if (!userInfo?.UserId && userInfo?.userId) {
-          userInfo.UserId = userInfo.userId;
-          userInfo.UserName = userInfo.userName;
+        /**
+         * 兼容userInfo大小写问题
+         * UserId
+         * UserName
+         * NickName
+         * DisplayName
+         * Email
+         */
+        for (const key in userInfo || {}) {
+          if (Object.prototype.hasOwnProperty.call(userInfo, key)) {
+            const upperKey = key.charAt(0).toUpperCase() + key.slice(1);
+            const lowerKey = key.charAt(0).toLowerCase() + key.slice(1);
+            if (upperKey !== key) {
+              userInfo[upperKey] = userInfo[key];
+            }
+            if (lowerKey !== key) {
+              userInfo[lowerKey] = userInfo[key];
+            }
+          }
         }
-        if (userInfo && !userInfo?.DisplayName && userInfo?.UserName) {
-          userInfo.DisplayName = userInfo.UserName;
+        // 兼容没有DisplayName的情况
+        if (userInfo) {
+          userInfo.DisplayName = userInfo.DisplayName || userInfo.UserName;
+          userInfo.displayName = userInfo.displayName || userInfo.userName;
         }
 
         const $global = Config.globalProperties.get('$global') || {};
