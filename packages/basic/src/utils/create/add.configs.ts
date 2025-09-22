@@ -64,39 +64,10 @@ export function httpCode(response, params, requestInfo) {
 export function shortResponse(response, params, requestInfo) {
   const result = response.data;
 
-  if (response.skipShortResponseCopy) {
+  if (response.skipShortResponseCopy || requestInfo.config?.concept === 'Logic') {
     if (!isNil(result?.data) || !isNil(result?.Data)) {
       return result.Data ?? result.data;
     }
-
-    return result;
-  }
-
-  // logic response
-  if (requestInfo.config?.concept === 'Logic') {
-    /**
-     * 接口返回统一后的case
-     * 判断依据：接口返回结构中有data或Data字段
-     **/
-    if (!isNil(result?.data) || !isNil(result?.Data)) {
-      return result.Data ?? result.data;
-    }
-
-    // 最初的case
-    return result;
-  }
-
-  // service response
-  // 兼容新Code、Data、Message
-  if (result?.Code !== undefined) {
-    result.code = result.Code;
-  }
-  if (result?.Data !== undefined) {
-    result.data = result.Data;
-  }
-  if (result?.Message !== undefined) {
-    result.message = result.Message;
-    result.msg = result.Message;
   }
 
   return result;
