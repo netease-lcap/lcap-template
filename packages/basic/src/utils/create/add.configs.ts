@@ -66,7 +66,7 @@ export function shortResponse(response, params, requestInfo) {
 
   if (response.skipShortResponseCopy) {
     if (!isNil(result?.data) || !isNil(result?.Data)) {
-      return result.Data || result.data;
+      return result.Data ?? result.data;
     }
 
     return result;
@@ -79,7 +79,7 @@ export function shortResponse(response, params, requestInfo) {
      * 判断依据：接口返回结构中有data或Data字段
      **/
     if (!isNil(result?.data) || !isNil(result?.Data)) {
-      return result.Data || result.data;
+      return result.Data ?? result.data;
     }
 
     // 最初的case
