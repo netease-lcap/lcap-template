@@ -14,7 +14,6 @@ export function formatResponse(response) {
 
   // 兼容大小写Code、Data、Message
   response.data = {
-    ...(result || {}),
     data,
     Data: data,
 
@@ -27,6 +26,8 @@ export function formatResponse(response) {
 
     errorType,
     ErrorType: errorType,
+
+    ...(result || {}),
   };
 
   return response;
