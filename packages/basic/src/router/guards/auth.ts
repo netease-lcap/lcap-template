@@ -1,21 +1,35 @@
-import Global from "../../global";
+import Global from '../../global';
 
-import { filterRoutes, parsePath } from "../../utils/route";
-import { getBasePath } from "../../utils/encodeUrl";
+import { filterRoutes, parsePath } from '../../utils/route';
+import { getBasePath } from '../../utils/encodeUrl';
 
 /**
  * 是否有无权限页面
  * @param {*} routes
  */
 export function findNoAuthView(routes) {
+  let route;
   if (Array.isArray(routes)) {
-    return routes.find((route) => route?.path === `${getBasePath()}/noAuth`);
+    route = routes.find((route) => route?.path === `${getBasePath()}/noAuth`);
   }
+
+  // 如果没有noAuth，则找notFound
+  if (!route) {
+    if (Array.isArray(routes)) {
+      route = routes.find((route) => route?.path === `${getBasePath()}/notFound`);
+    }
+  }
+
+  return (
+    route || {
+      path: `${getBasePath()}/`,
+    }
+  );
 }
 
-const ROOT_PATH = "/";
+const ROOT_PATH = '/';
 
-const getParentPath = (path) => (path === ROOT_PATH ? null : path.substring(0, path.lastIndexOf("/")) || ROOT_PATH);
+const getParentPath = (path) => (path === ROOT_PATH ? null : path.substring(0, path.lastIndexOf('/')) || ROOT_PATH);
 
 /**
  * 过滤无权限页面（X2.22_0629调整），如子页面绑定了角色父页面未绑定，则子页面无法访问。
@@ -44,11 +58,11 @@ export function filterAuthResources(resources) {
 }
 
 function generatePaths(str) {
-  let parts = str.split("/");
+  let parts = str.split('/');
   let paths = [];
 
   for (let i = 0; i < parts.length; i++) {
-    let path = parts.slice(0, i + 1).join("/");
+    let path = parts.slice(0, i + 1).join('/');
     path && paths.push([path, 1]);
   }
 
