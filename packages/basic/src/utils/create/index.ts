@@ -364,6 +364,7 @@ export function createService(apiSchemaList, serviceConfig?, dynamicServices?) {
   // config 兼容空值
   serviceConfig.config = serviceConfig.config || {};
   Object.assign(serviceConfig.config, {
+    formatResponse: true,
     httpCode: true,
     httpError: true,
     shortResponse: true,
@@ -371,6 +372,7 @@ export function createService(apiSchemaList, serviceConfig?, dynamicServices?) {
 
     priority: {
       ...(serviceConfig.config.priority ?? {}),
+      formatResponse: 1,
       postRequestError: 10,
     },
   });
@@ -457,6 +459,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
   serviceConfig.config = serviceConfig.config || {};
   Object.assign(serviceConfig.config, {
     concept: 'Logic',
+    formatResponse: true,
     shortResponse: true,
     preRequest: true,
     postRequest: true,
@@ -465,6 +468,7 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
 
     priority: {
       ...(serviceConfig.config.priority ?? {}),
+      formatResponse: 1,
       lcapLocation: 1,
       postRequest: 10,
       postRequestError: 10,

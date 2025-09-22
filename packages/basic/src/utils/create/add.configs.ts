@@ -5,6 +5,32 @@ export const isPromise = function (func) {
   return func && typeof func.then === 'function';
 };
 
+export function formatResponse(response) {
+  const result = response.data;
+  const data = result?.Data || result?.data;
+  const msg = result?.Message || result?.msg || result?.message;
+  const code = result?.Code || result?.code;
+  const errorType = result?.ErrorType || result?.errorType;
+
+  // 兼容大小写Code、Data、Message
+  response.data = {
+    data,
+    Data: data,
+
+    msg,
+    message: msg,
+    Message: msg,
+
+    code,
+    Code: code,
+
+    errorType,
+    ErrorType: errorType,
+  };
+
+  return response;
+}
+
 export function httpCode(response, params, requestInfo) {
   const { config } = requestInfo;
   const serviceType = config?.serviceType;
@@ -131,6 +157,8 @@ export function addConfigs(service) {
       }
     });
   }
+
+  service.postConfig.set('formatResponse', formatResponse);
   service.postConfig.set('httpCode', httpCode);
   service.postConfig.set('httpError', httpError);
   service.postConfig.set('shortResponse', shortResponse);
