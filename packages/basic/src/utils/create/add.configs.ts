@@ -7,28 +7,30 @@ export const isPromise = function (func) {
 
 export function formatResponse(response) {
   const result = response.data;
-  const data = result?.Data || result?.data;
-  const msg = result?.Message || result?.msg || result?.message;
-  const code = result?.Code || result?.code;
-  const errorType = result?.ErrorType || result?.errorType;
+  const data = result?.Data ?? result?.data;
+  const msg = result?.Message ?? result?.msg ?? result?.message;
+  const code = result?.Code ?? result?.code;
+  const errorType = result?.ErrorType ?? result?.errorType;
 
-  // 兼容大小写Code、Data、Message
-  response.data = {
-    data,
-    Data: data,
+  if (data || msg || code || errorType) {
+    // 兼容大小写Code、Data、Message
+    response.data = {
+      data,
+      Data: data,
 
-    msg,
-    message: msg,
-    Message: msg,
+      msg,
+      message: msg,
+      Message: msg,
 
-    code,
-    Code: code,
+      code,
+      Code: code,
 
-    errorType,
-    ErrorType: errorType,
+      errorType,
+      ErrorType: errorType,
 
-    ...(result || {}),
-  };
+      ...(result || {}),
+    };
+  }
 
   return response;
 }
