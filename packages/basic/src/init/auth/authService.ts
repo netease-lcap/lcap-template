@@ -66,7 +66,10 @@ const Service: IService = {
 
     if (window.appInfo.hasUserCenter) {
       userInfoPromise = lowauthService.GetUser({
-        headers: getBaseHeaders(),
+        headers: {
+          ...getBaseHeaders(),
+          apiVersion: 'v2',
+        },
         config: {
           noErrorTip: true,
         },
