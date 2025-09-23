@@ -1,3 +1,4 @@
+import { stringify } from 'qs';
 import safeJSONStringify from 'safe-json-stringify';
 
 type Nil = null | undefined;
@@ -226,3 +227,12 @@ export function isStream(val) {
 export function isURLSearchParams(val) {
   return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
 }
+
+export const formatContentType = function (contentType, data) {
+  const map = {
+    'application/x-www-form-urlencoded'(data) {
+      return stringify(data);
+    },
+  };
+  return map[contentType] ? map[contentType](data) : data;
+};
