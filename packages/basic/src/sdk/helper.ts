@@ -125,9 +125,9 @@ export const safeNewDate = (dateStr) => {
       if (!isValidDate(res)) {
         return fallback;
       }
-    } else {
-      return res;
     }
+
+    return res;
   } catch (err) {
     return fallback;
   }
