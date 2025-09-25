@@ -44,6 +44,11 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   window.appInfo = Object.assign(appConfig, platformConfig);
 
   /**
+   * 🔒创建i18n
+   */
+  const i18n = setI18nLocale(appConfig);
+
+  /**
    * Vue全局错误捕获
    */
   Vue.config.errorHandler = (err, vm, info) => {
@@ -246,7 +251,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   const app = new Vue({
     name: 'app',
     router,
-    i18n: setI18nLocale(appConfig),
+    i18n,
     pinia: createPinia(),
     ...App,
   });

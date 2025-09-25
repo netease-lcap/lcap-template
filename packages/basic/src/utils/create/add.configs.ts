@@ -1,13 +1,44 @@
-import errHandles from "./errHandles";
+import isNil from 'lodash/isNil';
+import errHandles from './errHandles';
 
 export const isPromise = function (func) {
-  return func && typeof func.then === "function";
+  return func && typeof func.then === 'function';
 };
+
+export function formatResponse(response) {
+  const result = response.data;
+  const data = result?.Data ?? result?.data;
+  const msg = result?.Message ?? result?.msg ?? result?.message;
+  const code = result?.Code ?? result?.code;
+  const errorType = result?.ErrorType ?? result?.errorType;
+
+  if (data || msg || code || errorType) {
+    // 兼容大小写Code、Data、Message
+    response.data = {
+      data,
+      Data: data,
+
+      msg,
+      message: msg,
+      Message: msg,
+
+      code,
+      Code: code,
+
+      errorType,
+      ErrorType: errorType,
+
+      ...(result || {}),
+    };
+  }
+
+  return response;
+}
 
 export function httpCode(response, params, requestInfo) {
   const { config } = requestInfo;
   const serviceType = config?.serviceType;
-  if (serviceType && serviceType === "external") {
+  if (serviceType && serviceType === 'external') {
     return response;
   }
   const data = response.data; // cloneDeep(response.data, (value) => value === null ? undefined : value);
@@ -17,12 +48,12 @@ export function httpCode(response, params, requestInfo) {
       location.href = path;
     }
   };
-  if (code === undefined || code === "Success" || (code + "").startsWith("2")) {
+  if (code === undefined || code === 'Success' || (code + '').startsWith('2')) {
     return response;
-  } else if (String(code) === "401") {
-    noRepeatHrefChange("/login");
-  } else if (String(code) === "403") {
-    noRepeatHrefChange("/noAuth");
+  } else if (String(code) === '401') {
+    noRepeatHrefChange('/login');
+  } else if (String(code) === '403') {
+    noRepeatHrefChange('/noAuth');
   }
   return Promise.reject({
     code,
@@ -31,31 +62,15 @@ export function httpCode(response, params, requestInfo) {
 }
 
 export function shortResponse(response, params, requestInfo) {
-  if(response.skipShortResponseCopy){
-    // response上具有skipShortResponseCopy时，意味着是createService中的postRequestError启用了handleError的情形
-    // 此时也被服务端包过，直接取data字段即可
-    return response.data?.Data !== undefined ? response.data?.Data : response.data;
-  }
-  if (requestInfo.config?.concept === "Logic") {
-    // logic接口被服务端包过，因此直接取data字段即可
-    return response.data?.Data !== undefined ? response.data?.Data : response.data;
+  const result = response.data;
+
+  if (response.skipShortResponseCopy || requestInfo.config?.concept === 'Logic') {
+    if (!isNil(result?.data) || !isNil(result?.Data)) {
+      return result.Data ?? result.data;
+    }
   }
 
-  const data = response?.data;
-
-  // 兼容新Code、Data、Message
-  if (data?.Code !== undefined) {
-    data.code = data.Code;
-  }
-  if (data?.Data !== undefined) {
-    data.data = data.Data;
-  }
-  if (data?.Message !== undefined) {
-    data.message = data.Message;
-    data.msg = data.Message;
-  }
-
-  return data;
+  return result;
 }
 
 // 给流程系统接口使用
@@ -68,7 +83,7 @@ export const httpError = {
     const { url, config = {} } = requestInfo;
     const { method, body = {}, headers = {} } = url;
     // 处理code
-    if (err === "expired request") {
+    if (err === 'expired request') {
       throw err;
     }
     let handle;
@@ -77,7 +92,7 @@ export const httpError = {
     } else if (err.code === undefined) {
       if (err.response) {
         const code = err.response.data && (err.response.data.code || err.response.data.Code);
-        if (typeof code === "number") {
+        if (typeof code === 'number') {
           const status = err.response.status;
           handle = errHandles[code] || errHandles[status] || errHandles.remoteError;
         } else {
@@ -94,7 +109,7 @@ export const httpError = {
     const handleOut = handle(
       {
         config,
-        baseURL: config.baseURL || "",
+        baseURL: config.baseURL || '',
         url,
         method,
         body,
@@ -110,15 +125,17 @@ export const httpError = {
 };
 
 export function addConfigs(service) {
-  if (process.env.NODE_ENV === "development") {
-    service.preConfig.set("baseURL", (requestInfo, baseURL) => {
-      if (!baseURL.startsWith("http")) {
-        throw new Error("set baseURL only support cross domain");
+  if (process.env.NODE_ENV === 'development') {
+    service.preConfig.set('baseURL', (requestInfo, baseURL) => {
+      if (!baseURL.startsWith('http')) {
+        throw new Error('set baseURL only support cross domain');
       }
     });
   }
-  service.postConfig.set("httpCode", httpCode);
-  service.postConfig.set("httpError", httpError);
-  service.postConfig.set("shortResponse", shortResponse);
-  service.postConfig.set("shortResponseForSystemProcess", shortResponseForSystemProcess);
+
+  service.postConfig.set('formatResponse', formatResponse);
+  service.postConfig.set('httpCode', httpCode);
+  service.postConfig.set('httpError', httpError);
+  service.postConfig.set('shortResponse', shortResponse);
+  service.postConfig.set('shortResponseForSystemProcess', shortResponseForSystemProcess);
 }
