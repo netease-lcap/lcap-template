@@ -1,6 +1,6 @@
 <template>
   <view class="index">
-    <web-view :src="url" bindmessage="onWebViewMessage" bindload="onWebViewLoad" binderror="onWebViewError"></web-view>
+    <web-view :src="url" @message="onWebViewMessage" @load="onWebViewLoad" @error="onWebViewError"></web-view>
   </view>
 </template>
 
