@@ -1,21 +1,22 @@
-
-const upload = require("../../../scripts/upload");
-const argv = require("minimist")(process.argv.slice(2));
+const path = require('path');
+const upload = require('../../../scripts/upload');
+const argv = require('minimist')(process.argv.slice(2));
 const { miniRootDir, projects } = require('../config');
 
 async function main() {
   for (const project of projects) {
-    console.log(`Deploying ${project.name}...`)
-    const root = `${miniRootDir}/.temp/${project.name}`
-    const projectRoot = `${miniRootDir}/${project.name}`
+    console.log(`Deploying ${project.name}...`);
+    const root = path.resolve(__dirname, '..', 'dist', project.name);
+
+    const projectRoot = path.resolve(miniRootDir, project.name);
     const packageJson = require(`${projectRoot}/package.json`);
     const version = packageJson.version;
     const name = `@lcap/${packageJson.name}`;
-    
-    const platform = argv.platform
-    const username = argv.username
-    const password = argv.password
-  
+
+    const platform = argv.platform;
+    const username = argv.username;
+    const password = argv.password;
+
     const config = {
       root,
       name,
@@ -23,26 +24,26 @@ async function main() {
       platform,
       username,
       password,
-    }
-  
+    };
+
     await upload({
       ...config,
       source: {
         name: 'source.tgz',
-        path: 'source/zip.tgz',
-      }
-    })
-  
+        path: 'source.tgz',
+      },
+    });
+
     await upload({
       ...config,
       source: {
         name: 'dist.tgz',
-        path: 'dist/zip.tgz',
-      }
-    })
-  
-    console.log(`Deployed ${project.name}`)
+        path: 'dist.tgz',
+      },
+    });
+
+    console.log(`Deployed ${project.name}`);
   }
 }
 
-main()
+main();

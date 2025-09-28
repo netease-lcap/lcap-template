@@ -8,7 +8,7 @@
     "prepare": "husky",
     "test": "pnpm --filter \"./packages/*\" run test",
     "change:version": "node ./scripts/version",
-    "build": "pnpm --filter \"./packages/*\" --filter \"./mini-folder/*\" run build",
+    "build": "turbo run build",
     "deploy": "pnpm --filter \"./packages/*\" --filter \"./mini-folder/*\" run deploy",
     "format:vue3": "prettier --write \"packages/**/vue3/**/*.{vue,ts,tsx,jsx,js}\"",
     "format:react": "prettier --write \"packages/**/react/**/*.{vue,ts,tsx,jsx,js}\""
@@ -28,7 +28,8 @@
     "lcap": "0.2.3",
     "lint-staged": "^15.2.10",
     "minimist": "^1.2.8",
-    "prettier": "^3.3.3"
+    "prettier": "^3.3.3",
+    "turbo": "^2.5.8"
   },
   "lint-staged": {
     "**/*.json": [

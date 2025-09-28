@@ -39,3 +39,5 @@ lcap.deploy.json
 .temp
 mini-folder/**/project.private.config.json
 docs/
+
+.turbo
