@@ -9,7 +9,7 @@
     "test": "pnpm --filter \"./packages/*\" run test",
     "change:version": "node ./scripts/version",
     "build": "turbo run build",
-    "deploy": "pnpm --filter \"./packages/*\" --filter \"./mini-folder/*\" run deploy",
+    "deploy": "turbo run deploy",
     "format:vue3": "prettier --write \"packages/**/vue3/**/*.{vue,ts,tsx,jsx,js}\"",
     "format:react": "prettier --write \"packages/**/react/**/*.{vue,ts,tsx,jsx,js}\""
   },
