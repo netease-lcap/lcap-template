@@ -8,7 +8,13 @@ async function main() {
   // run package build tasks
   for (const project of projects) {
     console.log(`Building ${project.name}...`);
-    execSync(`cd ${miniRootDir}/${project.name} && npm run ${project.build}`);
+
+    const projectDir = path.resolve(miniRootDir, project.name);
+    execSync(`npm run ${project.build}`, {
+      cwd: projectDir,
+      stdio: 'inherit',
+    });
+
     console.log(`Built ${project.name}`);
   }
 
