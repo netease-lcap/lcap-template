@@ -1,6 +1,6 @@
 <template>
   <view class="index">
-    <web-view :src="url"></web-view>
+    <web-view :src="url" bindmessage="onWebViewMessage" bindload="onWebViewLoad" binderror="onWebViewError"></web-view>
   </view>
 </template>
 
@@ -172,6 +172,35 @@ export default {
       }
       return newUrl;
     },
+
+    onWebViewMessage(event) {
+      console.log(`[onWebViewMessage]`, event);
+      const { data = [] } = event.detail;
+
+      (data || []).forEach(item => {
+        const { method, params = {} } = item || {};
+        // 直接调用
+        if (typeof Taro[method] === 'function') {
+          Taro[method]({
+            ...params,
+            success: (res) => {
+              console.log(`[onWebViewMessage] 调用${method}成功`, res);
+            },
+            fail: (err) => {
+              console.log(`[onWebViewMessage] 调用${method}失败`, err);
+            }
+          });
+        }
+      })
+    },
+
+    onWebViewLoad(event) {
+      console.log(`[onWebViewLoad]`, event);
+    },
+
+    onWebViewError(event) {
+      console.log(`[onWebViewError]`, event);
+    }
   },
 };
 </script>
