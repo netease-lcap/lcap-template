@@ -1,12 +1,12 @@
 const path = require('path');
-const upload = require('../../../scripts/upload');
+const deploy = require('../../../scripts/deploy');
 const argv = require('minimist')(process.argv.slice(2));
 const { miniRootDir, projects } = require('../config');
 
 async function main() {
   for (const project of projects) {
     console.log(`Deploying ${project.name}...`);
-    const root = path.resolve(__dirname, '..', 'dist', project.name);
+    const root = path.resolve(__dirname, '..');
 
     const projectRoot = path.resolve(miniRootDir, project.name);
     const packageJson = require(`${projectRoot}/package.json`);
@@ -26,20 +26,9 @@ async function main() {
       password,
     };
 
-    await upload({
+    await deploy({
       ...config,
-      source: {
-        name: 'source.tgz',
-        path: 'source.tgz',
-      },
-    });
-
-    await upload({
-      ...config,
-      source: {
-        name: 'dist.tgz',
-        path: 'dist.tgz',
-      },
+      dest: `dist/${project.name}`,
     });
 
     console.log(`Deployed ${project.name}`);
