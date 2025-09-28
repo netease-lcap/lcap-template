@@ -32,6 +32,9 @@ importers:
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
+      tar:
+        specifier: 7.4.3
+        version: 7.4.3
       turbo:
         specifier: ^2.5.8
         version: 2.5.8
@@ -41,9 +44,6 @@ importers:
       minimist:
         specifier: ^1.2.8
         version: 1.2.8
-      tar:
-        specifier: 7.4.3
-        version: 7.4.3
 
   mini-folder/taro:
     dependencies:

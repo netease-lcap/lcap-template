@@ -1,9 +1,8 @@
-const deploy = require("../../../scripts/deploy");
-const deployTgz = require("../../../scripts/deploy-tgz");
-const path = require("path");
-const argv = require("minimist")(process.argv.slice(2));
+const deploy = require('../../../scripts/deploy');
+const path = require('path');
+const argv = require('minimist')(process.argv.slice(2));
 
-const pkg = require("../package.json");
+const pkg = require('../package.json');
 const version = argv.version || pkg.version;
 
 const config = {
@@ -17,10 +16,7 @@ const config = {
 
 Promise.all([
   deploy({
-      ...config,
-      dest: 'dist'
-  }),
-  deployTgz({
-      ...config,
+    ...config,
+    dest: 'dist',
   }),
 ]);
