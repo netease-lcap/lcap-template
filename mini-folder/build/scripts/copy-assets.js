@@ -1,5 +1,5 @@
-const path = require("path");
-const fs = require("fs");
+const path = require('path');
+const fs = require('fs');
 const { miniRootDir, projects } = require('../config');
 
 module.exports = function ({ root }) {
@@ -13,8 +13,8 @@ module.exports = function ({ root }) {
     const targetDir = path.resolve(root, package);
     fs.mkdirSync(targetDir);
 
-    const tempDir = `${miniRootDir}/.temp/${project.name}`
-    fs.copyFileSync(`${tempDir}/source/zip.tgz`, `${targetDir}/source.tgz`);
-    fs.copyFileSync(`${tempDir}/dist/zip.tgz`, `${targetDir}/dist.tgz`);
+    const distDir = path.resolve(__dirname, '..', 'dist', project.name);
+    fs.copyFileSync(`${distDir}/source.tgz`, `${targetDir}/source.tgz`);
+    fs.copyFileSync(`${distDir}/dist.tgz`, `${targetDir}/dist.tgz`);
   }
 };
