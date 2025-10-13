@@ -27,8 +27,10 @@ import {
   isBlob,
   isArrayBufferView,
   isObject,
+  formatContentType,
 } from './utils';
 import { default as builtInInterceptors } from './interceptors';
+import { download } from './download';
 
 const getData = (str) => new Function('return ' + str)();
 function getJsonParse() {
@@ -48,15 +50,6 @@ function getJsonParse() {
   return hasSource ? warpJsonParse : JSONbig.parse;
 }
 const jsonParse = getJsonParse();
-
-const formatContentType = function (contentType, data) {
-  const map = {
-    'application/x-www-form-urlencoded'(data) {
-      return stringify(data);
-    },
-  };
-  return map[contentType] ? map[contentType](data) : data;
-};
 
 const parseCookie = (str) => {
   if (typeof str !== 'string') {
@@ -103,72 +96,6 @@ const formatCookie = (cookieStr) => {
   });
   return result;
 };
-
-/**
- * 目前主要测试的是 get 请求
- * 图片，文件，和文件流形式的下载
- * https://raw.githubusercontent.com/vusion/cloud-ui/master/src/assets/images/1.jpg
- * 支持 query 参数
- */
-function download(url) {
-  const { path, method, body = {}, headers = {}, query = {}, timeout } = url;
-
-  return axios({
-    url: formatMicroFrontUrl(path),
-    method,
-    params: query,
-    data: formatContentType(headers['Content-Type'], body),
-    responseType: 'blob',
-    timeout,
-    // 允许跨域请求携带 cookie
-    withCredentials: true,
-  })
-    .then((res) => {
-      // 包含 content-disposition， 从中解析名字，不包含 content-disposition 的获取请求地址的后缀
-      let effectiveFileName = res.request.getAllResponseHeaders().includes('content-disposition')
-        ? getFilenameFromContentDispositionHeader(res.request.getResponseHeader('content-disposition'))
-        : res.request.responseURL.split('/').pop();
-      const { data, status, statusText } = res;
-
-      // 通过UA判断是否是移动端
-      const mobilePattern = /mobile|mobi|wap|simulator|iphone|android/gi;
-      const isMobile = mobilePattern.test(navigator.userAgent);
-      if (!isMobile) {
-        effectiveFileName = decodeURIComponent(effectiveFileName).replace(/_\d{8,}\./, '.');
-        if (data && data.size === 0) {
-          return Promise.resolve({
-            data: {
-              code: status,
-              msg: statusText,
-            },
-          });
-        }
-      }
-
-      const downloadUrl = window.URL.createObjectURL(new Blob([data]));
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.setAttribute('download', effectiveFileName); // any other extension
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      return Promise.resolve({
-        data: {
-          code: status,
-          msg: statusText,
-        },
-      });
-    })
-    .catch((err) =>
-      // 基于 AxiosError 的错误类型 https://github.com/axios/axios/blob/b7e954eba3911874575ed241ec2ec38ff8af21bb/index.d.ts#L85
-      Promise.resolve({
-        data: {
-          code: err.code,
-          msg: err.response.statusText,
-        },
-      }),
-    );
-}
 
 function formatCallConnectorPath(path: string, connectionName: string): string {
   const sysPrefixPath = window.appInfo?.sysPrefixPath;
@@ -330,6 +257,8 @@ const requester = function (requestInfo) {
 };
 
 const service = new Service(requester);
+// 注入配置，但是不会默认启用
+addConfigs(service);
 
 // 调整请求路径
 const adjustPathWithSysPrefixPath = (apiSchemaList) => {
@@ -356,14 +285,23 @@ const adjustPathWithSysPrefixPath = (apiSchemaList) => {
   return newApiSchemaMap;
 };
 
-export const createService = function createService(apiSchemaList, serviceConfig?, dynamicServices?) {
-  addConfigs(service);
-  const fixServiceConfig = serviceConfig || {};
-  fixServiceConfig.config = fixServiceConfig.config || {};
-  Object.assign(fixServiceConfig.config, {
+export function createService(apiSchemaList, serviceConfig?, dynamicServices?) {
+  // 配置兼容空值
+  serviceConfig = serviceConfig || {};
+  // config 兼容空值
+  serviceConfig.config = serviceConfig.config || {};
+  Object.assign(serviceConfig.config, {
+    formatResponse: true,
     httpCode: true,
     httpError: true,
     shortResponse: true,
+    postRequestError: true,
+
+    priority: {
+      ...(serviceConfig.config.priority ?? {}),
+      formatResponse: 1,
+      postRequestError: 10,
+    },
   });
 
   {
@@ -418,17 +356,8 @@ export const createService = function createService(apiSchemaList, serviceConfig
         throw err;
       },
     });
-    fixServiceConfig.config = {
-      ...fixServiceConfig.config,
-      priority: {
-        ...(fixServiceConfig.config.priority ? fixServiceConfig.config.priority : {}),
-        postRequestError: 10,
-      },
-    };
-    fixServiceConfig.config.postRequestError = true;
   }
 
-  serviceConfig = fixServiceConfig;
   const newApiSchemaMap = adjustPathWithSysPrefixPath(apiSchemaList);
   let logicsInstance = service.generator(newApiSchemaMap, dynamicServices, serviceConfig);
   let mockInstance = {};
@@ -448,16 +377,31 @@ export const createService = function createService(apiSchemaList, serviceConfig
     mockInstance = logicsInstance;
   }
   return mockInstance;
-};
+}
 
 export const createLogicService = function createLogicService(apiSchemaList, serviceConfig?, dynamicServices?) {
-  const fixServiceConfig = serviceConfig || {};
-  fixServiceConfig.config = fixServiceConfig.config || {};
-  Object.assign(fixServiceConfig.config, {
-    shortResponse: true,
+  // 配置兼容空值
+  serviceConfig = serviceConfig || {};
+  // config 兼容空值
+  serviceConfig.config = serviceConfig.config || {};
+  Object.assign(serviceConfig.config, {
     concept: 'Logic',
+    formatResponse: true,
+    shortResponse: true,
+    preRequest: true,
+    postRequest: true,
+    postRequestError: true,
+    lcapLocation: true,
+
+    priority: {
+      ...(serviceConfig.config.priority ?? {}),
+      formatResponse: 1,
+      lcapLocation: 1,
+      postRequest: 10,
+      postRequestError: 10,
+    },
   });
-  serviceConfig = fixServiceConfig;
+
   const newApiSchemaMap = adjustPathWithSysPrefixPath(apiSchemaList);
 
   if (window.preRequest) {
@@ -482,7 +426,6 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
         return data || preData;
       },
     });
-    serviceConfig.config.preRequest = true;
   }
 
   if (window.postRequest) {
@@ -604,16 +547,6 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
         throw err;
       },
     });
-    serviceConfig.config = {
-      ...serviceConfig.config,
-      priority: {
-        ...(serviceConfig.config.priority ? serviceConfig.config.priority : {}),
-        postRequest: 10,
-        postRequestError: 10,
-      },
-    };
-    serviceConfig.config.postRequest = true;
-    serviceConfig.config.postRequestError = true;
   }
 
   service.postConfig.set('lcapLocation', (response, params, requestInfo) => {
@@ -623,15 +556,6 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
     }
     return response;
   });
-
-  serviceConfig.config = {
-    ...serviceConfig.config,
-    priority: {
-      ...(serviceConfig.config.priority ? serviceConfig.config.priority : {}),
-      lcapLocation: 1,
-    },
-  };
-  serviceConfig.config.lcapLocation = true;
 
   let logicsInstance = service.generator(newApiSchemaMap, dynamicServices, serviceConfig);
   let mockInstance = {};
