@@ -1,4 +1,5 @@
 import Vue from "vue";
+import * as VueCompositionAPI from "@vue/composition-api";
 import { installOptions, installFilters, installComponents, installDirectives, install } from "@vusion/utils";
 
 import * as Components from "@/components";
@@ -37,6 +38,8 @@ Vue.prototype.$sleep = function () {
     this.$nextTick(resolve);
   });
 };
+
+window.VueCompositionAPI = VueCompositionAPI;
 
 window._lcapCreateService = createService;
 window.LcapInstall = install;
