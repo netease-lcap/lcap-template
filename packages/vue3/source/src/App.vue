@@ -9,6 +9,7 @@
 <script setup>
 import VErrorBoundary from './VErrorBoundary.vue';
 import { getUserLanguage } from './i18n';
+import { useInitDataPermission } from './hooks';
 
 const { ConfigProvider = 'div', transformKeys = v => v } = window.lcapStandardUI;
 
@@ -18,4 +19,7 @@ const { i18nInfo } = appConfig;
 const lang = getUserLanguage(appConfig, i18nInfo.messages);
 // 拿到messages
 const locale = i18nInfo.enabled ? transformKeys(i18nInfo.messages[lang], lang) : undefined;
+
+// 初始化权限数据
+useInitDataPermission();
 </script>
