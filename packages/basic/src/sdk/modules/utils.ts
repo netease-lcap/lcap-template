@@ -39,7 +39,7 @@ import {
   isSunday,
 } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-import { isObject, isEqual, set, cloneDeep } from 'lodash';
+import { isObject, isEqual, set, cloneDeep, values } from 'lodash';
 import Decimal from 'decimal.js';
 import {
   isInputValidNaslDateTime,
@@ -159,6 +159,8 @@ export class Utils {
       return tempEnums.enumItems.map((enumItem) => ({
         text: toString(typeNamespace + '.' + typeName, enumItem.value),
         value: isToNumber ? +enumItem.value : enumItem.value,
+        // 在nasl中item属性类型是Enum，例如 app.enums.Enum1
+        item: isToNumber ? +enumItem.value : enumItem.value,
       }));
     }
   }
