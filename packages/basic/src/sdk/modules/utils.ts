@@ -39,7 +39,7 @@ import {
   isSunday,
 } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-import { isObject, isEqual, set, cloneDeep, values } from 'lodash';
+import { isObject, isEqual, set, cloneDeep } from 'lodash';
 import Decimal from 'decimal.js';
 import {
   isInputValidNaslDateTime,
