@@ -96,7 +96,7 @@ export class Utils {
     return '';
   }
 
-  EnumItemToStructure(typeKey, value): { text: string; value: any } {
+  EnumItemToStructure(typeKey, value): { text: string; value: any; item: any } {
     if (typeKey) {
       const { typeName, typeNamespace } = this.helpers.typeDefinitionMap.get(typeKey) || {};
 
@@ -108,12 +108,14 @@ export class Utils {
       return {
         text: this.helpers.toString(typeKey, value),
         value: isToNumber ? +value : value,
+        item: isToNumber ? +value : value,
       };
     }
 
     return {
       text: '',
       value: '',
+      item: '',
     };
   }
 
@@ -159,6 +161,8 @@ export class Utils {
       return tempEnums.enumItems.map((enumItem) => ({
         text: toString(typeNamespace + '.' + typeName, enumItem.value),
         value: isToNumber ? +enumItem.value : enumItem.value,
+        // 在nasl中item属性类型是Enum，例如 app.enums.Enum1
+        item: isToNumber ? +enumItem.value : enumItem.value,
       }));
     }
   }
