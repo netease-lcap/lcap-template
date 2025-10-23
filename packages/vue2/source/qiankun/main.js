@@ -10,6 +10,13 @@ import platformConfig from "./platform.config.json";
 import '@/style/index.css';
 import '@/style/theme.css';
 
+window.createLcapApp = undefined;
+window.rendered = undefined;
+window.preRequest = undefined;
+window.postRequest = undefined;
+window.beforeRoute = undefined;
+window.afterRoute = undefined;
+
 // 写入国际化配置
 platformConfig.appConfig.i18nInfo = i18nInfo;
 
