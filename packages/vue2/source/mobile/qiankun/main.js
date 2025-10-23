@@ -8,6 +8,13 @@ import './library';
 
 import '@/assets/css/index.css';
 
+window.createLcapApp = undefined;
+window.rendered = undefined;
+window.preRequest = undefined;
+window.postRequest = undefined;
+window.beforeRoute = undefined;
+window.afterRoute = undefined;
+
 if (!window.__POWERED_BY_QIANKUN__) {
   cloudAdminDesigner.init(platformConfig?.appConfig, platformConfig, routes, metaData);
 }
