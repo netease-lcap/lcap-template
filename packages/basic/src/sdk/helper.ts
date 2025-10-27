@@ -161,7 +161,13 @@ export const isDefString = (typeKey) =>
     'nasl.core.Email',
   ].includes(typeKey);
 
-export const isDefRegExp = (obj) => {
+export type RegExpLike = {
+  pattern: string;
+  flags?: string;
+  $type: 'nasl.util.Regex';
+};
+
+export const isDefRegExp: (obj: unknown) => boolean = (obj: unknown) => {
   // @ts-expect-error
   return isObject(obj) && obj.$type === 'nasl.util.Regex';
 };
