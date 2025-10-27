@@ -1,5 +1,6 @@
 import moment from 'moment';
 import momentTZ from 'moment-timezone';
+import { isObject } from 'lodash';
 
 export const findAsync = async (arr, callback) => {
   for (let i = 0; i < arr.length; i++) {
@@ -159,6 +160,11 @@ export const isDefString = (typeKey) =>
     'nasl.core.DateTime',
     'nasl.core.Email',
   ].includes(typeKey);
+
+export const isDefRegExp = (obj) => {
+  // @ts-expect-error
+  return isObject(obj) && obj.$type === 'nasl.util.Regex';
+};
 
 // 类型定义是否属于数字大类
 export const isDefNumber = (typeKey) => ['nasl.core.Long', 'nasl.core.Decimal'].includes(typeKey);
