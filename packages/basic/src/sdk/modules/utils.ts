@@ -58,6 +58,8 @@ import {
   isDefMap,
   isDefNumber,
   isDefString,
+  isDefRegExp,
+  RegExpLike,
 } from '../helper';
 import { dateFormatter } from '../Formatters';
 import type { IOptions } from '../types';
@@ -207,9 +209,17 @@ export class Utils {
     }
   }
 
-  Split(str: string, separator: string, trail?: boolean) {
+  Split(str: string, separator: string | RegExpLike, trail?: boolean) {
     if (Object.prototype.toString.call(str) === '[object String]') {
-      const res = str.split(separator);
+      let res;
+      if (isDefRegExp(separator)) {
+        // @ts-expect-error
+        const reg = new RegExp(separator.pattern, separator.flags);
+        res = str.split(reg);
+      } else {
+        res = str.split(separator as string);
+      }
+
       if (trail === true) {
         return res;
       } else {
@@ -1460,12 +1470,53 @@ export class Utils {
    * @param {string} replace 替换字符串
    * @returns {string} 替换后的字符串
    */
-  Replace(str, search, replace) {
-    if (typeof str !== 'string' || typeof search !== 'string') {
+  Replace(str: string, search: string | RegExpLike, replace: string) {
+    // str必须是字符串类型
+    if (typeof str !== 'string') {
       return str;
     }
-    replace = replace.replace(/\$/g, '$$$$');
-    return str.replace(new RegExp(search.replace(/([/,!\\^${}[\]().*+?|<>\-&])/g, '\\$&'), 'g'), replace);
+
+    if (typeof search !== 'string' && !isDefRegExp(search)) {
+      return str;
+    }
+
+    let pattern, flags;
+
+    // search 字符串或者正则表达式
+    if (typeof search === 'string') {
+      pattern = search.replace(/([/,!\\^${}[\]().*+?|<>\-&])/g, '\\$&');
+      flags = 'g';
+
+      // replace 中的 $ 符号需要转义
+      replace = replace.replace(/\$/g, '$$$$');
+    } else if (isDefRegExp(search)) {
+      pattern = search.pattern;
+      flags = search.flags;
+    }
+
+    return str.replace(new RegExp(pattern, flags), replace);
+  }
+
+  /**
+   * 正则表达式匹配
+   * @param str
+   * @param reg
+   * @return {array} 匹配结果数组
+   */
+  MatchRegex(str: string, reg: RegExpLike) {
+    // 检查参数类型
+    if (typeof str !== 'string') {
+      return [];
+    }
+
+    if (!isDefRegExp(reg)) {
+      return [];
+    }
+
+    const pattern = reg.pattern;
+    const flags = reg.flags;
+
+    return str.match(new RegExp(pattern, flags)) || [];
   }
 
   /**
