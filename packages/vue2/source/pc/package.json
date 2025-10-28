@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@vue/composition-api": "1.7.1",
     "@vusion/utils": "^0.4.10",
     "babel-polyfill": "^6.26.0",
     "core-js": "^3.6.5",
