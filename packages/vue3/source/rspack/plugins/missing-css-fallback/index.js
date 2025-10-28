@@ -43,7 +43,8 @@ class MissingCssFallbackPlugin {
             console.log(`[MissingCssFallbackPlugin] CSS file not found: ${originalRequest}, using empty fallback`);
 
             // 创建一个临时的空 CSS 文件
-            const tempCssPath = path.join(compiler.context, 'node_modules', '.cache', `missing-css-${Date.now()}.css`);
+            const uuid = originalRequest.replace(/[\/\\:]/g, '_') + `_${Date.now()}`;
+            const tempCssPath = path.join(compiler.context, 'node_modules', '.cache', `missing-css-${uuid}.css`);
             const tempDir = path.dirname(tempCssPath);
 
             if (!fs.existsSync(tempDir)) {
@@ -54,7 +55,7 @@ class MissingCssFallbackPlugin {
             resource.request = tempCssPath;
 
             // 在编译完成后清理临时文件
-            compiler.hooks.done.tap(`MissingCssFallbackPlugin-cleanup-${Date.now()}`, () => {
+            compiler.hooks.done.tap(`MissingCssFallbackPlugin-cleanup-${uuid}`, () => {
               try {
                 if (fs.existsSync(tempCssPath)) {
                   fs.unlinkSync(tempCssPath);
