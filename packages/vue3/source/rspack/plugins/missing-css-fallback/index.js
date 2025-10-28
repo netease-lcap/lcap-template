@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const rspack = require('@rspack/core');
 
 class MissingCssFallbackPlugin {
   constructor(options = {}) {
@@ -16,7 +17,7 @@ class MissingCssFallbackPlugin {
     const { pattern, fallbackContent } = this.options;
 
     // 使用 NormalModuleReplacementPlugin 来替换不存在的 CSS 文件
-    const normalModuleReplacementPlugin = new compiler.webpack.NormalModuleReplacementPlugin(
+    const normalModuleReplacementPlugin = new rspack.NormalModuleReplacementPlugin(
       pattern,
       (resource) => {
         const originalRequest = resource.request;
