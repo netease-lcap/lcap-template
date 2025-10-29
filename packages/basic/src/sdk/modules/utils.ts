@@ -1486,14 +1486,13 @@ export class Utils {
     if (typeof search === 'string') {
       pattern = search.replace(/([/,!\\^${}[\]().*+?|<>\-&])/g, '\\$&');
       flags = 'g';
-
-      // replace 中的 $ 符号需要转义
-      replace = replace.replace(/\$/g, '$$$$');
     } else if (isDefRegExp(search)) {
       pattern = search.pattern;
       flags = search.flags;
     }
 
+    // replace 中的 $ 符号需要转义
+    replace = replace.replace(/\$/g, '$$$$');
     return str.replace(new RegExp(pattern, flags), replace);
   }
 
