@@ -1,9 +1,5 @@
 import axios from 'axios';
-import { stringify } from 'qs';
-// import JSONbig from 'json-bigint';
-import JSONbig from '../json-bigint';
-import BigNumber from 'bignumber.js';
-import get from 'lodash/get';
+import type { AxiosRequestConfig, Method } from 'axios';
 import pick from 'lodash/pick';
 
 import Service from '../request-pre';
@@ -11,45 +7,18 @@ import { formatMicroFrontUrl } from '../../init/router/microFrontUrl'; // 微前
 
 import cookie from '../cookie';
 import { addConfigs } from './add.configs';
-import { getFilenameFromContentDispositionHeader } from './tools';
 import paramsSerializer from './paramsSerializer';
 import { createMockServiceByData } from './mockData';
 import { sseRequester } from './sseRequester';
 
 import Config from '../../config';
-import {
-  overwriteErrorMsgFieldIfSpecified,
-  isFormData,
-  isArrayBuffer,
-  isBuffer,
-  isStream,
-  isFile,
-  isBlob,
-  isArrayBufferView,
-  isObject,
-  formatContentType,
-} from './utils';
+import { overwriteErrorMsgFieldIfSpecified, formatContentType } from './utils';
 import { default as builtInInterceptors } from './interceptors';
 import { download } from './download';
+import transformRequest from './transform/request';
+import transformResponse from './transform/response';
 
 const getData = (str) => new Function('return ' + str)();
-function getJsonParse() {
-  let hasSource = false;
-  const jsonStr = `{"myBigInt":6028792033986383748 }`;
-  JSON.parse(jsonStr, (...arg) => {
-    if (get(arg, '2')) hasSource = true;
-    return arg[1];
-  });
-  const warpJsonParse = (jsonStr) =>
-    JSON.parse(jsonStr, (...arg) => {
-      if (typeof arg[1] === 'number' && Number.isInteger(arg[1]) && !Number.isSafeInteger(arg[1])) {
-        return new BigNumber(get(arg, '2.source'));
-      }
-      return arg[1];
-    });
-  return hasSource ? warpJsonParse : JSONbig.parse;
-}
-const jsonParse = getJsonParse();
 
 const parseCookie = (str) => {
   if (typeof str !== 'string') {
@@ -112,7 +81,27 @@ function formatCallConnectorPath(path: string, connectionName: string): string {
   return `${sysPrefixPath ? sysPrefixPath : ''}/${prefix1}/${prefix2}/${connectorName}/${connectionName}/${rt.join('/')}`;
 }
 
-export function genBaseOptions(requestInfo) {
+export type RequestInfo = {
+  config: {
+    connectionName?: string;
+    serviceType?: string;
+    baseURL?: string;
+    withCredentials?: boolean;
+    onUploadProgress?: (progressEvent: any) => void;
+    onDownloadProgress?: (progressEvent: any) => void;
+    handleError?: boolean;
+    errorMessage?: string;
+  };
+  url: {
+    path: string;
+    method: string;
+    body?: Record<string, any>;
+    headers?: Record<string, any>;
+    query?: Record<string, any>;
+  };
+};
+
+export function genBaseOptions(requestInfo: RequestInfo): AxiosRequestConfig {
   const { url, config = {} } = requestInfo;
   const { method, body = {}, headers = {}, query = {} } = url;
   const path = formatMicroFrontUrl(url.path);
@@ -128,7 +117,7 @@ export function genBaseOptions(requestInfo) {
   headers.TimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   let data;
-  const method2 = method.toUpperCase();
+  const method2 = method.toUpperCase() as Method;
   if (Array.isArray(body) || Object.keys(body).length || ['PUT', 'POST', 'PATCH', 'DELETE'].includes(method2)) {
     data = formatContentType(headers['Content-Type'], body);
   }
@@ -138,47 +127,8 @@ export function genBaseOptions(requestInfo) {
     paramsSerializer,
     baseURL,
     method: method2,
-    transformRequest: [
-      function (data, headers) {
-        try {
-          if (
-            isFormData(data) ||
-            isArrayBuffer(data) ||
-            isBuffer(data) ||
-            isStream(data) ||
-            isFile(data) ||
-            isBlob(data)
-          ) {
-            return data;
-          }
-
-          if (isArrayBufferView(data)) {
-            return data.buffer;
-          }
-
-          if (isObject(data) || headers['Content-Type'].includes('application/json')) {
-            // 对于 JSON 请求，序列化的时候保持对象的形状，不让 undefined 字段消失。便于服务端识别
-            const replacerToKeepUndefinedFields = (_: string, value: unknown) => (value === undefined ? null : value);
-            const request = JSONbig.stringify(data, replacerToKeepUndefinedFields);
-            return request;
-          }
-
-          return data;
-        } catch (error) {
-          return data;
-        }
-      },
-    ],
-    transformResponse: [
-      function (data) {
-        try {
-          const response = jsonParse(data);
-          return response;
-        } catch (error) {
-          return data;
-        }
-      },
-    ],
+    transformRequest: transformRequest(requestInfo),
+    transformResponse: transformResponse(requestInfo),
     url: path,
     data,
     headers,
