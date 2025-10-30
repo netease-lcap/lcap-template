@@ -1,9 +1,22 @@
 import JSONbig from '../../json-bigint';
-import { isFormData, isArrayBuffer, isBuffer, isStream, isFile, isBlob, isArrayBufferView, isObject } from '../utils';
+import {
+  isFormData,
+  isArrayBuffer,
+  isBuffer,
+  isStream,
+  isFile,
+  isBlob,
+  isArrayBufferView,
+  isObject,
+  normalizeHeaderName,
+} from '../utils';
 import type { RequestInfo } from '../index';
 
 function defaultTransform(data, headers) {
   try {
+    normalizeHeaderName(headers, 'Accept');
+    normalizeHeaderName(headers, 'Content-Type');
+
     if (isFormData(data) || isArrayBuffer(data) || isBuffer(data) || isStream(data) || isFile(data) || isBlob(data)) {
       return data;
     }
