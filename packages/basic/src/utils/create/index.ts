@@ -6,7 +6,7 @@ import Service from '../request-pre';
 import { formatMicroFrontUrl } from '../../init/router/microFrontUrl'; // 微前端路由方法
 
 import cookie from '../cookie';
-import { addConfigs } from './add.configs';
+import { addConfigs, formatResponse } from './add.configs';
 import paramsSerializer from './paramsSerializer';
 import { createMockServiceByData } from './mockData';
 import { sseRequester } from './sseRequester';
@@ -256,24 +256,28 @@ export function createService(apiSchemaList, serviceConfig?, dynamicServices?) {
 
   {
     service.postConfig.set('postRequestError', {
-      async reject(response, params, requestInfo) {
-        response.Code = response.code || response.status;
+      async reject(error, params, requestInfo) {
+        error.Code = error.code || error.status;
         const status = 'error';
-        const err = response;
         const { config } = requestInfo;
 
-        if (!response.response) {
-          throw response;
+        if (!error.response) {
+          throw error;
         }
 
-        if (response.response?.data?.Data) {
-          overwriteErrorMsgFieldIfSpecified(response.response.data.Data, requestInfo?.config?.errorMessage);
+        const { response } = error;
+
+        // 格式化响应字段大小写
+        formatResponse(response);
+
+        if (response?.data?.Data) {
+          overwriteErrorMsgFieldIfSpecified(response.data.Data, requestInfo?.config?.errorMessage);
         }
 
         const HttpResponse = {
-          status: response.response.status + '',
-          body: JSON.stringify(response.response.data),
-          headers: response.response.headers,
+          status: response.status + '',
+          body: JSON.stringify(response.data),
+          headers: response.headers,
           cookies: formatCookie(document.cookie),
         };
 
@@ -292,18 +296,18 @@ export function createService(apiSchemaList, serviceConfig?, dynamicServices?) {
         if (config?.handleError) {
           let body = event?.response?.body || event?.body;
           try {
-            response.data = JSON.parse(body);
-          } catch (error) {
+            error.data = JSON.parse(body);
+          } catch (e) {
             // 解析不了则直接返回
-            throw err;
+            throw error;
           }
           // 此时跳过shortResponse中的兼容操作
-          response.skipShortResponseCopy = true;
-          response.headers = event?.response?.headers || event?.headers;
-          return response;
+          error.skipShortResponseCopy = true;
+          error.headers = event?.response?.headers || event?.headers;
+          return error;
         }
 
-        throw err;
+        throw error;
       },
     });
   }
@@ -423,51 +427,57 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
       },
     });
     service.postConfig.set('postRequestError', {
-      async reject(response, params, requestInfo) {
+      async reject(error, params, requestInfo) {
         if (requestInfo?.config?.serviceType === 'sse') {
           throw Error('远端调用异常');
         }
-        response.Code = response.code || response.status;
+
+        error.Code = error.code || error.status;
         const status = 'error';
-        const err = response;
         const { config } = requestInfo;
-        if (err === 'expired request') {
-          throw err;
+
+        if (error === 'expired request') {
+          throw error;
         }
-        if (!err.response) {
+        if (!error.response) {
           if (!config.noErrorTip) {
             // instance.show('系统错误，请查看日志！');
             Config.toast.error('系统错误，请查看日志！');
             // 得抛错，否则会走成功回调，然后shortResponse会报错
-            throw err;
+            throw error;
           }
         }
         if (window.LcapMicro?.loginFn) {
-          if (err.Code === 401 && err.Message === 'token.is.invalid') {
+          if (error.Code === 401 && error.Message === 'token.is.invalid') {
             window.LcapMicro.loginFn();
             return;
           }
-          if (err.Code === 'InvalidToken' && err.Message === 'Token is invalid') {
+          if (error.Code === 'InvalidToken' && error.Message === 'Token is invalid') {
             window.LcapMicro.loginFn();
             return;
           }
         }
-        if (err.Code === 501 && err.Message === 'abort') {
+        if (error.Code === 501 && error.Message === 'abort') {
           throw Error('程序中止');
         }
 
-        if (!response.response) {
-          throw response;
+        if (!error.response) {
+          throw error;
         }
 
-        if (response.response?.data?.Data) {
-          overwriteErrorMsgFieldIfSpecified(response.response.data.Data, requestInfo?.config?.errorMessage);
+        const { response } = error;
+
+        // 格式化响应字段大小写
+        formatResponse(response);
+
+        if (response?.data?.Data) {
+          overwriteErrorMsgFieldIfSpecified(response.data.Data, requestInfo?.config?.errorMessage);
         }
 
         const HttpResponse = {
-          status: response.response.status + '',
-          body: JSON.stringify(response.response.data),
-          headers: response.response.headers,
+          status: response.status + '',
+          body: JSON.stringify(response.data),
+          headers: response.headers,
           cookies: formatCookie(document.cookie),
         };
 
@@ -485,16 +495,16 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
         if (config?.handleError) {
           let body = event?.response?.body || event?.body;
           try {
-            response.data = JSON.parse(body);
-          } catch (error) {
+            error.data = JSON.parse(body);
+          } catch (e) {
             // 解析不了则直接返回
-            throw err;
+            throw error;
           }
-          response.headers = event?.response?.headers || event?.headers;
-          return response;
+          error.headers = event?.response?.headers || event?.headers;
+          return error;
         }
 
-        throw err;
+        throw error;
       },
     });
   }

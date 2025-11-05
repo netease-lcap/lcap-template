@@ -38,7 +38,7 @@ function defaultTransform(data, headers) {
   }
 }
 
-function transformFileInBody(data, headers) {
+function transformFileInConnectorBody(data, headers) {
   let hasFile = false;
 
   if (isObject(data) && isObject(data.body)) {
@@ -65,14 +65,43 @@ function transformFileInBody(data, headers) {
   return data;
 }
 
+function transformFileInBody(data, headers) {
+  let hasFile = false;
+
+  if (isObject(data)) {
+    for (const key in data) {
+      if (isFile(data[key])) {
+        hasFile = true;
+        break;
+      }
+    }
+  }
+
+  if (hasFile) {
+    const formData = new FormData();
+
+    for (const key in data) {
+      formData.append(`${key}`, data[key]);
+    }
+
+    headers['Content-Type'] = 'multipart/form-data';
+
+    return formData;
+  }
+
+  return data;
+}
+
 export default (requestInfo: RequestInfo) => {
   const { config } = requestInfo;
   const { connectionName } = config || {};
 
   let list = [defaultTransform];
 
-  // 连接器才调用转换器
+  // 连接器的文件上传 请求体结构有一层body，特殊处理一下
   if (connectionName) {
+    list = [transformFileInConnectorBody, ...list];
+  } else {
     list = [transformFileInBody, ...list];
   }
 
