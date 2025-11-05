@@ -7,6 +7,7 @@ class MissingCssFallbackPlugin {
     this.options = {
       // 默认匹配 dist-theme/index.css 结尾的路径
       pattern: /\/dist-theme\/index\.css$/,
+      filename: 'lcap-missing-css.css',
       // 空的 CSS 内容
       fallbackContent: '/* CSS file not found, using empty fallback */',
       ...options
@@ -14,7 +15,7 @@ class MissingCssFallbackPlugin {
   }
 
   apply(compiler) {
-    const { pattern, fallbackContent } = this.options;
+    const { pattern, fallbackContent, filename } = this.options;
 
     // 使用 NormalModuleReplacementPlugin 来替换不存在的 CSS 文件
     const normalModuleReplacementPlugin = new rspack.NormalModuleReplacementPlugin(
@@ -43,8 +44,7 @@ class MissingCssFallbackPlugin {
             console.log(`[MissingCssFallbackPlugin] CSS file not found: ${originalRequest}, using empty fallback`);
 
             // 创建一个临时的空 CSS 文件
-            const uuid = originalRequest.replace(/[\/\\:]/g, '_') + `_${Date.now()}`;
-            const tempCssPath = path.join(compiler.context, 'node_modules', '.cache', `missing-css-${uuid}.css`);
+            const tempCssPath = path.join(compiler.context, 'node_modules', '.cache', filename);
             const tempDir = path.dirname(tempCssPath);
 
             if (!fs.existsSync(tempDir)) {
@@ -55,7 +55,7 @@ class MissingCssFallbackPlugin {
             resource.request = tempCssPath;
 
             // 在编译完成后清理临时文件
-            compiler.hooks.done.tap(`MissingCssFallbackPlugin-cleanup-${uuid}`, () => {
+            compiler.hooks.done.tap(`MissingCssFallbackPlugin-cleanup`, () => {
               try {
                 if (fs.existsSync(tempCssPath)) {
                   fs.unlinkSync(tempCssPath);
