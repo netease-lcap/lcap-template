@@ -3,7 +3,7 @@
 [![Deploy Test Environment](https://github.com/netease-lcap/lcap-template/actions/workflows/deploy.yml/badge.svg)](https://github.com/netease-lcap/lcap-template/actions/workflows/deploy.yml)
 
 # lcap-template
-> 低代码应用模板
+> 低代码应用模板，[文档](https://netease-lcap.github.io/lcap-template/)
 
 ## 项目结构
 ```
