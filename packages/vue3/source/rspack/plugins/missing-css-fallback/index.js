@@ -26,14 +26,11 @@ class MissingCssFallbackPlugin {
         try {
           // 尝试解析原始模块
           const context = resource.context || compiler.context;
-          let resolvedPath;
+          const resolver = compiler.resolverFactory.get('normal')
 
           try {
-            if (originalRequest.startsWith('.')) {
-              resolvedPath = path.resolve(context, originalRequest);
-            } else {
-              resolvedPath = require.resolve(originalRequest, { paths: [context] });
-            }
+            // 使用同步解析方法
+            const resolvedPath = resolver.resolveSync(null, context, originalRequest);
 
             // 检查文件是否存在
             if (!fs.existsSync(resolvedPath)) {
