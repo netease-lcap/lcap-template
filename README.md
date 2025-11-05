@@ -1,6 +1,7 @@
 [![Node.js CI](https://github.com/netease-lcap/lcap-template/actions/workflows/test.yml/badge.svg)](https://github.com/netease-lcap/lcap-template/actions/workflows/test.yml)
 [![Deploy Pages](https://github.com/netease-lcap/lcap-template/actions/workflows/doc.yml/badge.svg)](https://github.com/netease-lcap/lcap-template/actions/workflows/doc.yml)
 [![Deploy Test Environment](https://github.com/netease-lcap/lcap-template/actions/workflows/deploy.yml/badge.svg)](https://github.com/netease-lcap/lcap-template/actions/workflows/deploy.yml)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/netease-lcap/lcap-template)
 
 # lcap-template
 > 低代码应用模板，[文档](https://netease-lcap.github.io/lcap-template/)
