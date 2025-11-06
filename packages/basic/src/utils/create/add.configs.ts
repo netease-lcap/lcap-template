@@ -8,7 +8,13 @@ export const isPromise = function (func) {
   return func && typeof func.then === 'function';
 };
 
-export function formatResponse(response) {
+/**
+ * has side effects
+ * change response data keys to support different casing
+ * @param response
+ * @returns
+ */
+export function formatResponseData(response): void {
   const result = response?.data;
 
   // 遍历字段，兼容类似大小写 （通用场景）
@@ -59,9 +65,21 @@ export function formatResponse(response) {
       ErrorType: errorType,
     };
   }
-
-  return response;
 }
+
+const formatResponse = {
+  resolve(response) {
+    formatResponseData(response);
+
+    return response;
+  },
+  reject(error) {
+    const { response } = error;
+    formatResponseData(response);
+
+    return Promise.reject(error);
+  },
+};
 
 export function httpCode(response, params, requestInfo) {
   const { config } = requestInfo;
