@@ -801,9 +801,9 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
         }
       }
     } else if (['nasl.util.Regex'].includes(typeKey)) {
-      str = '{\n';
-      str += `${indent(tabSize + 1)}pattern: \`${variable.pattern}\`,\n`;
-      str += `${indent(tabSize + 1)}flags: \`${variable.flags}\`\n`;
+      str = 'Regex {\n';
+      str += `${indent(tabSize + 1)}pattern: \"${variable.pattern}\",\n`;
+      str += `${indent(tabSize + 1)}flags: \"${variable.flags}\"\n`;
       str += `${indent(tabSize)}}`;
     } else if (['TypeAnnotation', 'Structure', 'Entity'].includes(concept)) {
       // 复合类型
