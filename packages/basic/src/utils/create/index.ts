@@ -6,7 +6,7 @@ import Service from '../request-pre';
 import { formatMicroFrontUrl } from '../../init/router/microFrontUrl'; // 微前端路由方法
 
 import cookie from '../cookie';
-import { addConfigs, formatResponse } from './add.configs';
+import { addConfigs } from './add.configs';
 import paramsSerializer from './paramsSerializer';
 import { createMockServiceByData } from './mockData';
 import { sseRequester } from './sseRequester';
@@ -267,9 +267,6 @@ export function createService(apiSchemaList, serviceConfig?, dynamicServices?) {
 
         const { response } = error;
 
-        // 格式化响应字段大小写
-        formatResponse(response);
-
         if (response?.data?.Data) {
           overwriteErrorMsgFieldIfSpecified(response.data.Data, requestInfo?.config?.errorMessage);
         }
@@ -466,9 +463,6 @@ export const createLogicService = function createLogicService(apiSchemaList, ser
         }
 
         const { response } = error;
-
-        // 格式化响应字段大小写
-        formatResponse(response);
 
         if (response?.data?.Data) {
           overwriteErrorMsgFieldIfSpecified(response.data.Data, requestInfo?.config?.errorMessage);
