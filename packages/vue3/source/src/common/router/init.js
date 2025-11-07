@@ -15,6 +15,7 @@ export function createRouterInstance(routes) {
   const router = createRouter({
     history: createHistory(window.LcapMicro?.routePrefix),
     routes,
+    sensitive: true,
   });
 
   if (window.LcapVueRouterConfig?.initRoute) {
