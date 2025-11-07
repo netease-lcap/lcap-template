@@ -5,3 +5,4 @@ export * from './useWatchProps';
 export * from './useRefs';
 export * from './useElementStateAndProp';
 export * from './useDataPermission';
+export * from './useProcessDynamicForm';
