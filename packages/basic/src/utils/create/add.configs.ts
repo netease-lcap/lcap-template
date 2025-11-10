@@ -1,12 +1,46 @@
 import isNil from 'lodash/isNil';
+import camelCase from 'lodash/camelCase';
+import upperFirst from 'lodash/upperFirst';
+import lowerFirst from 'lodash/lowerFirst';
 import errHandles from './errHandles';
 
 export const isPromise = function (func) {
   return func && typeof func.then === 'function';
 };
 
-export function formatResponse(response) {
-  const result = response.data;
+/**
+ * has side effects
+ * change response data keys to support different casing
+ * @param response
+ * @returns
+ */
+export function formatResponseData(response): void {
+  const result = response?.data;
+
+  // 遍历字段，兼容类似大小写 （通用场景）
+  Object.keys(result || {}).forEach((key) => {
+    const value = result[key];
+
+    // 驼峰
+    const camelKey = camelCase(key);
+    if (camelKey !== key && !(camelKey in result)) {
+      result[camelKey] = value;
+    }
+
+    // 首字母大写
+    const upperFirstKey = upperFirst(camelKey);
+    if (upperFirstKey !== camelKey && !(upperFirstKey in result)) {
+      result[upperFirstKey] = value;
+    }
+
+    // 首字母小写
+    const lowerFirstKey = lowerFirst(camelKey);
+    if (lowerFirstKey !== camelKey && !(lowerFirstKey in result)) {
+      result[lowerFirstKey] = value;
+    }
+  });
+
+  // 可枚举的特殊场景
   const data = result?.Data ?? result?.data;
   const msg = result?.Message ?? result?.msg ?? result?.message;
   const code = result?.Code ?? result?.code;
@@ -15,6 +49,8 @@ export function formatResponse(response) {
   if (data || msg || code || errorType) {
     // 兼容大小写Code、Data、Message
     response.data = {
+      ...(result || {}),
+
       data,
       Data: data,
 
@@ -27,13 +63,23 @@ export function formatResponse(response) {
 
       errorType,
       ErrorType: errorType,
-
-      ...(result || {}),
     };
   }
-
-  return response;
 }
+
+const formatResponse = {
+  resolve(response) {
+    formatResponseData(response);
+
+    return response;
+  },
+  reject(error) {
+    const { response } = error;
+    formatResponseData(response);
+
+    return Promise.reject(error);
+  },
+};
 
 export function httpCode(response, params, requestInfo) {
   const { config } = requestInfo;
