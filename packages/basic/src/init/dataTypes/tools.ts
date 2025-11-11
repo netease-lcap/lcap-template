@@ -6,6 +6,7 @@ import { Helpers } from '../../sdk';
 
 import BigNumber from 'bignumber.js';
 import Config from '../../config';
+import { isFile } from '../../utils/create/utils';
 import { sortTypeArgumentsBasedOnTypePriority } from './inference';
 
 const { getAppTimezone, safeNewDate } = Helpers;
@@ -319,6 +320,8 @@ export function isInstanceOf(variable, typeKey) {
       }
     }
   } else if (typeConstructor && variable instanceof typeConstructor) {
+    return true;
+  } else if (['nasl.io.File'].includes(typeKey) && isFile(variable)) {
     return true;
   }
   return false;
@@ -659,6 +662,8 @@ export const genInitData = (typeKey, defaultValue, parentLevel?) => {
         parsedValue = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
       }
       return parsedValue;
+    } else if (['nasl.io.File'].includes(typeKey)) {
+      return defaultValue;
     } else if (typeKey) {
       const Ctor = inferConstructorAgainstTypeKey(parsedValue, typeKey);
       if (Ctor) {
