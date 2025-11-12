@@ -65,10 +65,6 @@ export default [
       'vue/no-unused-vars': ['error', {
         ignorePattern: '^current(\\d+)?',
       }],
-      // lcap插件 var -> let
-      'lcap/no-var': 'warn',
-      // lcap插件 no-empty-if-else
-      'lcap/no-empty-if-else': 'warn',
     }
   }
 ];
