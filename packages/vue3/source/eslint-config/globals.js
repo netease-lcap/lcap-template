@@ -1,4 +1,4 @@
-{
+modeule.exports = {
   "amd": {
     "define": false,
     "require": false
