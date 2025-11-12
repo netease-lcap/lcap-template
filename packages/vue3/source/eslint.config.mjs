@@ -2,7 +2,7 @@ import js from '@eslint/js';
 import pluginVue from 'eslint-plugin-vue';
 import vueTsEslintConfig from '@vue/eslint-config-typescript';
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
-import globals from './eslint-config/globals.json' assert { type: 'json' };
+import globals from './eslint-config/globals.js';
 import PluginLCAP from './eslint-config/plugins/lcap.js';
 
 export default [
@@ -24,7 +24,7 @@ export default [
       '**/router/**',
       'src/platform.config.json',
       'src/metaData.js',
-      'vite.config.ts',
+      'rspack.config.js',
       'eslint.config.mjs',
     ],
   },
@@ -65,10 +65,6 @@ export default [
       'vue/no-unused-vars': ['error', {
         ignorePattern: '^current(\\d+)?',
       }],
-      // lcap插件 var -> let
-      'lcap/no-var': 'warn',
-      // lcap插件 no-empty-if-else
-      'lcap/no-empty-if-else': 'warn',
     }
   }
 ];
