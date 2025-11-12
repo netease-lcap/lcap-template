@@ -24,7 +24,7 @@ export default [
       '**/router/**',
       'src/platform.config.json',
       'src/metaData.js',
-      'vite.config.ts',
+      'rspack.config.js',
       'eslint.config.mjs',
     ],
   },
