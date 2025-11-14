@@ -32,8 +32,12 @@ import { setConfig } from './setConfig';
 import './index.css';
 
 // 注册组件库MCP JSON
-if (typeof registerTool === 'function' && window.lcapStandardUI?.mcpToolJson) {
-  registerTool(window.lcapStandardUI.mcpToolJson);
+try {
+  if (typeof registerTool === 'function' && window.lcapStandardUI?.mcpToolJson) {
+    registerTool(window.lcapStandardUI.mcpToolJson);
+  }
+} catch (error) {
+  console.error('注册组件库MCP JSON失败:', error);
 }
 
 const evalWrap = function (metaData, fnName) {
