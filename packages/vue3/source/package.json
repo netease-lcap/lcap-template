@@ -37,6 +37,7 @@
     "tar": "7.4.3"
   },
   "lcap_modules": {
+    "@lcap/ui-libraries-mcp": "./lcap_modules/@lcap/ui-libraries-mcp@0.0.3/zip.tgz",
     "@lcap/swc-plugin-import": "./lcap_modules/@lcap/swc-plugin-import@0.0.1/zip.tgz"
   }
 }
