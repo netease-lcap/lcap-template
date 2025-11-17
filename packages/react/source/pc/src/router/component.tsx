@@ -29,7 +29,7 @@ export const Guarded: React.FC<
   const { authResourcePaths } = useAppConfig();
   const loaderData = useLoaderData();
 
-  const userInfo = props.userInfo || loaderData?.userInfo || window.$global.userInfo;
+  const userInfo = loaderData?.userInfo || props.userInfo || window.$global.userInfo;
 
   useHandlePageNavigationEvent();
   const location = useLocation();
