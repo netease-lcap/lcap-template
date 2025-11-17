@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useLoaderData } from 'react-router-dom';
 import { NASLUserInfo } from '@lcap/basic-template';
 import { getBasePath } from '@lcap/basic-template';
 import { Skeleton } from 'antd';
@@ -24,7 +24,13 @@ export const Guarded: React.FC<
     beforeEach?: RouterHookFunc;
     meta: RouteObjectMeta | undefined;
   }
-> = ({ children, userResources, userInfo, beforeEach, meta }) => {
+> = (props) => {
+  const { children, beforeEach, meta } = props;
+  const { authResourcePaths } = useAppConfig();
+  const loaderData = useLoaderData();
+
+  const userInfo = loaderData?.userInfo || props.userInfo || window.$global.userInfo;
+
   useHandlePageNavigationEvent();
   const location = useLocation();
 
@@ -32,8 +38,6 @@ export const Guarded: React.FC<
   const toPath = pathname;
 
   const $auth = nasl.auth;
-  const appConfig = useAppConfig();
-  const { authResourcePaths } = appConfig;
 
   const needCheckAuth = (authResourcePaths as string[]).find((authResourcePath) => {
     return authResourcePath === toPath || `${authResourcePath}/` === toPath;
@@ -48,13 +52,7 @@ export const Guarded: React.FC<
       return <Navigate to={`${getBasePath()}/login`}></Navigate>;
     }
 
-    const normalizePath = (path: string) => path.endsWith('/') ? path : `${path}/`;
-    const hasPermission = userResources.some((userResource: string) => {
-      const a = normalizePath(userResource);
-      const b = normalizePath(toPath);
-      
-      return a === b;
-    });
+    const hasPermission = $auth.has(needCheckAuth);
     // 已登录, 无权限
     if (!hasPermission) {
       // @ts-ignore
@@ -96,6 +94,24 @@ export function createRouter(routes: RouteObject[], opts: RouterOpts) {
           </Guarded>
         </Suspense>
       );
+
+      route.loader = async () => {
+        let info, resources;
+        try {
+          const appConfig = window.appInfo.appConfig;
+           [info, resources] = await Promise.all([
+            nasl.auth.getUserInfo(),
+            nasl.auth.getUserResources(appConfig.domain),
+          ]);
+        } catch(e) {
+            console.log(e);
+        }
+
+        return ({
+          userInfo: info,
+          userResources: (resources || []).map((item: any) => item?.resourceValue || item?.ResourceValue),
+        });
+      }
     }
     route.children?.forEach(guardIfNecessary);
   }
