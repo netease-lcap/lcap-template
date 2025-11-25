@@ -13,6 +13,15 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
   const formTemplate = ref('');
   const needReplaced = ref(false);
 
+  function strMatchAll(regex, str) {
+    const matches = [];
+    let match;
+    while ((match = regex.exec(str)) !== null) {
+      matches.push(match);
+    }
+    return matches;
+  }
+
   function defineProcessFormComponent({ template, formData }) {
     const componentKeys = Object.keys(instance.setupState).filter((key) => !!instance.setupState[key]?.setup);
     const components = {};
@@ -20,38 +29,40 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
     const DynamicComponent = VueModule.defineComponent({
       name: 'DynamicComponent',
       props: ['i18n'],
-      setup(_props, { attrs, slots, emit, expose }) {
-        const processDetailFormData = formData ? reactive(formData) : reactive({ data: {} });
-        const processDatas = {
-          [`${processData.name}`]: reactive({ data: {} }),
-        };
-        if (processData?.processPrefixValue && processData?.processPrefixValue !== processData?.name) {
-          processDatas[`${processData?.processPrefixValue}`] = reactive({ data: {} });
-        }
+      setup(_props, _ctx) {
+        const processDetailFormData = instance.setupState.processDetailFormData;
+        Object.assign(processDetailFormData, formData);
 
-        const regex = /ref-name="([^"]+)"/;
-        const match = template.match(regex);
-        const formRef = useTemplateRef(match[1])
+        const regex = new RegExp(`ref-name="([^"]+)"`, 'g');
+        const matches = strMatchAll(regex, template);
+        const refs = {};
+        matches.forEach((match, index) => {
+          if (match[1] && !match[1].startsWith('template_')) {
+            refs[match[1]] = useTemplateRef(match[1]);
+          }
+          if (index === 0) {
+            refs.processFormRef = refs[match[1]];
+          }
+        })
 
         onMounted(() => {
           // 在这里可以访问到 $refs
-          if (match[1] && !$refs[`${match[1]}`]) {
-            $refs[`${match[1]}`] = formRef.value;
-            window.__processDetailFromMixinFormVm__ = formRef.value;
-          }
+          window.__processDetailFromMixinFormVm__ = refs.processFormRef.value;
+          Object.keys(refs).forEach((key) => {
+            $refs[key] = refs[key].value;
+          });
         })
 
         return Object.assign({
           processDetailFormData,
-          testFun: () => {},
-          testFun11: () => $i18n.t,
-        }, processDatas, instance.setupState) 
+        },instance.setupState) 
       },
       components,
       render(_ctx) {
         const { code } = compile(template);
         const renderComponent = new Function('Vue', '$t', code)(VueModule, $i18n.t);
-        return renderComponent(_ctx);
+        const _ctxData = Object.assign({}, _ctx, instance.setupState);
+        return renderComponent(_ctxData);
       },
     });
     return DynamicComponent;
@@ -67,7 +78,7 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
       const sliceStartIndex = (() => {
         const regex = new RegExp(`<${tag}[^>]*>`, 'g');
         const subString = formTemplate.value.slice(0, sliceEndIndex);
-        const matches = [...subString.matchAll(regex)];
+        const matches = [...strMatchAll(regex, subString)];
         return matches.length ? matches[matches.length - 1].index : -1;
       })();
       if (sliceStartIndex > -1 && sliceStartIndex > startIndex) {
@@ -94,7 +105,12 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
         return startIndex;
       } else if (['readOnly', 'preview'].includes(permission)) {
         let newItemStr = itemStr;
-        if (!itemStr.includes(':preview=')) {
+        if (itemStr.includes(':preview')) {
+          const match = itemStr.match(/:preview="([^"]+)"/);
+          if (match && match[0]) {
+            newItemStr = itemStr.replace(match[0], `:preview="true" `);
+          }
+        } else if (!itemStr.includes(':preview')) {
           newItemStr = itemStr.replace(fieldStr, `${fieldStr} :preview="true" `);
         }
         formTemplate.value = formTemplate.value.replace(itemStr, newItemStr);
@@ -110,7 +126,7 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
   }
 
   function getRelationDataStartAndEndIndex(relationDataName) {
-    const tag = 'u-table-view';
+    const tag = 'el-table';
     let tableStartIndex = -1;
     let tableEndIndex = -1;
     const reg = new RegExp(`dataSource(?:\\.sync)?="[^"]*processDetailFormData[^"]*\\.${relationDataName}"`, 'g');
@@ -180,7 +196,7 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
     const subReplTemplates = []
 
     if (subPerms.length && frontend.type === 'pc') {
-      const fieldTag = 'el-table-column', stencilTag = 'u-grid-layout-column';
+      const fieldTag = 'el-table-column', stencilTag = 'el-col';
       // 遍历每个子表单
       subPerms.forEach((relationData) => {
         const { propertyName, subFieldPermissions, permission } = relationData;
