@@ -1,12 +1,12 @@
-import Taro from "@tarojs/taro";
-import { baseUrl,frontend } from "./config";
+import Taro from '@tarojs/taro';
+import { baseUrl, frontend } from './config';
 const server = async (params) => {
-  const { url, data, method } = params
+  const { url, data, method } = params;
   return new Promise((resolve, reject) =>
     Taro.request({
       url: baseUrl + url,
       header: {
-        "LCAP-FRONTEND":frontend
+        'LCAP-FRONTEND': frontend,
       },
       method,
       data,
@@ -16,9 +16,8 @@ const server = async (params) => {
       fail: (r) => {
         reject(r);
       },
-    })
+    }),
   );
 };
-  
-export default server;
 
+export default server;
