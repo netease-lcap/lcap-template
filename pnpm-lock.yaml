@@ -365,6 +365,9 @@ importers:
       '@lcap/basic-template':
         specifier: workspace:*
         version: link:../basic
+      '@lcap/ui-libraries-mcp':
+        specifier: ./source/lcap_modules/@lcap/ui-libraries-mcp@0.0.3/zip.tgz
+        version: file:packages/vue3/source/lcap_modules/@lcap/ui-libraries-mcp@0.0.3/zip.tgz
       date-fns:
         specifier: 2.30.0
         version: 2.30.0
@@ -1710,6 +1713,10 @@ packages:
   '@lcap/nasl@3.13.2-beta.13':
     resolution: {integrity: sha512-KznAxdAlL9ZiPU+X/8tG7ClZ7NDndmQPTxAZ2cL1+yTTu+vzjN9Z9IJRTAxv+EIMpA1YE8V7kCJAEWf/X8eD8g==}
     engines: {node: '>=16.20'}
+
+  '@lcap/ui-libraries-mcp@file:packages/vue3/source/lcap_modules/@lcap/ui-libraries-mcp@0.0.3/zip.tgz':
+    resolution: {integrity: sha512-fXP4BV7RlK65P2ieoAg4FtchvUxjg8ZvyIHTmU31aatKAcXPljiYwCR7eG8+xJXTACLoZocERWDr0/ZeOtAUkg==, tarball: file:packages/vue3/source/lcap_modules/@lcap/ui-libraries-mcp@0.0.3/zip.tgz}
+    version: 0.0.3
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -12369,6 +12376,8 @@ snapshots:
       - supports-color
       - typescript
       - utf-8-validate
+
+  '@lcap/ui-libraries-mcp@file:packages/vue3/source/lcap_modules/@lcap/ui-libraries-mcp@0.0.3/zip.tgz': {}
 
   '@leichtgewicht/ip-codec@2.0.5': {}
 

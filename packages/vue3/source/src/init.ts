@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 
+import UIMCP from '@lcap/ui-libraries-mcp';
 import '@/global';
 import * as Components from '@/components';
 import * as Libraries from '@/libraries';
@@ -29,6 +30,16 @@ import { createI18nInstance } from './i18n';
 import { setConfig } from './setConfig';
 
 import './index.css';
+
+// 注册组件库MCP JSON
+try {
+  const registerTool = (UIMCP.default ?? UIMCP).registerTool;
+  if (typeof registerTool === 'function' && window.lcapStandardUI?.mcpToolJson) {
+    registerTool(window.lcapStandardUI.mcpToolJson);
+  }
+} catch (error) {
+  console.error('注册组件库MCP JSON失败:', error);
+}
 
 const evalWrap = function (metaData, fnName) {
   metaData && fnName && metaData?.frontendEvents[fnName] && eval(metaData.frontendEvents[fnName]);
