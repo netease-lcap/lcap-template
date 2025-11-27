@@ -1715,7 +1715,7 @@ packages:
     engines: {node: '>=16.20'}
 
   '@lcap/ui-libraries-mcp@file:packages/vue3/source/lcap_modules/@lcap/ui-libraries-mcp@0.0.3/zip.tgz':
-    resolution: {integrity: sha512-EcMMG6nNeqsevrEH7e0WiPoch6rHA2qaAIsH1E7o19NDTMLYcN/9BMWCXynavevshz3fvoWFlurxcIdcfuPHLw==, tarball: file:packages/vue3/source/lcap_modules/@lcap/ui-libraries-mcp@0.0.3/zip.tgz}
+    resolution: {integrity: sha512-Z4CwlHht/MCjU8kRy8wVbqLcXtr3lp9Le2oOtADL3XETxTDUbbLDofuq+K0R6tkfnnckoge5gA+K9JwjXgy2Gg==, tarball: file:packages/vue3/source/lcap_modules/@lcap/ui-libraries-mcp@0.0.3/zip.tgz}
     version: 0.0.5
 
   '@leichtgewicht/ip-codec@2.0.5':
