@@ -1,6 +1,6 @@
 <template>
   <error-boundary>
-    <keep-alive v-if="enableRootKeepAlive">
+    <keep-alive v-if="enableRootKeepAlive" :include="rootKeepAliveInclude" :exclude="rootKeepAliveExclude" :max="rootKeepAliveMax">
       <router-view></router-view>
     </keep-alive>
     <router-view v-else></router-view>
@@ -16,6 +16,17 @@ export default {
     return {
       enableRootKeepAlive: window.LcapEnableRootKeepAlive || false,
     }
+  },
+  computed: {
+    rootKeepAliveInclude() {
+      return this.enableRootKeepAlive?.include;
+    },
+    rootKeepAliveExclude() {
+      return this.enableRootKeepAlive?.exclude;
+    },
+    rootKeepAliveMax() {
+      return this.enableRootKeepAlive?.max;
+    },
   },
   mixins: [localCacheVariableMixin],
   components: {
