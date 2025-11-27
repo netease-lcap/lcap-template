@@ -1,50 +1,45 @@
 <template>
-<view></view>
+  <view></view>
 </template>
 
 <script>
-import { baseUrl } from "../../utils/config"
-import Taro from "@tarojs/taro"
+import Taro from '@tarojs/taro';
 
 export default {
-  data () {
+  data() {
     return {
-      wxScanCode:"",
-    }
+    };
   },
   onLoad(options) {
-    this.init(options);
+    console.log('扫码页面参数', options);
     Taro.scanCode({
-      success:(r)=>{
-        this.wxScanCode = r.result
-        this.handleSave()
+      success: (r) => {
+        const wxScanCode = r.result;
+        this.handleSave(wxScanCode);
       },
-      fail:(error)=>{
+      fail: (error) => {
         Taro.showToast({
           title: '扫码失败',
-          icon:"none"
-        })
-        Taro.navigateBack({
-          delta: 1
+          icon: 'none',
         });
-      }
-    })
+        Taro.navigateBack({
+          delta: 1,
+        });
+      },
+    });
   },
   methods: {
-    init(options) {
-      console.log(options);
-    },
-    handleSave(e) {
-      let pages = Taro.getCurrentPages()
-      let prevPage = pages[pages.length - 2]
-      const { wxScanCode } = this
+    handleSave(wxScanCode) {
+      let pages = Taro.getCurrentPages();
+      let prevPage = pages[pages.length - 2];
       prevPage.setData({
-          userinfo: {wxScanCode},
+        userinfo: { wxScanCode },
+      }, () => {
+        Taro.navigateBack({
+          delta: 1,
         });
-      Taro.navigateBack({
-        delta: 1
       });
-    }
-  }
-}
+    },
+  },
+};
 </script>

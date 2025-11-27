@@ -1,0 +1,10 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["../taro/src/**", "../taro/config/**", "../taro/*.js", "../taro/*.json"],
+      "outputs": ["dist/**", "!.turbo/**"]
+    }
+  }
+}
