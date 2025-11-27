@@ -3,6 +3,7 @@ name: Deploy Test Environment
 on:
   push:
     branches:
+      - test
       - test-v*
 
 jobs:
