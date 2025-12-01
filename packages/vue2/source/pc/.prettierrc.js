@@ -5,6 +5,7 @@ module.exports = {
   tabWidth: 2,
   semi: true,
   singleQuote: true,
+  embeddedLanguageFormatting: 'off',
   overrides: [
     {
       files: '*.vue',
