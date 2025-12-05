@@ -13,7 +13,7 @@ export function createRouterInstance(routes) {
   }
 
   const router = createRouter({
-    history: createHistory(window.LcapMicro?.routePrefix || import.meta.env.BASE_URL),
+    history: createHistory(window.LcapMicro?.routePrefix),
     routes,
   });
 
