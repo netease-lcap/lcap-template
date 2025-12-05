@@ -45,7 +45,10 @@ export async function mount(props) {
     };
   }
 
-  const { container } = props;
+  const { container, routeConfig } = props;
+  if (routeConfig) {
+    window.LcapVueRouterConfig = routeConfig;
+  }
   window.LcapMicro.container = container.querySelector("#app");
   // window.LcapMicro.appendTo = container.querySelector('#app');  // 如果开启了样式隔离，需要设置 appendTo, 弹窗等组件会挂在 container 上。
   window.LcapMicro.props = props;
