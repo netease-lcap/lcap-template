@@ -1,8 +1,8 @@
-import { fetchEventSource, EventSourceMessage } from "@microsoft/fetch-event-source";
-import { genBaseOptions } from "./index";
+import { fetchEventSource, EventSourceMessage } from '@microsoft/fetch-event-source';
+import { genBaseOptions } from './index';
 
 const MAX_RETRY_TIME = 0;
-const EventStreamContentType = "text/event-stream";
+const EventStreamContentType = 'text/event-stream';
 
 export const sseRequester = function (requestInfo) {
   const { url, config = {} } = requestInfo;
@@ -39,8 +39,9 @@ export const sseRequester = function (requestInfo) {
       if (leftRetries < 0) {
         close();
       }
-      const contentType = response.headers.get("content-type");
-      if (contentType !== EventStreamContentType) {
+      const contentType = response.headers.get('content-type');
+      // content-type可能返回包含charset等信息，因此需要包含判断
+      if (!contentType.includes(EventStreamContentType)) {
         throw new Error(`Expected content-type to be ${EventStreamContentType}, Actual: ${contentType}`);
       }
     },
