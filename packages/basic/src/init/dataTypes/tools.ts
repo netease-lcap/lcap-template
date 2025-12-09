@@ -406,8 +406,8 @@ const isTypeMatch = (typeKey, value) => {
 /**
  * 只要保证b需要的属性，a中都有即可
  * 背景：由于兼容后端接口字段大小写后，可能同时存在 name 和 Name 两个字段
- * @param a 运行时的值
- * @param b 类型标注的值
+ * @param a 运行时的值的属性列表
+ * @param b 类型标注的值的属性列表
  * @returns boolean
  */
 function unorderedArrayEqual(a: string[], b: string[]) {
