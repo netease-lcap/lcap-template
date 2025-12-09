@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import momentTZ from 'moment-timezone';
 import moment from 'moment';
-import { flatMap } from 'lodash';
+import { flatMap, difference } from 'lodash';
 import { Helpers } from '../../sdk';
 
 import BigNumber from 'bignumber.js';
@@ -404,24 +404,16 @@ const isTypeMatch = (typeKey, value) => {
 };
 
 /**
- * 只要保证b需要的属性，a中都有即可
+ * 检查数组 a 是否包含数组 b 的所有元素（即 a 是否为 b 的超集）
  * 背景：由于兼容后端接口字段大小写后，可能同时存在 name 和 Name 两个字段
- * @param a 运行时的值的属性列表
- * @param b 类型标注的值的属性列表
- * @returns boolean
+ * @param a 运行时的值的属性列表（超集）
+ * @param b 类型标注的值的属性列表（子集）
+ * @returns boolean - 如果 a 包含 b 的所有元素则返回 true
  */
-function unorderedArrayEqual(a: string[], b: string[]) {
-  let result = true;
-
-  for (let i = 0; i < b.length; i++) {
-    const key = b[i];
-    if (!a.includes(key)) {
-      result = false;
-      break;
-    }
-  }
-
-  return result;
+function isSuperset(a: string[], b: string[]) {
+  // 使用 lodash 的 difference 函数：返回 b 中不在 a 中的元素
+  // 如果返回空数组，说明 b 的所有元素都在 a 中
+  return difference(b, a).length === 0;
 }
 
 /**
@@ -508,7 +500,7 @@ export function exactMatchShapeAgainstDef(value, def: any): boolean {
       typeof value === 'object' &&
       value !== null &&
       Array.isArray(properties) &&
-      unorderedArrayEqual(
+      isSuperset(
         Object.keys(value),
         properties.map((prop) => prop.name),
       )
