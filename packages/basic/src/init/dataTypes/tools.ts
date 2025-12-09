@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import momentTZ from 'moment-timezone';
 import moment from 'moment';
-import { flatMap, xor } from 'lodash';
+import { flatMap } from 'lodash';
 import { Helpers } from '../../sdk';
 
 import BigNumber from 'bignumber.js';
@@ -403,8 +403,25 @@ const isTypeMatch = (typeKey, value) => {
   return isMatch;
 };
 
-function unorderedArrayEqual<T>(a: T[], b: T[]) {
-  return xor(a, b).length === 0;
+/**
+ * 只要保证b需要的属性，a中都有即可
+ * 背景：由于兼容后端接口字段大小写后，可能同时存在 name 和 Name 两个字段
+ * @param a 运行时的值
+ * @param b 类型标注的值
+ * @returns boolean
+ */
+function unorderedArrayEqual(a: string[], b: string[]) {
+  let result = true;
+
+  for (let i = 0; i < b.length; i++) {
+    const key = b[i];
+    if (!a.includes(key)) {
+      result = false;
+      break;
+    }
+  }
+
+  return result;
 }
 
 /**
