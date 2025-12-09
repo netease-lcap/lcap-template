@@ -51,11 +51,9 @@ function transformFileInConnectorBody(data, headers) {
   }
 
   if (hasFile) {
-    const formData = new FormData();
+    const { contentType, ...rest } = data;
 
-    for (const key in data.body) {
-      formData.append(`body.${key}`, data.body[key]);
-    }
+    const formData = traverse(rest);
 
     headers['Content-Type'] = data['contentType'] || 'multipart/form-data';
 
@@ -78,11 +76,7 @@ function transformFileInBody(data, headers) {
   }
 
   if (hasFile) {
-    const formData = new FormData();
-
-    for (const key in data) {
-      formData.append(`${key}`, data[key]);
-    }
+    const formData = traverse(data);
 
     headers['Content-Type'] = 'multipart/form-data';
 
@@ -107,3 +101,17 @@ export default (requestInfo: RequestInfo) => {
 
   return list;
 };
+
+function traverse(obj, parentKey = '', formData = new FormData()) {
+  for (const key in obj) {
+    const value = obj[key];
+    const formKey = parentKey ? `${parentKey}.${key}` : key;
+
+    if (isObject(value) && !isFile(value)) {
+      traverse(value, formKey, formData);
+    } else {
+      formData.append(formKey, value);
+    }
+  }
+  return formData;
+}
