@@ -470,6 +470,11 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
     // 在exactMatchShapeAgainstDef中，不应该去调用isInstanceOf。
     // 此时value未被绑定构造器，因此它会返回错误的值。
     return isInstanceOf(value, genSortedTypeKey(def));
+  } else if (def.typeKind === 'reference') {
+    const resolved = resolveTypeReference(def);
+    if (resolved) {
+      return exactMatchShapeAgainstDef(value, resolved);
+    }
   } else if (def.properties) {
     // 此时 def 既可以为 anonymousStructure 也可以为 Structure/Entity 等等
     const properties = def.properties;
@@ -491,11 +496,6 @@ function exactMatchShapeAgainstDef(value, def: any): boolean {
       });
     }
     return false;
-  } else if (def.typeKind === 'reference') {
-    const resolved = resolveTypeReference(def);
-    if (resolved) {
-      return exactMatchShapeAgainstDef(value, resolved);
-    }
   }
   return false;
 }
