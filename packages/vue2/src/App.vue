@@ -1,6 +1,12 @@
 <template>
   <error-boundary>
-    <keep-alive v-if="enableRootKeepAlive" :include="rootKeepAliveInclude" :exclude="rootKeepAliveExclude" :max="rootKeepAliveMax">
+    <keep-alive 
+      v-if="enableRootKeepAlive"
+      :key="$route.fullPath"
+      :include="rootKeepAliveInclude"
+      :exclude="rootKeepAliveExclude"
+      :max="rootKeepAliveMax"
+    >
       <router-view></router-view>
     </keep-alive>
     <router-view v-else></router-view>
