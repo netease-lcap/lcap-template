@@ -2,12 +2,11 @@
   <error-boundary>
     <keep-alive 
       v-if="enableRootKeepAlive"
-      :key="$route.fullPath"
       :include="rootKeepAliveInclude"
       :exclude="rootKeepAliveExclude"
       :max="rootKeepAliveMax"
     >
-      <router-view></router-view>
+      <router-view :key="$route.fullPath"></router-view>
     </keep-alive>
     <router-view v-else></router-view>
   </error-boundary>
