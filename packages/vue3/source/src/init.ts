@@ -138,7 +138,12 @@ const init = (appConfig, platformConfig, routes, metaData) => {
 
   // rendered 事件
   if (typeof window?.rendered === 'function') {
-    window.rendered();
+    window.rendered({
+      appConfig,
+      platformConfig,
+      routes,
+      metaData,
+    });
   }
 
   // ------ router begin ------
