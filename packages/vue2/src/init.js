@@ -168,7 +168,12 @@ const init = (appConfig, platformConfig, routes, metaData) => {
    * 执行端事件---应用进入时
    */
   if (typeof window?.rendered === 'function') {
-    window.rendered();
+    window.rendered({
+      appConfig,
+      platformConfig,
+      routes,
+      metaData,
+    });
   }
 
   /**
