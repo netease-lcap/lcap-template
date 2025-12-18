@@ -119,7 +119,12 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   }
 
   if (window?.rendered) {
-    window.rendered();
+    window.rendered({
+      appConfig,
+      platformConfig,
+      routes,
+      metaData,
+    });
   }
 
   const baseResourcePaths = platformConfig.baseResourcePaths || [];
