@@ -1052,3 +1052,27 @@ function jsonNameReflection(properties, parsedValue) {
   });
   return parsedValue;
 }
+
+/**
+ * 获取枚举的准确值
+ * 由于翻译器会把枚举值当字符串处理，导致类型不匹配
+ */
+export function getEnumValue(typeKey, value) {
+  const typeDefinition = typeDefinitionMap[typeKey];
+  const { concept, enumItems, valueType } = typeDefinition || {};
+
+  if (concept !== 'Enum') {
+    return value;
+  }
+
+  if (!enumItems?.some((item) => item.value == value)) {
+    return value;
+  }
+
+  const { typeNamespace, typeName } = valueType || {};
+  if (`${typeNamespace}.${typeName}` === 'nasl.core.Long') {
+    return +value;
+  }
+
+  return value;
+}

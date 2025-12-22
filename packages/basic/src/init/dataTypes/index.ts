@@ -3,7 +3,7 @@ import { processPorts } from '../process';
 import Config from '../../config';
 import Global from '../../global';
 
-import { initApplicationConstructor, genInitData, isInstanceOf, genSortedTypeKey } from './tools';
+import { initApplicationConstructor, genInitData, isInstanceOf, genSortedTypeKey, getEnumValue } from './tools';
 import * as Utils from './utils';
 import * as Tools from './tools';
 import * as wx from './wx';
@@ -14,6 +14,7 @@ function initDataTypes(options) {
   initApplicationConstructor(dataTypesMap, genInitFromSchema);
 
   // 一定要放在getFrontendVariables之前，因为Vue应用翻译的代码会用到这个
+  Config.globalProperties.set('$getEnumValue', getEnumValue);
   Config.globalProperties.set('$genInitFromSchema', genInitFromSchema);
   const { frontendVariables, localCacheVariableSet } = getFrontendVariables(options);
 
