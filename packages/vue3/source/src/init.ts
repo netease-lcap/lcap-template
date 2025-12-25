@@ -90,7 +90,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   if (metaData && metaData.frontendEvents) {
     for (let index = 0; index < endEventLists.length; index++) {
       const name = endEventLists[index];
-      if (name && metaData.frontendEvents[name]) {
+      if (metaData.frontendEvents[name]) {
         const evalWrap = function (code: string) {
           code && eval(code);
         };
