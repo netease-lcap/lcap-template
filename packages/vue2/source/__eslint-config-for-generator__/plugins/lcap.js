@@ -15,6 +15,7 @@ module.exports = {
     'no-useless-escape': require('./rules/no-useless-escape.js'),
     'no-undef': require('./rules/no-undef.js'),
     'prefer-const': require('./rules/prefer-const.js'),
+    'redundant-await': require('./rules/redundant-await.js'),
 
     'vue-no-useless-template-attributes': require('./rules/vue/no-useless-template-attributes.js'),
     'vue-no-unused-vars': require('./rules/vue/no-unused-vars.js'),
