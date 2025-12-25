@@ -3,6 +3,7 @@
   "version": "2.2.0",
   "description": "base on vue3",
   "scripts": {
+    "postinstall": "node ./scripts/postinstall.js",
     "prebuild": "rm -rf dist",
     "build": "rspack build --config ./build/rspack.config.js && node ./scripts/build.js",
     "deploy": "node ./scripts/deploy.js",
@@ -16,7 +17,6 @@
   "license": "MIT",
   "dependencies": {
     "@lcap/basic-template": "workspace:*",
-    "@lcap/ui-libraries-mcp": "./source/lcap_modules/@lcap/ui-libraries-mcp@0.0.3/zip.tgz",
     "pinia": "2.3.1",
     "vue": "3.5.13",
     "vue-router": "4.5.0",
@@ -29,5 +29,8 @@
     "@rspack/cli": "1.3.10",
     "@rspack/core": "1.3.10",
     "vue-loader": "17.4.2"
+  },
+  "lcap_modules": {
+    "@lcap/ui-libraries-mcp": "./source/lcap_modules/@lcap/ui-libraries-mcp@0.0.3/zip.tgz"
   }
 }
