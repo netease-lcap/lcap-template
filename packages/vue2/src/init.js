@@ -76,7 +76,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   if (metaData && metaData.frontendEvents) {
     for (let index = 0; index < endEventLists.length; index++) {
       const name = endEventLists[index];
-      if (metaData && name && metaData.frontendEvents[name]) {
+      if (metaData.frontendEvents[name]) {
         // 事件函数中的this指向Vue.prototype
         unsafeEval.bind(Vue.prototype)(metaData.frontendEvents[name]);
         Vue.prototype[name] = window[name];
