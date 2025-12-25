@@ -6,7 +6,7 @@
   </VErrorBoundary>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import VErrorBoundary from './VErrorBoundary.vue';
 import { getUserLanguage } from './i18n';
 import { useInitDataPermission } from './hooks';

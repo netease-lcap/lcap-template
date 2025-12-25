@@ -10,7 +10,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onErrorCaptured, onBeforeUnmount } from 'vue';
 
 const props = defineProps({
@@ -27,7 +27,7 @@ let timeoutId = null;
 
 onErrorCaptured((err, vm, info) => {
   // 仅在 dev 环境下捕获 render 错误
-  if (appInfo.env === 'dev' && ['render'].includes(info)) {
+  if (window.appInfo.env === 'dev' && ['render'].includes(info)) {
     console.log('errorCaptured: 👇');
     console.log('err:', err);
     console.log('vm:', vm);

@@ -1,5 +1,5 @@
 import AuthPlugin from './auth';
-import DataTypesPlugin from './dataTypes';
+import DataTypesPlugin from './data-types';
 import LogicsPlugin from './logic';
 import RouterPlugin from './router';
 import ServicesPlugin from './service';
