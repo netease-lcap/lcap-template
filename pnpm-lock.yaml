@@ -1718,8 +1718,8 @@ packages:
     engines: {node: '>=16.20'}
 
   '@lcap/ui-libraries-mcp@file:packages/vue3/source/lcap_modules/@lcap/ui-libraries-mcp@0.0.3/zip.tgz':
-    resolution: {integrity: sha512-Z4CwlHht/MCjU8kRy8wVbqLcXtr3lp9Le2oOtADL3XETxTDUbbLDofuq+K0R6tkfnnckoge5gA+K9JwjXgy2Gg==, tarball: file:packages/vue3/source/lcap_modules/@lcap/ui-libraries-mcp@0.0.3/zip.tgz}
-    version: 0.0.5
+    resolution: {integrity: sha512-OldB53kH3qToisvn2GSfNpX4EUcGZc+L3Jrq0Atn6GN4X1a7mDbYCHIBuzZ3lSzvkHwDSj4Q7jZrrIDzIKR6+Q==, tarball: file:packages/vue3/source/lcap_modules/@lcap/ui-libraries-mcp@0.0.3/zip.tgz}
+    version: 0.0.7
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
