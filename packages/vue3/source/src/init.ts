@@ -34,8 +34,8 @@ import './index.css';
 // 注册组件库MCP JSON
 try {
   const registerTool = UIMCP.registerTool;
-  if (typeof registerTool === 'function' && window.lcapStandardUI?.mcpToolJson) {
-    registerTool(window.lcapStandardUI.mcpToolJson?.tools);
+  if (typeof registerTool === 'function' && window.lcapStandardUI?.mcpToolJson?.result?.tools) {
+    registerTool(window.lcapStandardUI.mcpToolJson?.result?.tools);
   }
 } catch (error) {
   console.error('注册组件库MCP JSON失败:', error);
