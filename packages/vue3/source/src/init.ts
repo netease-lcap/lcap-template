@@ -23,7 +23,7 @@ import {
   findNoAuthView,
 } from '@/common';
 import { installComponents, installDirectives, installLibraries } from '@/common/utils';
-import { getTitleGuard } from '@/guards';
+import { getTitleGuard } from '@/router/guards';
 
 import App from './App.vue';
 import { createI18nInstance } from './i18n';
