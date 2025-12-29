@@ -6,7 +6,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 const ClientLazyloadTemplate = require('./client-lazyload-template');
 const LcapPlugin = require('./rspack/plugins/lcap');
 const MissingCssFallbackPlugin = require('./rspack/plugins/missing-css-fallback');
-const MissingJsFallbackPlugin = require('./rspack/plugins/missing-js-fallback');
+const MissingFileFallbackPlugin = require('./rspack/plugins/missing-file-fallback');
 
 // 会被替换成真实服务端地址，形如 http://dev.pagetest.defaulttenant.lcap.hatest.163yun.com
 const backendUrl = '';
@@ -102,7 +102,7 @@ module.exports = defineConfig({
       pattern: /\/dist-theme\/index\.css$/,
       fallbackContent: '/* CSS theme file not found, using empty fallback */'
     }),
-    new MissingJsFallbackPlugin(),
+    new MissingFileFallbackPlugin(),
     // LcapPlugin start
 		new LcapPlugin({
       isDev,
