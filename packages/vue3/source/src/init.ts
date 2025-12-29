@@ -30,8 +30,6 @@ import { createI18nInstance } from './i18n';
 import { setConfig } from './setConfig';
 import { setFavicon } from './utils';
 
-import './index.css';
-
 // 注册组件库MCP JSON
 try {
   const registerTool = UIMCP.registerTool;

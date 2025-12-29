@@ -4,6 +4,8 @@ import { routes } from './router';
 import platformConfig from './platform.config';
 import i18nInfo from './language';
 
+import './style/theme.css';
+
 let app: any = null;
 
 export async function renderApp() {
