@@ -68,6 +68,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
 
   if (window.LcapMicro?.container) {
     if (
+      window.ICESTARK &&
       document.currentScript &&
       (!document.head.contains(document.currentScript) || document.currentScript.active === false)
     )
