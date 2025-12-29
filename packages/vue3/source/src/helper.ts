@@ -8,7 +8,9 @@ let app: any = null;
 
 export async function renderApp() {
   // 写入国际化配置
-  platformConfig.appConfig.i18nInfo = i18nInfo;
+  if (i18nInfo) {
+    platformConfig.appConfig.i18nInfo = i18nInfo;
+  }
 
   app = await cloudAdminDesigner.init(platformConfig?.appConfig, platformConfig, routes, metaData);
   window.createLcapApp = renderApp;
