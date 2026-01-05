@@ -1,6 +1,6 @@
 {
   "name": "@lcap/vue3-template",
-  "version": "2.2.0",
+  "version": "2.4.0",
   "description": "base on vue3",
   "scripts": {
     "postinstall": "node ./scripts/postinstall.js",
@@ -17,6 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "@lcap/basic-template": "workspace:*",
+    "@vue/compiler-dom": "3.5.13",
     "pinia": "2.3.1",
     "vue": "3.5.13",
     "vue-router": "4.5.0",
