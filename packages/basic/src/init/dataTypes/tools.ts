@@ -24,6 +24,17 @@ function tryJSONParse(str) {
 export const typeDefinitionMap = new Map();
 const typeMap = new Map();
 
+/**
+ * 枚举映射表
+ * key: typeKey 例如：app.enums.Enum1
+ * value: {
+ *   value: number|string; // 枚举值
+ *   label: string; // 枚举标签
+ * }
+ *
+ */
+export const enumsMap = {};
+
 // 生成typeKey
 export function genSortedTypeKey(typeAnnotation) {
   const { typeKind, typeNamespace, typeName, typeArguments, properties } = typeAnnotation || {};
@@ -217,6 +228,21 @@ export function initApplicationConstructor(dataTypesMap, genInitFromSchema) {
   if (dataTypesMap) {
     for (const typeKey in dataTypesMap) {
       genConstructor(typeKey, dataTypesMap[typeKey], genInitFromSchema);
+
+      // 枚举特殊处理，生成枚举映射表
+      const typeDefinition = dataTypesMap[typeKey];
+      const { concept, enumItems } = typeDefinition || {};
+      if (concept === 'Enum') {
+        const enumItemMap = {};
+        enumItems?.forEach((enumItem) => {
+          enumItemMap[enumItem.value] = {
+            value: enumItem.value,
+            item: enumItem.value,
+            text: enumItem.label?.value,
+          };
+        });
+        enumsMap[typeKey] = enumItemMap;
+      }
     }
   }
 }
@@ -1051,28 +1077,4 @@ function jsonNameReflection(properties, parsedValue) {
     delete parsedValue[jsonName];
   });
   return parsedValue;
-}
-
-/**
- * 获取枚举的准确值
- * 由于翻译器会把枚举值当字符串处理，导致类型不匹配
- */
-export function getEnumValue(typeKey, value) {
-  const typeDefinition = typeDefinitionMap[typeKey];
-  const { concept, enumItems, valueType } = typeDefinition || {};
-
-  if (concept !== 'Enum') {
-    return value;
-  }
-
-  if (!enumItems?.some((item) => item.value == value)) {
-    return value;
-  }
-
-  const { typeNamespace, typeName } = valueType || {};
-  if (`${typeNamespace}.${typeName}` === 'nasl.core.Long') {
-    return +value;
-  }
-
-  return value;
 }
