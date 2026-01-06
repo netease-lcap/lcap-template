@@ -24,6 +24,17 @@ function tryJSONParse(str) {
 export const typeDefinitionMap = new Map();
 const typeMap = new Map();
 
+/**
+ * 枚举映射表
+ * key: typeKey 例如：app.enums.Enum1
+ * value: {
+ *   value: number|string; // 枚举值
+ *   label: string; // 枚举标签
+ * }
+ *
+ */
+export const enumsMap = {};
+
 // 生成typeKey
 export function genSortedTypeKey(typeAnnotation) {
   const { typeKind, typeNamespace, typeName, typeArguments, properties } = typeAnnotation || {};
@@ -217,6 +228,21 @@ export function initApplicationConstructor(dataTypesMap, genInitFromSchema) {
   if (dataTypesMap) {
     for (const typeKey in dataTypesMap) {
       genConstructor(typeKey, dataTypesMap[typeKey], genInitFromSchema);
+
+      // 枚举特殊处理，生成枚举映射表
+      const typeDefinition = dataTypesMap[typeKey];
+      const { concept, enumItems } = typeDefinition || {};
+      if (concept === 'Enum') {
+        const enumItemMap = {};
+        enumItems?.forEach((enumItem) => {
+          enumItemMap[enumItem.value] = {
+            value: enumItem.value,
+            item: enumItem.value,
+            text: enumItem.label?.value,
+          };
+        });
+        enumsMap[typeKey] = enumItemMap;
+      }
     }
   }
 }
