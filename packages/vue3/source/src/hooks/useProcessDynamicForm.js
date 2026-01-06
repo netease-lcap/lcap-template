@@ -47,10 +47,15 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
 
         onMounted(() => {
           // 在这里可以访问到 $refs
-          window.__processDetailFromMixinFormVm__ = refs.processFormRef.value;
+          window.__processDetailFromMixinFormVm__ = refs.processFormRef?.value;
           Object.keys(refs).forEach((key) => {
             $refs[key] = refs[key].value;
           });
+        })
+
+        onUnmounted(() => {
+          window.__processDetailFromMixinFormVm__ = null;
+          window.__processDetailFromMixinFormData__ = null;
         })
 
         return Object.assign({
@@ -260,7 +265,7 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
   }
 
   function reRenderForm ({fieldReplTemplates, isSubForm, formData, parentElement, formTemplate}) {
-    for (let i = 0; i <= fieldReplTemplates.length; i++) {
+    for (let i = 0; i < fieldReplTemplates.length; i++) {
       const { propertyName, origin, replace } = fieldReplTemplates[i] || {};
       // step1: 如果上一次渲染失败，更换为替换模版
       if (needReplaced.value && i > 0) {
@@ -273,7 +278,7 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
       }
       // step2: 如果子表单的首次渲染失败，则不在继续替换后续模版，直接取消掉该子表单的渲染
       if (isSubForm && needReplaced.value && i === 1) {
-        for (let j = 1; j <= fieldReplTemplates.length; j++) {
+        for (let j = 1; j < fieldReplTemplates.length; j++) {
           fieldReplTemplates[j].isError = true;
         }
         break;
@@ -339,32 +344,38 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
     const container = document.getElementById('dynamicRenderContainer');
     if (!container) return;
     // 先创建一个空div替换dynamicRenderContainer
-    var parentElement = container.parentNode;
+    const parentElement = container.parentNode;
     const divEl = document.createElement('div');
     parentElement.insertBefore(divEl, container);
     parentElement.removeChild(container);
 
-    const templateData = await getTemplate();
-    if (!formTemplate.value) return;
+    try {
+      const templateData = await getTemplate();
+      if (!formTemplate.value) return;
 
-    // 先渲染，如果报错，再一个个item渲染，去除报错的item
-    dynamicRender({ formData: templateData.formData, parentElement: divEl, template: formTemplate.value });
+      // 先渲染，如果报错，再一个个item渲染，去除报错的item
+      dynamicRender({ formData: templateData.formData, parentElement: divEl, template: formTemplate.value });
 
-    if (needReplaced.value) {
-      reDynamicRenderForm({
-        templateData,
-        parentElement: divEl,
-      });
-    }
-    if (templateData.processVars && templateData.formData) {
-      const processVarsKeys = Object.keys(templateData.processVars);
-      const data = {};
-      for (const key in templateData.formData) {
-        if (!processVarsKeys.includes(key)) {
-          data[key] = templateData.formData[key];
-        }
+      if (needReplaced.value) {
+        reDynamicRenderForm({
+          templateData,
+          parentElement: divEl,
+        });
       }
-      window.__processDetailFromMixinFormData__ = data;
+      if (templateData.processVars && templateData.formData) {
+        const processVarsKeys = Object.keys(templateData.processVars);
+        const data = {};
+        for (const key in templateData.formData) {
+          if (!processVarsKeys.includes(key)) {
+            data[key] = templateData.formData[key];
+          }
+        }
+        window.__processDetailFromMixinFormData__ = data;
+      }
+    } catch (error) {
+      console.error('动态渲染表单失败：', error);
+      window.__processDetailFromMixinFormData__ = null;
+      window.__processDetailFromMixinFormVm__ = null;
     }
   }
 
