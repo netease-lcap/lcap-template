@@ -51,7 +51,7 @@ window.$sleep = function () {
   });
 };
 
-const init = (appConfig, platformConfig, routes, metaData) => {
+const init = async (appConfig, platformConfig, routes, metaData) => {
   // 写入favicon
   if (platformConfig?.documentIcon) {
     let link = document.querySelector("link[rel='icon']");
@@ -138,7 +138,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
 
   // rendered 事件
   if (typeof window?.rendered === 'function') {
-    window.rendered({
+    await window.rendered({
       appConfig,
       platformConfig,
       routes,
