@@ -205,14 +205,16 @@ var json_parse = function (options) {
         // Bignumber has stricter check: everything with length > 15 digits disallowed
         // if (string.length > 15)
         // if (number > 9007199254740992 || number < -9007199254740992)
-        if (!Number.isSafeInteger(number))
+
+        if (Number.isInteger(number) && !Number.isSafeInteger(number)) {
           return _options.storeAsString ? string : _options.useNativeBigInt ? BigInt(string) : new BigNumber(string);
-        else
+        } else {
           return !_options.alwaysParseAsBig
             ? number
             : _options.useNativeBigInt
               ? BigInt(number)
               : new BigNumber(number);
+        }
       }
     },
     string = function () {
