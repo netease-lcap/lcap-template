@@ -347,6 +347,7 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
       dynamicRender({ formData: templateData.formData, parentElement, template: formTemplate.value });
   }
 
+  let renderedContainer = null;
   async function handleRenderForm() {
     const container = document.getElementById('dynamicRenderContainer');
     if (!container) return;
@@ -355,6 +356,7 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
     const divEl = document.createElement('div');
     parentElement.insertBefore(divEl, container);
     parentElement.removeChild(container);
+    renderedContainer = divEl;
 
     try {
       const templateData = await getTemplate();
@@ -388,5 +390,12 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
 
   onMounted(() => {
     handleRenderForm();
+  });
+
+  onUnmounted(() => {
+    if (renderedContainer) {
+      VueModule.render(null, renderedContainer);
+      renderedContainer = null;
+    }
   });
 }
