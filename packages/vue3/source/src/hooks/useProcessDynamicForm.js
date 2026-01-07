@@ -26,6 +26,15 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
     const componentKeys = Object.keys(instance.setupState).filter((key) => !!instance.setupState[key]?.setup);
     const components = {};
     componentKeys.forEach((key) => components[key] = instance.setupState[key]);
+    const { code } = compileTemplate({
+      source: template,
+      compilerOptions: {
+        mode: 'function',
+      },
+      filename: 'processDynamicForm.vue',
+      id: 'process-dynamic-form',
+    });
+    const wrappedCode = (code || '').replace(/export\s+\{[^}]*\};?/g, '') + '\nreturn render;';
     const DynamicComponent = VueModule.defineComponent({
       name: 'DynamicComponent',
       props: ['i18n'],
@@ -64,16 +73,7 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
       },
       components,
       render(_ctx) {
-        const { code } = compileTemplate({
-          source: template,
-          compilerOptions: {
-            mode: 'function',
-          },
-          filename: 'processDynamicForm.vue',
-          id: 'process-dynamic-form',
-        });
-        const wrapped = (code || '').replace(/export\s+\{[^}]*\};?/g, '') + '\nreturn render;';
-        const renderComponent = new Function('Vue', wrapped)(VueModule);
+        const renderComponent = new Function('Vue', wrappedCode)(VueModule);
         const _ctxData = Object.assign({ 
           $t: $i18n.t,
           $utils: window.$utils,
@@ -121,13 +121,14 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
         return startIndex;
       } else if (['readOnly', 'preview'].includes(permission)) {
         let newItemStr = itemStr;
-        if (itemStr.includes(':preview')) {
-          const match = itemStr.match(/:preview="([^"]+)"/);
+        const formItemDisplayAttrValue = processData?.formItemDisplayAttrValue || 'preview';
+        if (itemStr.includes(`:${formItemDisplayAttrValue}`)) {
+          const match = itemStr.match(new RegExp(`:${formItemDisplayAttrValue}="([^"]+)"`));
           if (match && match[0]) {
-            newItemStr = itemStr.replace(match[0], `:preview="true" `);
+            newItemStr = itemStr.replace(match[0], `:${formItemDisplayAttrValue}="true" `);
           }
-        } else if (!itemStr.includes(':preview')) {
-          newItemStr = itemStr.replace(fieldStr, `${fieldStr} :preview="true" `);
+        } else if (!itemStr.includes(`:${formItemDisplayAttrValue}`)) {
+          newItemStr = itemStr.replace(fieldStr, `${fieldStr} :${formItemDisplayAttrValue}="true" `);
         }
         formTemplate.value = formTemplate.value.replace(itemStr, newItemStr);
         itemStr = newItemStr;
@@ -180,6 +181,9 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
   async function getTemplate() {
     const taskId = instance?.setupState?.state?.taskId;
     if (!taskId) return;
+    if (!window.$systemProcessV2) {
+      return;
+    }
     let templateProcessDetailFrom = await window.$systemProcessV2.getProcessFormDefinition({
       body: { taskId }
     })
