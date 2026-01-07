@@ -1,5 +1,5 @@
 import { onMounted, onUnmounted, ref, reactive, inject, useTemplateRef } from 'vue';
-import { compile } from '@vue/compiler-dom';
+import { compileTemplate } from 'vue/compiler-sfc';
 import * as VueModule from 'vue';
 
 /**
@@ -64,9 +64,16 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
       },
       components,
       render(_ctx) {
-        const { code } = compile(template);
-        const renderComponent = new Function('Vue', '$t', code)(VueModule, $i18n.t);
-        const _ctxData = Object.assign({}, _ctx, instance.setupState);
+        const { code } = compileTemplate({
+          source: template,
+          compilerOptions: {
+            mode: 'function',
+          },
+          filename: 'processDynamicForm.vue',
+          id: 'process-dynamic-form',
+        });
+        const renderComponent = new Function('Vue', code)(VueModule);
+        const _ctxData = Object.assign({ $t: $i18n.t }, _ctx, instance.setupState);
         return renderComponent(_ctxData);
       },
     });
