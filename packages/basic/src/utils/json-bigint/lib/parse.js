@@ -205,14 +205,26 @@ var json_parse = function (options) {
         // Bignumber has stricter check: everything with length > 15 digits disallowed
         // if (string.length > 15)
         // if (number > 9007199254740992 || number < -9007199254740992)
-        if (!Number.isSafeInteger(number))
-          return _options.storeAsString ? string : _options.useNativeBigInt ? BigInt(string) : new BigNumber(string);
-        else
+
+        let isSafeNumber = Number.isSafeInteger(number);
+        // 再次检查，防止小数被误判
+        if (!isSafeNumber && !Number.isInteger(number)) {
+          const min = Number.MIN_SAFE_INTEGER ?? -9007199254740991;
+          const max = Number.MAX_SAFE_INTEGER ?? 9007199254740991;
+          if (number >= min && number <= max) {
+            isSafeNumber = true;
+          }
+        }
+
+        if (isSafeNumber) {
           return !_options.alwaysParseAsBig
             ? number
             : _options.useNativeBigInt
               ? BigInt(number)
               : new BigNumber(number);
+        } else {
+          return _options.storeAsString ? string : _options.useNativeBigInt ? BigInt(string) : new BigNumber(string);
+        }
       }
     },
     string = function () {
