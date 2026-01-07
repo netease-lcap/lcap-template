@@ -72,9 +72,13 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
           filename: 'processDynamicForm.vue',
           id: 'process-dynamic-form',
         });
-        const renderComponent = new Function('Vue', code)(VueModule);
-        const _ctxData = Object.assign({ $t: $i18n.t }, _ctx, instance.setupState);
-        return renderComponent(_ctxData);
+        const wrapped = (code || '').replace(/export\s+\{[^}]*\};?/g, '') + '\nreturn render;';
+        const renderComponent = new Function('Vue', wrapped)(VueModule);
+        const _ctxData = Object.assign({ 
+          $t: $i18n.t,
+          $utils: window.$utils,
+        }, _ctx, instance.setupState);
+        return renderComponent(_ctxData, []);
       },
     });
     return DynamicComponent;
