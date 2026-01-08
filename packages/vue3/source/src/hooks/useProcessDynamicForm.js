@@ -8,7 +8,7 @@ import * as VueModule from 'vue';
  * name
  * processPrefixValue
  */
-export function useProcessDynamicForm({ instance, processData, $i18n, frontend, $refs }) {
+export function useProcessDynamicForm({ instance, processData, frontend }) {
 
   const formTemplate = ref('');
   const needReplaced = ref(false);
@@ -23,9 +23,6 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
   }
 
   function defineProcessFormComponent({ template, formData }) {
-    const componentKeys = Object.keys(instance.setupState).filter((key) => !!instance.setupState[key]?.setup);
-    const components = {};
-    componentKeys.forEach((key) => components[key] = instance.setupState[key]);
     const { code } = compileTemplate({
       source: template,
       compilerOptions: {
@@ -38,7 +35,7 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
     const DynamicComponent = VueModule.defineComponent({
       name: 'DynamicComponent',
       props: ['i18n'],
-      setup(_props, _ctx) {
+      setup() {
         const processDetailFormData = instance.setupState.processDetailFormData;
         Object.assign(processDetailFormData, formData);
 
@@ -58,7 +55,9 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
           // 在这里可以访问到 $refs
           window.__processDetailFromMixinFormVm__ = refs.processFormRef?.value;
           Object.keys(refs).forEach((key) => {
-            $refs[key] = refs[key].value;
+            if (instance.setupState?.$refs) {
+              instance.setupState.$refs[key] = refs[key].value;
+            }
           });
         })
 
@@ -71,11 +70,11 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
           processDetailFormData,
         },instance.setupState) 
       },
-      components,
+      components: instance.components || {},
       render(_ctx) {
         const renderComponent = new Function('Vue', wrappedCode)(VueModule);
         const _ctxData = Object.assign({ 
-          $t: $i18n.t,
+          $t: instance?.setupState?.$i18n?.t,
           $utils: window.$utils,
         }, _ctx, instance.setupState);
         return renderComponent(_ctxData, []);
@@ -268,8 +267,7 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
       template,
       formData,
     });
-    const i18n = instance.appContext.config.globalProperties.$i18n;
-    const vnode = VueModule.h(processFormComponent, { i18n });
+    const vnode = VueModule.h(processFormComponent);
     try {
       VueModule.render(vnode, parentElement);
       needReplaced.value = false;
