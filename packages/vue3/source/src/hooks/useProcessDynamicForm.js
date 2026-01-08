@@ -23,9 +23,6 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
   }
 
   function defineProcessFormComponent({ template, formData }) {
-    const componentKeys = Object.keys(instance.setupState).filter((key) => !!instance.setupState[key]?.setup);
-    const components = {};
-    componentKeys.forEach((key) => components[key] = instance.setupState[key]);
     const { code } = compileTemplate({
       source: template,
       compilerOptions: {
@@ -38,7 +35,7 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
     const DynamicComponent = VueModule.defineComponent({
       name: 'DynamicComponent',
       props: ['i18n'],
-      setup(_props, _ctx) {
+      setup() {
         const processDetailFormData = instance.setupState.processDetailFormData;
         Object.assign(processDetailFormData, formData);
 
@@ -71,7 +68,7 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
           processDetailFormData,
         },instance.setupState) 
       },
-      components,
+      components: instance.components || {},
       render(_ctx) {
         const renderComponent = new Function('Vue', wrappedCode)(VueModule);
         const _ctxData = Object.assign({ 
@@ -268,8 +265,7 @@ export function useProcessDynamicForm({ instance, processData, $i18n, frontend, 
       template,
       formData,
     });
-    const i18n = instance.appContext.config.globalProperties.$i18n;
-    const vnode = VueModule.h(processFormComponent, { i18n });
+    const vnode = VueModule.h(processFormComponent);
     try {
       VueModule.render(vnode, parentElement);
       needReplaced.value = false;
