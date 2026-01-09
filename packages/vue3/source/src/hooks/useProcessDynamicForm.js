@@ -85,7 +85,7 @@ export function useProcessDynamicForm({ instance, processData, frontend }) {
 
   function sliceStrByTag(tag, referIndex, startIndex = 0, endIndex = Infinity) {
     const sliceEndIndex = (() => {
-      const regex = new RegExp(`</${tag}[a-zA-Z-]+>`);
+      const regex = new RegExp(`</${tag}(?:[a-zA-Z0-9-]*)>`);
       const match = formTemplate.value.slice(referIndex).match(regex);
       return match ? referIndex + match.index + match[0].length : -1;
     })();
@@ -145,7 +145,7 @@ export function useProcessDynamicForm({ instance, processData, frontend }) {
     const tag = 'el-table';
     let tableStartIndex = -1;
     let tableEndIndex = -1;
-    const reg = new RegExp(`dataSource(?:\\.sync)?="[^"]*processDetailFormData[^"]*\\.${relationDataName}"`, 'g');
+    const reg = new RegExp(`(?:\\v-model:)?dataSource="[^"]*processDetailFormData[^"]*\\.${relationDataName}"`, 'g');
     const match = formTemplate.value.match(reg);
     if (match && match.length) {
       const relationDataStr = match[0], relationDataStrIndex = formTemplate.value.indexOf(relationDataStr);
