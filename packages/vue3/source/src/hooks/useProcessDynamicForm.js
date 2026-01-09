@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
+import { onMounted, onUnmounted, ref, useTemplateRef, nextTick } from 'vue';
 import { compileTemplate } from 'vue/compiler-sfc';
 import * as VueModule from 'vue';
 
@@ -355,6 +355,7 @@ export function useProcessDynamicForm({ instance, processData, frontend }) {
 
   let renderedContainer = null;
   async function handleRenderForm() {
+    await nextTick();
     const container = document.getElementById('dynamicRenderContainer');
     if (!container) return;
     // 先创建一个空div替换dynamicRenderContainer
