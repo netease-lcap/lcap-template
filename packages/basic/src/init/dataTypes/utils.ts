@@ -92,8 +92,10 @@ export function isIn<T>(a: T, b: string | T[] | Record<string, any>): boolean {
 }
 
 export function like(a: string, b: string) {
-  const anyChar = '(.|[\r\n])';
   let pattern = b;
+
+  // 转义\_和\%
+  pattern = pattern.replace(/[\\]_/g, '_').replace(/[\\]%/g, '%');
 
   /**
    * 正则原有的特殊字符转义
@@ -101,15 +103,15 @@ export function like(a: string, b: string) {
    **/
   pattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+  // 替换_和%
+  const anyChar = '(.|[\r\n])';
   pattern = pattern
-    .replace(/([^\\])_/, ($0, $1) => {
+    .replace(/([^\\])_/g, ($0, $1) => {
       return $1 + anyChar;
     })
-    .replace(/([^\\])%/, ($0, $1) => {
+    .replace(/([^\\])%/g, ($0, $1) => {
       return $1 + anyChar + '*';
-    })
-    .replace(/[\\]_/, '_')
-    .replace(/[\\]%/, '%');
+    });
 
   const reg = new RegExp(`${pattern}`);
   return reg.test(a);
