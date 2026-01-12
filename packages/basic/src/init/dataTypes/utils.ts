@@ -95,6 +95,12 @@ export function like(a: string, b: string) {
   const anyChar = '(.|[\r\n])';
   let pattern = b;
 
+  /**
+   * 正则原有的特殊字符转义
+   * https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Regular_expressions#escaping
+   **/
+  pattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
   pattern = pattern
     .replace(/([^\\])_/, ($0, $1) => {
       return $1 + anyChar;
@@ -104,12 +110,6 @@ export function like(a: string, b: string) {
     })
     .replace(/[\\]_/, '_')
     .replace(/[\\]%/, '%');
-
-  /**
-   * 正则原有的特殊字符转义
-   * https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Regular_expressions#escaping
-   **/
-  pattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
   const reg = new RegExp(`${pattern}`);
   return reg.test(a);
