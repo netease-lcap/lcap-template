@@ -42,7 +42,6 @@ class MissingFileFallbackPlugin {
                 throw new Error('File not found');
               }
             } catch (e) {
-              // 文件不存在，创建一个内联模块
               console.log(`[MissingFileFallbackPlugin] file not found: ${originalRequest}, using fallback`);
 
               resource.request = fallbackFilesFn(originalRequest);
