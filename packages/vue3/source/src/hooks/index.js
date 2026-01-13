@@ -5,3 +5,4 @@ export * from './watch-props';
 export * from './refs';
 export * from './element-state-prop';
 export * from './data-permission';
+export * from './process-dynamic-form';

@@ -33,8 +33,8 @@ import { setFavicon } from './utils';
 // 注册组件库MCP JSON
 try {
   const registerTool = UIMCP.registerTool;
-  if (typeof registerTool === 'function' && window.lcapStandardUI?.mcpToolJson) {
-    registerTool(window.lcapStandardUI.mcpToolJson?.tools);
+  if (typeof registerTool === 'function' && window.lcapStandardUI?.mcpToolJson?.result?.tools) {
+    registerTool(window.lcapStandardUI.mcpToolJson?.result.tools);
   }
 } catch (error) {
   console.error('注册组件库MCP JSON失败:', error);
@@ -122,7 +122,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
 
   // rendered 事件
   if (typeof window?.rendered === 'function') {
-    window.rendered({
+    await window.rendered({
       appConfig,
       platformConfig,
       routes,
