@@ -40,7 +40,7 @@ try {
   console.error('注册组件库MCP JSON失败:', error);
 }
 
-const init = (appConfig, platformConfig, routes, metaData) => {
+const init = async (appConfig, platformConfig, routes, metaData) => {
   /**
    * 合并应用配置和平台配置至window.appInfo
    */
