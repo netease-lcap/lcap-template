@@ -1517,7 +1517,7 @@ export class Utils {
 
     const matches = str.match(new RegExp(pattern, flags)) || [];
 
-    return [matches[0]];
+    return matches ? [matches[0]] : [];
   }
 
   /**
