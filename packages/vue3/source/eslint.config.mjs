@@ -3,29 +3,22 @@ import pluginVue from 'eslint-plugin-vue';
 import vueTsEslintConfig from '@vue/eslint-config-typescript';
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
 import globals from './eslint-config/globals.js';
-import PluginLCAP from './eslint-config/plugins/lcap.js';
+import BaseRules from './eslint-config/rules/base/index.js';
+import VueRules from './eslint-config/rules/vue.js';
 
 export default [
   {
     name: 'app/files-to-lint',
-    files: ['src/views/**/*.{js,jsx,ts,tsx,vue}', 'src/components/**/*.{js,jsx,ts,tsx,vue}'],
+    files: ['src/**/*.{js,jsx,ts,tsx,vue}'],
   },
 
   {
     name: 'app/files-to-ignore',
     ignores: [
-      '**/dist/**',
-      '**/public/**',
-      '**/packages/**',
-      '**/common/**',
-      '**/assets/**',
-      '**/metaData/**',
-      '**/plugins/**',
-      '**/router/**',
-      'src/platform.config.json',
-      'src/metaData.js',
-      'rspack.config.js',
-      'eslint.config.mjs',
+      'dist/',
+      'node_modules/',
+      'eslint-config/',
+      'scripts/',
     ],
   },
 
@@ -44,27 +37,10 @@ export default [
         appInfo: 'writable'
       },
     },
-    plugins: {
-      lcap: PluginLCAP,
-    },
     rules: {
-      'vue/no-useless-template-attributes': 'off',
-      'vue/multi-word-component-names': 'off',
-      'vue/block-lang': 'off',
-      'vue/valid-v-slot': 'off',
-      'import/no-unresolved': 'off',
-      '@typescript-eslint/no-unused-expressions': 'off',
-      '@typescript-eslint/ban-ts-comment': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
-
-      'no-unused-vars': ['error', {
-        argsIgnorePattern: '(event|current(\\d+)?)',
-        caughtErrors: 'none',
-      }],
-      // 忽略template中slotScope的变量未使用
-      'vue/no-unused-vars': ['error', {
-        ignorePattern: '^current(\\d+)?',
-      }],
+      // 基础规则
+      ...BaseRules.rules,
+      ...VueRules.rules,
     }
   }
 ];

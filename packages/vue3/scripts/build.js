@@ -49,6 +49,11 @@ function fileWriter(inputPath, outputPath, item) {
     const info = {
       files: {},
       environment: 'vanilla',
+      // 增加features字段描述模板特性，方便翻译器识别
+      features: [
+        // 代码规范
+        'Code Specifications',
+      ],
     };
     dirTree(path, info.files);
     info.files = processFiles(info);

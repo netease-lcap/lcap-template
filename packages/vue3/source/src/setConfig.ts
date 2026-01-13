@@ -1,6 +1,6 @@
 import { setConfig as setCommonConfig } from '@/common';
 
-import { utils } from './plugins/dataTypes/index';
+import { utils } from './plugins/data-types/index';
 import { destination, back, go } from './plugins/router';
 
 export function setConfig(options = {}) {
