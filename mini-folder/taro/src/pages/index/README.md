@@ -6,12 +6,12 @@
 {
   "data": {
     // 必须，调用方法
-    "method": "requestSubscribeMessage", 
+    "method": "requestSubscribeMessage",
     // 可选
-    "params": { 
+    "params": {
       // 与method对应的参数
-      "tmplIds": ["TEMPLATE_ID1", "TEMPLATE_ID2"] 
-    },
+      "tmplIds": ["TEMPLATE_ID1", "TEMPLATE_ID2"]
+    }
   }
 }
 ```

@@ -1,6 +1,47 @@
 const fs = require('fs-extra');
 const path = require('path');
 
+const compilerConfig = {
+  pc: {
+    standardUIImports: ['ConfigProvider', 'transformKeys', 'Message', 'setupAppConfiguration', 'mcpToolJson'],
+    standardUIExports: [
+      'ConfigProvider',
+      'transformKeys',
+      'Message',
+      [
+        'install',
+        `(app) => {
+        if (typeof setupAppConfiguration === 'function') {
+          setupAppConfiguration(app);
+        } else {
+          app.config.globalProperties.$message = Message;
+        }
+      }`,
+      ],
+      'mcpToolJson',
+    ],
+  },
+  mobile: {
+    standardUIImports: ['ConfigProvider', 'transformKeys', 'Message', 'setupAppConfiguration', 'mcpToolJson'],
+    standardUIExports: [
+      'ConfigProvider',
+      'transformKeys',
+      'Message',
+      [
+        'install',
+        `(app) => {
+        if (typeof setupAppConfiguration === 'function') {
+          setupAppConfiguration(app);
+        } else {
+          app.config.globalProperties.$message = Message;
+        }
+      }`,
+      ],
+      'mcpToolJson',
+    ],
+  },
+};
+
 function fileWriter(inputPath, outputPath, item) {
   const { type, exclude } = item;
 
@@ -8,6 +49,11 @@ function fileWriter(inputPath, outputPath, item) {
     const info = {
       files: {},
       environment: 'vanilla',
+      // 增加features字段描述模板特性，方便翻译器识别
+      features: [
+        // 代码规范
+        'Code Specifications',
+      ],
     };
     dirTree(path, info.files);
     info.files = processFiles(info);
@@ -87,4 +133,8 @@ const distDir = path.resolve(__dirname, '../dist');
 
   const writer = fileWriter(`${sourceDir}`, `${distDir}/${item.type}/sandbox-template.json`, item);
   writer();
+
+  // 生成 compiler 配置文件
+  const compilerOutputPath = `${distDir}/${item.type}/compiler-config.json`;
+  fs.writeFileSync(compilerOutputPath, JSON.stringify(compilerConfig[item.type], null, '\t'));
 });

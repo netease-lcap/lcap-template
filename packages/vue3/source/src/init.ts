@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 
 import '@/global';
+import * as UIMCP from '@lcap/ui-libraries-mcp';
 import * as Components from '@/components';
 import * as Libraries from '@/libraries';
 import {
@@ -22,37 +23,40 @@ import {
   findNoAuthView,
 } from '@/common';
 import { installComponents, installDirectives, installLibraries } from '@/common/utils';
-import { getTitleGuard } from '@/guards';
+import { getTitleGuard } from '@/router/guards';
 
 import App from './App.vue';
 import { createI18nInstance } from './i18n';
 import { setConfig } from './setConfig';
+import { setFavicon } from './utils';
 
-import './index.css';
+// 注册组件库MCP JSON
+try {
+  const registerTool = UIMCP.registerTool;
+  if (typeof registerTool === 'function' && window.lcapStandardUI?.mcpToolJson?.result?.tools) {
+    registerTool(window.lcapStandardUI.mcpToolJson?.result.tools);
+  }
+} catch (error) {
+  console.error('注册组件库MCP JSON失败:', error);
+}
 
-const evalWrap = function (metaData, fnName) {
-  metaData && fnName && metaData?.frontendEvents[fnName] && eval(metaData.frontendEvents[fnName]);
-};
+const init = async (appConfig, platformConfig, routes, metaData) => {
+  /**
+   * 合并应用配置和平台配置至window.appInfo
+   */
+  window.appInfo = Object.assign(appConfig, platformConfig);
 
-window.$sleep = function () {
-  return new Promise((resolve) => {
-    this.$nextTick(resolve);
-  });
-};
-
-const init = (appConfig, platformConfig, routes, metaData) => {
-  // 写入favicon
+  /**
+   * 设置页面图标（favicon）
+   */
   if (platformConfig?.documentIcon) {
-    let link = document.querySelector("link[rel='icon']");
-    if (!link) {
-      link = document.createElement('link');
-      link.rel = 'icon';
-      document.head.appendChild(link);
-    }
-    link.href = platformConfig?.documentIcon;
+    setFavicon(platformConfig?.documentIcon);
   }
 
-  // 微前端相关
+  /**
+   * 微前端场景判断
+   * 如果当前脚本不是在头部或脚本未激活，则不执行初始化
+   */
   if (window.LcapMicro?.container && window.ICESTARK && window.ICESTARK.root) {
     if (
       document.currentScript &&
@@ -62,22 +66,19 @@ const init = (appConfig, platformConfig, routes, metaData) => {
     }
   }
 
-  window.appInfo = Object.assign(appConfig, platformConfig);
-
   const pinia = createPinia();
   const app = createApp(App);
 
   // 给basic设置配置
   setConfig({ app });
 
-  // 全局catch error，主要来处理中止组件,的错误不想暴露给用户，其余的还是在控制台提示出来
-  app.config.errorHandler = (err, vm, info) => {
+  /**
+   * Vue全局错误捕获
+   */
+  app.config.errorHandler = (err: Error) => {
     if (err.name === 'Error' && err.message === '程序中止') {
       console.warn('程序中止');
     } else {
-      // err，错误对象
-      // vm，发生错误的组件实例
-      // info，Vue特定的错误信息，例如错误发生的生命周期、错误发生的事件
       console.error(err);
     }
   };
@@ -87,21 +88,18 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   if (metaData && metaData.frontendEvents) {
     for (let index = 0; index < endEventLists.length; index++) {
       const name = endEventLists[index];
-      if (name && metaData.frontendEvents[name]) {
+      if (metaData.frontendEvents[name]) {
+        const evalWrap = function (code: string) {
+          code && eval(code);
+        };
         // 确保事件函数中的this指向app
-        evalWrap.bind(app.config.globalProperties)(metaData, name);
+        evalWrap.bind(app.config.globalProperties)(metaData.frontendEvents[name]);
+        app.config.globalProperties[name] = window[name];
+      } else if (window[name] && typeof window[name] === 'function') {
+        window[name] = window[name].bind(app.config.globalProperties);
         app.config.globalProperties[name] = window[name];
       }
     }
-  }
-
-  // properties
-  app.config.globalProperties.$sleep = window.$sleep;
-  app.config.globalProperties.hasLoadedAuth = false;
-  app.config.globalProperties.logined = true;
-  if (window.LcapMicro?.container) {
-    !app.config.globalProperties.$auth && (app.config.globalProperties.$auth = {});
-    app.config.globalProperties.$auth._map = undefined;
   }
 
   installDirectives(app, directives);
@@ -118,16 +116,13 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   app.use(DataTypesPlugin, { ...metaData, i18nInfo: appConfig.i18nInfo });
   app.use(ProcessPlugin);
 
-  // 兼容$frontendVariables
-  app.config.globalProperties.$frontendVariables = window.$global.frontendVariables;
-
   app.use(pinia);
 
   app.use(createI18nInstance(appConfig));
 
   // rendered 事件
   if (typeof window?.rendered === 'function') {
-    window.rendered({
+    await window.rendered({
       appConfig,
       platformConfig,
       routes,
