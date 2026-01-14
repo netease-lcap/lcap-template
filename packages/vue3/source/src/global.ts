@@ -1,5 +1,6 @@
 import * as hooks from '@/hooks';
 import * as globalVariables from '@/global-variables';
+import { request as LcapRequest } from '@/common';
 
 window.$hooks = hooks;
 window.$globalVariables = globalVariables;
@@ -18,3 +19,5 @@ window.$sleep = function () {
     }
   });
 };
+
+window.LcapRequest = LcapRequest;
