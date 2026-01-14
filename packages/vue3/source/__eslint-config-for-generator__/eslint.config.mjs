@@ -79,6 +79,7 @@ export default [
       'lcap/prefer-const': 'error',
       'lcap/vue-no-useless-template-attributes': 'error',
       'lcap/vue-no-unused-vars': 'error',
+      'lcap/redundant-await': 'error',
 
       // 已被复写的规则，不需要重复报错
       'no-unused-vars': 'off',
