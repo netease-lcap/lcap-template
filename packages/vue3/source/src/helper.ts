@@ -5,6 +5,7 @@ import platformConfig from './platform.config';
 import i18nInfo from './language';
 
 import './style/theme.css';
+import './style/index.css';
 
 let app: any = null;
 
