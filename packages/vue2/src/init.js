@@ -92,7 +92,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
    * 微前端场景判断
    * 如果当前脚本不是在头部或脚本未激活，则不执行初始化
    */
-  if (window.LcapMicro?.container) {
+  if (window.LcapMicro?.container && window.ICESTARK && window.ICESTARK.root) {
     if (
       document.currentScript &&
       (!document.head.contains(document.currentScript) || document.currentScript.active === false)
