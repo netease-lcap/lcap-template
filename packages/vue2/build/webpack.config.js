@@ -21,7 +21,7 @@ const baseConfig = (type) => {
     mode: isRelease ? 'production' : 'development',
     context: path.resolve(root, 'src'),
     devtool: 'source-map',
-    entry: [path.resolve(root, `./src/style/index.${type}.css`), path.resolve(root, './src/init.js')],
+    entry: [path.resolve(root, `./src/style/global.${type}.css`), path.resolve(root, './src/init.js')],
     output: {
       publicPath,
       path: path.resolve(root, `dist/${type}`),
