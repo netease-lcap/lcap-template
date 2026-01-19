@@ -67,7 +67,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
     }
   }
 
-  if (window.LcapMicro?.container) {
+  if (window.LcapMicro?.container && window.ICESTARK && window.ICESTARK.root) {
     if (
       document.currentScript &&
       (!document.head.contains(document.currentScript) || document.currentScript.active === false)
