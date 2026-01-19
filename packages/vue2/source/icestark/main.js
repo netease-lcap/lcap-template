@@ -6,8 +6,9 @@ import "./library";
 import i18nInfo from './language';
 import platformConfig from "./platform.config.json";
 
-import '@/style/index.css';
+import '@/style/global.css';
 import '@/style/theme.css';
+import '@/style/index.css';
 
 // 写入国际化配置
 platformConfig.appConfig.i18nInfo = i18nInfo;
