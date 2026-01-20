@@ -108,6 +108,12 @@ const init = async (appConfig, platformConfig, routes, metaData) => {
   // 注册依赖库
   installLibraries(app, Libraries);
 
+  /**
+   * 国际化实例
+   * 一定要放在DataTypesPlugin之前注册，因为数据类型插件中会用到国际化实例
+   */
+  app.use(createI18nInstance(appConfig));
+
   app.use(LogicsPlugin, metaData);
   app.use(RouterPlugin);
   app.use(ServicesPlugin, metaData);
@@ -117,8 +123,6 @@ const init = async (appConfig, platformConfig, routes, metaData) => {
   app.use(ProcessPlugin);
 
   app.use(pinia);
-
-  app.use(createI18nInstance(appConfig));
 
   // rendered 事件
   if (typeof window?.rendered === 'function') {
