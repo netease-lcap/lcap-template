@@ -1,8 +1,7 @@
-import { ref } from 'vue';
 import _isEqual from 'lodash/isEqual';
 
 export function useDataSourceUtils() {
-  const cache = ref(new Map());
+  const cache = new Map();
 
   function __isShallowEqualArray(arr1, arr2) {
     if (arr1.length !== arr2.length) return false;
@@ -19,9 +18,9 @@ export function useDataSourceUtils() {
 
   function __getDataSourceCacheFn(methodName, currentArray = []) {
     if (!currentArray.length) {
-      return cache.value.get(methodName);
+      return cache.get(methodName);
     }
-    for (let [key, value] of cache.value.entries()) {
+    for (let [key, value] of cache.entries()) {
       if (__isShallowEqualArray(key, [methodName, ...currentArray])) {
         return value;
       }
@@ -30,10 +29,10 @@ export function useDataSourceUtils() {
 
   function __setDataSourceCacheFn(methodName, currentArray = [], fn) {
     if (!currentArray.length) {
-      cache.value.set(methodName, fn);
+      cache.set(methodName, fn);
       return;
     }
-    cache.value.set([methodName, ...currentArray], fn);
+    cache.set([methodName, ...currentArray], fn);
   }
 
   function __getOrCreateDataSource(methodName, currentArray = [], newFn) {
@@ -47,6 +46,6 @@ export function useDataSourceUtils() {
 
   return {
     __getOrCreateDataSource,
-    private_data_source_cache: cache.value,
+    private_data_source_cache: cache,
   };
 }
