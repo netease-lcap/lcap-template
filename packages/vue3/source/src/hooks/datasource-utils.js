@@ -1,7 +1,7 @@
 import _isEqual from 'lodash/isEqual';
 
 export function useDataSourceUtils() {
-  const cache = new WeakMap();
+  const cache = new Map();
 
   function __isShallowEqualArray(arr1, arr2) {
     if (arr1.length !== arr2.length) return false;
