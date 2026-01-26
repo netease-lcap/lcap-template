@@ -39,3 +39,65 @@ window.LcapRequest = LcapRequest;
 
 window._lcapCreateService = createService;
 window.LcapInstall = install;
+
+const loadedLibs = [];
+window.loadLibs = async function (libs) {
+  for (const lib of libs) {
+    const { name, js = [], css = [] } = lib;
+    if (loadedLibs.includes(name)) {
+      continue;
+    }
+
+    const tasks = [];
+
+    for (const cssUrl of css) {
+      tasks.push(loadResource('css', cssUrl));
+    }
+
+    for (const jsUrl of js) {
+      tasks.push(loadResource('js', jsUrl));
+    }
+
+    await Promise.all(tasks);
+
+    const kebab2Camel = (name) => name.replace(/(?:^|-)([a-zA-Z0-9])/g, (m, $1) => $1.toUpperCase());
+    const kebabName = kebab2Camel(name);
+
+    if (window[kebabName]) {
+      try {
+        install(window.Vue, window[kebabName]);
+      } catch (error) {
+        console.log(new Error(`Failed to install library: ${name}`));
+      }
+    }
+
+    loadedLibs.push(name);
+  }
+
+  function loadResource(type, url) {
+    return new Promise((resolve, reject) => {
+      let element;
+      if (type === 'js') {
+        element = document.createElement('script');
+        element.type = 'text/javascript';
+        element.src = url;
+        element.async = true;
+      } else if (type === 'css') {
+        element = document.createElement('link');
+        element.rel = 'stylesheet';
+        element.href = url;
+      } else {
+        console.log(new Error(`Unsupported resource type: ${type}`));
+        return;
+      }
+
+      element.onload = () => resolve();
+      element.onerror = () => {
+        console.log(new Error(`Failed to load ${type} resource: ${url}`));
+        resolve();
+      };
+
+      document.head.appendChild(element);
+    });
+  }
+};
