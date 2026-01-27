@@ -14,6 +14,7 @@ window.preRequest = undefined;
 window.postRequest = undefined;
 window.beforeRoute = undefined;
 window.afterRoute = undefined;
+window.appVM = undefined;
 
 if (!window.__POWERED_BY_QIANKUN__) {
   cloudAdminDesigner.init(platformConfig?.appConfig, platformConfig, routes, metaData);
