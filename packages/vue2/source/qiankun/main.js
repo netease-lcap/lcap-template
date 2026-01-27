@@ -7,8 +7,9 @@ import "./library";
 import i18nInfo from './language';
 import platformConfig from "./platform.config.json";
 
-import '@/style/index.css';
+import '@/style/global.css';
 import '@/style/theme.css';
+import '@/style/index.css';
 
 window.createLcapApp = undefined;
 window.rendered = undefined;

@@ -1515,7 +1515,30 @@ export class Utils {
     const pattern = reg.pattern;
     const flags = reg.flags;
 
-    return str.match(new RegExp(pattern, flags)) || [];
+    const regex = new RegExp(pattern, flags);
+
+    let matches = [];
+    let match = undefined;
+    let index = undefined;
+    let error = undefined;
+    while ((match = regex.exec(str))) {
+      if (index === regex.lastIndex) {
+        error = {
+          id: 'infinite',
+          warning: true,
+        };
+        ++regex.lastIndex;
+      }
+      index = regex.lastIndex;
+
+      matches.push(match?.[0]);
+
+      if (!regex.global) {
+        break;
+      }
+    }
+
+    return matches;
   }
 
   /**
