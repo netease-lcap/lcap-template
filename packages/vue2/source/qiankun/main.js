@@ -17,6 +17,7 @@ window.preRequest = undefined;
 window.postRequest = undefined;
 window.beforeRoute = undefined;
 window.afterRoute = undefined;
+window.appVM = undefined;
 
 // 写入国际化配置
 platformConfig.appConfig.i18nInfo = i18nInfo;
