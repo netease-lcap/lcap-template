@@ -58,11 +58,11 @@ window.loadLibs = async function (libs) {
     }
 
     const kebab2Camel = (name) => name.replace(/(?:^|-)([a-zA-Z0-9])/g, (m, $1) => $1.toUpperCase());
-    const kebabName = kebab2Camel(name);
+    const camelName = kebab2Camel(name);
 
-    if (window[kebabName]) {
+    if (window[camelName]) {
       try {
-        install(window.Vue, window[kebabName]);
+        install(window.Vue, window[camelName]);
       } catch (error) {
         console.log(new Error(`Failed to install library: ${name}`));
       }
