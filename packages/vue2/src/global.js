@@ -62,7 +62,7 @@ window.loadLibs = async function (libs) {
 
     if (window[camelName]) {
       try {
-        install(window.Vue, window[camelName]);
+        install(Vue, window[camelName]);
       } catch (error) {
         console.log(new Error(`Failed to install library: ${name}`));
       }
