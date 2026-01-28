@@ -48,17 +48,14 @@ window.loadLibs = async function (libs) {
       continue;
     }
 
-    const tasks = [];
+    // CSS 可以并行加载
+    const cssTasks = css.map((cssUrl) => loadResource('css', cssUrl));
+    await Promise.all(cssTasks);
 
-    for (const cssUrl of css) {
-      tasks.push(loadResource('css', cssUrl));
-    }
-
+    // JS 需要串行加载以保证依赖顺序
     for (const jsUrl of js) {
-      tasks.push(loadResource('js', jsUrl));
+      await loadResource('js', jsUrl);
     }
-
-    await Promise.all(tasks);
 
     const kebab2Camel = (name) => name.replace(/(?:^|-)([a-zA-Z0-9])/g, (m, $1) => $1.toUpperCase());
     const kebabName = kebab2Camel(name);
@@ -88,7 +85,7 @@ window.loadLibs = async function (libs) {
         element.href = url;
       } else {
         console.log(new Error(`Unsupported resource type: ${type}`));
-        return;
+        return resolve();
       }
 
       element.onload = () => resolve();
