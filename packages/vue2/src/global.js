@@ -85,7 +85,8 @@ window.loadLibs = async function (libs) {
         element.href = url;
       } else {
         console.log(new Error(`Unsupported resource type: ${type}`));
-        return resolve();
+        resolve();
+        return;
       }
 
       element.onload = () => resolve();
