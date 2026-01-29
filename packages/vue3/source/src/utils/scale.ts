@@ -13,7 +13,7 @@ export function initScale(canvasWidth) {
       const baseWidth = canvasWidth;
       const scale = windowWidth / baseWidth;
       // 设置viewport缩放
-      document.querySelector('meta[name="viewport"]').content =
+      (document.querySelector('meta[name="viewport"]') as HTMLMetaElement).content =
         'width=' +
         baseWidth +
         ' , initial-scale=' +
@@ -70,15 +70,16 @@ export function initScale(canvasWidth) {
     } else {
       // 点击跳转到外部页面时，通知顶层页面
       document.body.addEventListener('click', (e) => {
-        if (!e.target.href) return;
-        if (typeof e.target.href !== 'string') return;
-        if (e.target.tagName !== 'A') return;
-        if (e.target.download) return;
+        const target = e.target as HTMLAnchorElement;
+        if (!target.href) return;
+        if (typeof target.href !== 'string') return;
+        if (target.tagName !== 'A') return;
+        if (target.download) return;
         try {
-          const url = new URL(e.target.href);
+          const url = new URL(target.href);
           // 只有绝对路径且不是新窗口打开的链接修改顶层页面地址
-          if (e.target.attributes.href.value.startsWith('http') && e.target.target !== '_blank') {
-            parent.location.href = e.target.href;
+          if (target.getAttribute('href')?.startsWith('http') && target.target !== '_blank') {
+            parent.location.href = target.href;
           }
         } catch (err) {
           console.error(err);
