@@ -18,6 +18,8 @@ window.postRequest = undefined;
 window.beforeRoute = undefined;
 window.afterRoute = undefined;
 window.appVM = undefined;
+window.$axiosHookManager = undefined;
+window.$registerAxiosHook = undefined;
 
 // 写入国际化配置
 platformConfig.appConfig.i18nInfo = i18nInfo;
