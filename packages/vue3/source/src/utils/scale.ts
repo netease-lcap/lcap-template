@@ -1,19 +1,31 @@
-export function initScale(canvasWidth) {
+export function initScale(canvasWidth: number) {
+  // 验证 canvasWidth 是否为有效的正数
+  const width = Number(canvasWidth);
+  if (!Number.isFinite(width) || width <= 0) {
+    console.warn('initScale: canvasWidth must be a finite number greater than 0, received:', canvasWidth);
+    return;
+  }
+  const validCanvasWidth = width;
+
   // mobile 用 viewport 缩放，pc 和 ipad 用 iframe 缩放
   if (navigator.userAgent.match(/mobile/i)) {
     // 使用viewport缩放，用js计算viewport的缩放比例
-    // 创建meta标签
-    const meta = document.createElement('meta');
-    meta.name = 'viewport';
-    meta.content = 'width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no';
+    // 先查找已存在的 viewport meta，如果没有则创建并添加到 DOM
+    let meta = document.querySelector('meta[name="viewport"]') as HTMLMetaElement;
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.name = 'viewport';
+      meta.content = 'width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no';
+      document.head.appendChild(meta);
+    }
     function scalePage() {
       // 计算缩放比例
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
-      const baseWidth = canvasWidth;
+      const baseWidth = validCanvasWidth;
       const scale = windowWidth / baseWidth;
       // 设置viewport缩放
-      (document.querySelector('meta[name="viewport"]') as HTMLMetaElement).content =
+      meta.content =
         'width=' +
         baseWidth +
         ' , initial-scale=' +
@@ -36,7 +48,7 @@ export function initScale(canvasWidth) {
         // 计算缩放比例
         const windowWidth = window.innerWidth;
         const windowHeight = window.innerHeight;
-        const baseWidth = canvasWidth;
+        const baseWidth = validCanvasWidth;
         const scale = windowWidth / baseWidth;
         // iframe 按比例缩放
         iframe.style.transform = 'scale(' + scale + ')';
@@ -109,7 +121,7 @@ export function afterEachInScale() {
     let isBack = false;
     // 是否是前进
     let isForward = false;
-    window.VueRouterInstance.afterEach((to, from) => {
+    window.VueRouterInstance?.afterEach((to, from) => {
       if (isBack) {
         // 重置回退状态
         isBack = false;
@@ -146,7 +158,7 @@ export function afterEachInScale() {
     // 顶层页面路由回退时，需要同步 iframe 的路由
     window.parent.addEventListener('popstate', function (e) {
       if (curParentHID > (e.state ? e.state.HID : undefined)) {
-        window.VueRouterInstance.back();
+        window.VueRouterInstance?.back();
       }
       // 更新当前顶层历史ID
       curParentHID = (e.state ? e.state.HID : undefined) || 0;
