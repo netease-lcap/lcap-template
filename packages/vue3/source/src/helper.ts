@@ -15,7 +15,7 @@ export async function renderApp() {
   const { globalScale } = appConfig;
 
   if (globalScale?.enabled) {
-    scale.initScale(globalScale.canvasWidth);
+    scale.initScale(globalScale.width);
   }
   // 写入国际化配置
   if (i18nInfo) {
