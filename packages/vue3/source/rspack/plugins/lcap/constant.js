@@ -42,7 +42,7 @@ const lazyLoadCode = `var LazyLoad = (function (doc) {
       env = {
         async: doc.createElement('script').async === true
       };
-      (env.webkit = /AppleWebKit\//.test(ua)) || (env.ie = /MSIE|Trident/.test(ua)) || (env.opera = /Opera/.test(ua)) || (env.gecko = /Gecko\//.test(ua)) || (env.unknown = true);
+      (env.webkit = /AppleWebKit\\//.test(ua)) || (env.ie = /MSIE|Trident/.test(ua)) || (env.opera = /Opera/.test(ua)) || (env.gecko = /Gecko\\//.test(ua)) || (env.unknown = true);
     }
 
     function load(type, urls, callback, obj, context) {
