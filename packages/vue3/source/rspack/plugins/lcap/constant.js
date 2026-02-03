@@ -166,9 +166,9 @@ const lazyLoadCode = `var LazyLoad = (function (doc) {
     }
     function preload(url) {
       var asAttr = '';
-      if (/\.js$/.test(url)) {
+      if (/\\.js$/.test(url)) {
         asAttr = 'script';
-      } else if (/\.css$/.test(url)) {
+      } else if (/\\.css$/.test(url)) {
         asAttr = 'style';
       }
       var node = createNode('link', {
