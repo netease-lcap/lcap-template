@@ -1,5 +1,7 @@
 import { _ } from '@/common';
 
+const { at } = _;
+
 /**
  * 将 Components 数组转换为对象
  * @deprecated
@@ -134,7 +136,7 @@ export function installOptions(Vue) {
     function (obj, propertyPath) {
       if (propertyPath === undefined || propertyPath === null) {
         return undefined;
-      } else return _.at(obj, [propertyPath])[0];
+      } else return at(obj, [propertyPath])[0];
     };
 
   Vue.prototype.$setAt =

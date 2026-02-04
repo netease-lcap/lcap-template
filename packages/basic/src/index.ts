@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 import Config, { setConfig } from './config';
 
 export * from './apis';
