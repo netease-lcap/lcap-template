@@ -1,5 +1,5 @@
-import { sortBy } from "lodash";
-import { genSortedTypeKey, getTypeDefinition } from "./tools";
+import { sortBy } from 'lodash';
+import { genSortedTypeKey, getTypeDefinition } from './tools';
 
 /**
  * 根据如下优先级排序类型：Enum Reference > Primitives > Tagged References > Entity > Structure > AnonymousStructure > Map > List
@@ -9,9 +9,9 @@ import { genSortedTypeKey, getTypeDefinition } from "./tools";
 export function sortTypeArgumentsBasedOnTypePriority(typeArguments: TypeAnnotation[]): TypeAnnotation[] {
   const firstPass = sortBy(typeArguments, (arg) => {
     // 应用优先级排序规则 Primitives > Tagged References > Entity > Structure > AnonymousStructure > Map > List
-    const typeKindListOrderedByPriority = ["primitive", "reference", "anonymousStructure", "generic"] as const;
-    if (arg.typeKind === "union") {
-      throw new Error("Union类型的typeArguments不能再为union");
+    const typeKindListOrderedByPriority = ['primitive', 'reference', 'anonymousStructure', 'generic'] as const;
+    if (arg.typeKind === 'union') {
+      throw new Error('Union类型的typeArguments不能再为union');
     }
     const priority = typeKindListOrderedByPriority.indexOf(arg.typeKind);
     return [priority, isTaggedReferenceType(arg) ? 0 : 1, isEntityReferenceType(arg) ? 0 : 1];
@@ -19,7 +19,7 @@ export function sortTypeArgumentsBasedOnTypePriority(typeArguments: TypeAnnotati
   const secondPass = sortBy(firstPass, (arg) => {
     // 应用优先级排序规则：Enum Reference > Others
     const argTypeDef = getTypeDefinition(genSortedTypeKey(arg));
-    if (argTypeDef?.concept === "Enum") {
+    if (argTypeDef?.concept === 'Enum') {
       return 0;
     }
     return 1;
@@ -30,16 +30,16 @@ export function sortTypeArgumentsBasedOnTypePriority(typeArguments: TypeAnnotati
     // @ts-expect-error FIXME
     const properties = getTypeDefinition(genSortedTypeKey(typeAnnotation))?.properties;
     return (
-      typeAnnotation.typeKind === "reference" &&
-      properties?.filter((prop) => prop.name === "errorType" && prop.expression?.concept === "StringLiteral")
+      typeAnnotation.typeKind === 'reference' &&
+      properties?.filter((prop) => prop.name === 'errorType' && prop.expression?.concept === 'StringLiteral')
     );
   }
 
   function isEntityReferenceType(typeAnnotation: TypeAnnotation): boolean {
     return (
-      typeAnnotation.typeKind === "reference" &&
+      typeAnnotation.typeKind === 'reference' &&
       // @ts-expect-error FIXME
-      getTypeDefinition(genSortedTypeKey(typeAnnotation))?.concept === "Entity"
+      getTypeDefinition(genSortedTypeKey(typeAnnotation))?.concept === 'Entity'
     );
   }
 }

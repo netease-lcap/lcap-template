@@ -1,7 +1,5 @@
-import isNil from 'lodash/isNil';
-import camelCase from 'lodash/camelCase';
-import upperFirst from 'lodash/upperFirst';
-import lowerFirst from 'lodash/lowerFirst';
+import { isNil, camelCase, upperFirst, lowerFirst } from 'lodash';
+
 import errHandles from './errHandles';
 
 export const isPromise = function (func) {
