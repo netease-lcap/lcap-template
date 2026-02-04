@@ -3,6 +3,7 @@ import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 export default {
 	input: 'src/index.ts',
@@ -27,5 +28,11 @@ export default {
     commonjs(),
     typescript(),
     nodePolyfills(),
+    visualizer({
+      filename: 'dist/stats.html',
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+    }),
   ],
 };

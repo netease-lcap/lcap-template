@@ -1,6 +1,6 @@
 import moment from 'moment';
 import momentTZ from 'moment-timezone';
-import { isObject } from 'lodash';
+import { isObject } from 'es-toolkit/compat';
 
 export const findAsync = async (arr, callback) => {
   for (let i = 0; i < arr.length; i++) {

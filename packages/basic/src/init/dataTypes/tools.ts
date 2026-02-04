@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import momentTZ from 'moment-timezone';
 import moment from 'moment';
-import { flatMap, difference } from 'lodash';
+import { flatMap, difference } from 'es-toolkit/compat';
 import { Helpers } from '../../sdk';
 
 import BigNumber from 'bignumber.js';

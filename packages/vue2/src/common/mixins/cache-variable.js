@@ -2,7 +2,8 @@
  * 前端全局变量，本地化缓存mixin
  */
 
-import { storage, _ } from '@lcap/basic-template';
+import { storage } from '@lcap/basic-template';
+import { isEmpty } from 'es-toolkit/compat';
 
 const ACTION_LOCAL_CACHE_VARIABLE_TYPE = {
   GET: 'get',
@@ -68,7 +69,7 @@ export const localCacheVariableMixin = {
 
               // 只同步写入非空值 避免 local 过多冗余数据
               if (
-                _.isEmpty(currentValue) &&
+                isEmpty(currentValue) &&
                 typeof currentValue !== 'boolean' &&
                 typeof currentValue !== 'number' &&
                 typeof currentValue !== 'object' &&

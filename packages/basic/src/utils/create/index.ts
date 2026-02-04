@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { AxiosRequestConfig, Method } from 'axios';
-import pick from 'lodash/pick';
+import { pick } from 'es-toolkit';
 
 import Service from '../request-pre';
 import { formatMicroFrontUrl } from '../../init/router/microFrontUrl'; // 微前端路由方法
