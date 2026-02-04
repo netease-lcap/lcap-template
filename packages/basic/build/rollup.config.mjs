@@ -3,6 +3,7 @@ import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
 import { visualizer } from 'rollup-plugin-visualizer';
+import terser from '@rollup/plugin-terser';
 
 export default {
 	input: 'src/index.ts',
@@ -28,6 +29,15 @@ export default {
     json(),
     commonjs(),
     typescript(),
+    terser({
+      compress: {
+        drop_console: false,
+        pure_funcs: [],
+      },
+      format: {
+        comments: false,
+      },
+    }),
     visualizer({
       filename: 'dist/stats.html',
       open: false,
