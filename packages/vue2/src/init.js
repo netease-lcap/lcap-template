@@ -6,7 +6,6 @@ import { installOptions, installFilters, installComponents, installDirectives } 
 import '@/global';
 import '@/config';
 import {
-  filters,
   directives,
   AuthPlugin,
   DataTypesPlugin,
@@ -109,10 +108,6 @@ const init = (appConfig, platformConfig, routes, metaData) => {
    * 安装指令
    */
   installDirectives(Vue, directives);
-  /**
-   * 安装过滤器
-   */
-  installFilters(Vue, filters);
   /**
    * 注册业务组件
    */
