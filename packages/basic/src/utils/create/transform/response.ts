@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { get } from 'es-toolkit/compat';
-import JSONbig from '../../json-bigint';
+import * as JSONbig from '../../json-bigint';
 import type { RequestInfo } from '../index';
 
 function getJsonParse() {

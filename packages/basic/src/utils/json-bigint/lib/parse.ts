@@ -1,4 +1,4 @@
-var BigNumber = null;
+import BigNumber from 'bignumber.js';
 
 // regexpxs extracted from
 // (c) BSD-3-Clause
@@ -71,7 +71,7 @@ const suspectConstructorRx =
     hasOwnProperty, message, n, name, prototype, push, r, t, text
 */
 
-var json_parse = function (options) {
+function json_parse(options?) {
   'use strict';
 
   // This is a function that can parse a JSON text, producing a JavaScript
@@ -151,7 +151,7 @@ var json_parse = function (options) {
         text: text,
       };
     },
-    next = function (c) {
+    next = function (c?) {
       // If a c parameter is provided, verify that it matches the current character.
 
       if (c && c !== ch) {
@@ -201,7 +201,6 @@ var json_parse = function (options) {
       if (!isFinite(number)) {
         error('Bad number');
       } else {
-        if (BigNumber == null) BigNumber = require('bignumber.js');
         // Bignumber has stricter check: everything with length > 15 digits disallowed
         // if (string.length > 15)
         // if (number > 9007199254740992 || number < -9007199254740992)
@@ -393,7 +392,7 @@ var json_parse = function (options) {
   // Return the json_parse function. It will have access to all of the above
   // functions and variables.
 
-  return function (source, reviver) {
+  return function (source, reviver?) {
     var result;
 
     text = source + '';
@@ -430,6 +429,6 @@ var json_parse = function (options) {
         })({ '': result }, '')
       : result;
   };
-};
+}
 
-module.exports = json_parse;
+export default json_parse;

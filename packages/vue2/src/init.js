@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import { createPinia, PiniaVuePlugin } from 'pinia';
 import VueCompositionAPI from '@vue/composition-api';
-import { installOptions, installFilters, installComponents, installDirectives } from '@vusion/utils';
+import { installOptions, installComponents, installDirectives } from '@/utils/install';
 
 import '@/global';
 import '@/config';

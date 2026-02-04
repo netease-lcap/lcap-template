@@ -4,7 +4,7 @@
 
 import Vue from 'vue';
 import * as VueCompositionAPI from '@vue/composition-api';
-import { install } from '@vusion/utils';
+import { install } from '@/utils/install';
 import { createService, request as LcapRequest } from '@/common';
 import mixins from '@/mixins';
 import appUtils from '@/utils';
