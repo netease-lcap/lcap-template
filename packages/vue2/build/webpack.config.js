@@ -1,4 +1,5 @@
 const path = require('path');
+const isCI = require('is-ci');
 const webpack = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -14,7 +15,7 @@ const library = 'cloudAdminDesigner';
 
 const extensions = ['.vue', '.js', '.ts', '.json', '.css'];
 
-const isRelease = process.env.LCAP_RELEASE == 1;
+const isRelease = isCI || process.env.LCAP_RELEASE == 1;
 
 const baseConfig = (type) => {
   return {

@@ -1,8 +1,8 @@
-import isPlainObject from "lodash/isPlainObject";
+import { isPlainObject } from 'lodash';
 
-import { createService } from "../../utils";
-import Global from "../../global";
-import Config from "../../config";
+import { createService } from '../../utils';
+import Global from '../../global';
+import Config from '../../config';
 
 let $services;
 
@@ -16,7 +16,7 @@ function initService(
 
   keys.forEach((key) => {
     if ($services && $services[key]) {
-      throw new Error("services repeat:" + key);
+      throw new Error('services repeat:' + key);
     }
 
     const service = services[key];
@@ -27,9 +27,9 @@ function initService(
   });
 
   if (keys.length) {
-    $services = Object.assign({}, Config.globalProperties.get("$services"), services);
+    $services = Object.assign({}, Config.globalProperties.get('$services'), services);
 
-    Config.globalProperties.set("$services", $services);
+    Config.globalProperties.set('$services', $services);
   }
 
   return {
