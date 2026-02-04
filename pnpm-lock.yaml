@@ -271,9 +271,6 @@ importers:
       '@vue/composition-api':
         specifier: 1.7.1
         version: 1.7.1(vue@2.6.14)
-      '@vusion/utils':
-        specifier: ^0.4.10
-        version: 0.4.11
       babel-polyfill:
         specifier: ^6.26.0
         version: 6.26.0
@@ -2792,9 +2789,6 @@ packages:
 
   '@vusion/categories-db@0.1.2':
     resolution: {integrity: sha512-shtOVcH/uvFxuzK2Cd9qtJ2kdAvO5NPgFkY39VAJSVELuGmP6wWYXOLSm/yV15bLJxWjNbyB81XP2vRLMfwwGg==}
-
-  '@vusion/utils@0.4.11':
-    resolution: {integrity: sha512-3n+fFmHEkgnMFZ+XwDmNMXHsyKTsFoyjYiH335rPipTbeJIO4bEAvedNMFdGPykt7FsMH8toMXgg3wVUjkIL+w==}
 
   '@webassemblyjs/ast@1.11.1':
     resolution: {integrity: sha512-ukBh14qFLjxTQNTXocdyksN5QdM28S1CxHt2rdskFyL+xFV7VremuBLVbmCePj+URalXBENx/9Lm7lnhihtCSw==}
@@ -14069,10 +14063,6 @@ snapshots:
   '@vue/shared@3.5.13': {}
 
   '@vusion/categories-db@0.1.2': {}
-
-  '@vusion/utils@0.4.11':
-    dependencies:
-      lodash: 4.17.21
 
   '@webassemblyjs/ast@1.11.1':
     dependencies:
