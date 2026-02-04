@@ -5,7 +5,7 @@
 import Vue from 'vue';
 import * as VueCompositionAPI from '@vue/composition-api';
 import { install } from '@vusion/utils';
-import { createService, request as LcapRequest } from '@/common';
+import { createService, request as LcapRequest, _ } from '@/common';
 import mixins from '@/mixins';
 import appUtils from '@/utils';
 
@@ -29,6 +29,7 @@ window.$sleep = function () {
 Vue.prototype.$sleep = window.$sleep;
 
 window.VueCompositionAPI = VueCompositionAPI;
+window.Lodash = _;
 
 // 全局混入
 window.$mixins = mixins;
