@@ -1,5 +1,6 @@
 {
   "$schema": "https://turborepo.com/schema.json",
+  "globalEnv": ["LCAP_RELEASE"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
