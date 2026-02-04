@@ -1,4 +1,4 @@
-import { sortBy } from 'es-toolkit/compat';
+import { sortBy } from 'lodash';
 import { genSortedTypeKey, getTypeDefinition } from './tools';
 
 /**

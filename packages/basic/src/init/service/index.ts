@@ -1,4 +1,4 @@
-import { isPlainObject } from 'es-toolkit';
+import { isPlainObject } from 'lodash';
 
 import { createService } from '../../utils';
 import Global from '../../global';

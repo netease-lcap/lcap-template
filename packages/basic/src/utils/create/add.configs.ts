@@ -1,4 +1,4 @@
-import { isNil, camelCase, upperFirst, lowerFirst } from 'es-toolkit';
+import { isNil, camelCase, upperFirst, lowerFirst } from 'lodash';
 
 import errHandles from './errHandles';
 

@@ -34,7 +34,7 @@
     "date-fns": "2.30.0",
     "date-fns-tz": "2.0.0",
     "decimal.js": "10.4.3",
-    "es-toolkit": "1.44.0",
+    "lodash": "4.17.21",
     "mockjs": "1.1.0",
     "moment": "2.30.1",
     "moment-timezone": "0.5.45",

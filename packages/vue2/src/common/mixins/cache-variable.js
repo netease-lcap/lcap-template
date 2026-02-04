@@ -2,8 +2,9 @@
  * 前端全局变量，本地化缓存mixin
  */
 
-import { storage } from '@lcap/basic-template';
-import { isEmpty } from 'es-toolkit/compat';
+import { storage, _ } from '@lcap/basic-template';
+
+const { isEmpty } = _;
 
 const ACTION_LOCAL_CACHE_VARIABLE_TYPE = {
   GET: 'get',

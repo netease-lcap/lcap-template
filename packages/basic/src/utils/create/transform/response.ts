@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { get } from 'es-toolkit/compat';
+import { get } from 'lodash';
 import * as JSONbig from '../../json-bigint';
 import type { RequestInfo } from '../index';
 

@@ -1,4 +1,4 @@
-import { isPlainObject } from 'es-toolkit';
+import { isPlainObject } from 'lodash';
 import { stringifyWithLoopProtection } from './utils';
 
 const interceptors: Array<{
