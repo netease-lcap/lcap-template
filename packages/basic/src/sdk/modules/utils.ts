@@ -1,44 +1,6 @@
 import type { TypeAnnotation } from '@lcap/nasl';
-import moment from 'moment';
-import momentTZ from 'moment-timezone';
-import {
-  addDays,
-  subDays,
-  addMonths,
-  format,
-  isValid,
-  differenceInYears,
-  differenceInQuarters,
-  differenceInMonths,
-  differenceInWeeks,
-  differenceInDays,
-  differenceInHours,
-  differenceInMinutes,
-  differenceInSeconds,
-  getDayOfYear,
-  getWeekOfMonth,
-  getQuarter,
-  startOfWeek,
-  getMonth,
-  getWeek,
-  getDate,
-  startOfQuarter,
-  addSeconds,
-  addMinutes,
-  addHours,
-  addQuarters,
-  addYears,
-  addWeeks,
-  eachDayOfInterval,
-  isMonday,
-  isTuesday,
-  isWednesday,
-  isThursday,
-  isFriday,
-  isSaturday,
-  isSunday,
-} from 'date-fns';
-import { formatInTimeZone } from 'date-fns-tz';
+import { DateTime } from 'luxon';
+import { getWeekOfMonth } from 'date-fns';
 import { isObject, set, isEqual, cloneDeep } from 'lodash';
 import Decimal from 'decimal.js';
 import {
@@ -63,6 +25,178 @@ import {
 } from '../helper';
 import { dateFormatter } from '../Formatters';
 import type { IOptions } from '../types';
+
+// Luxon 辅助函数 - 替代 date-fns
+function addDays(date: Date, amount: number): Date {
+  return DateTime.fromJSDate(date).plus({ days: amount }).toJSDate();
+}
+
+function subDays(date: Date, amount: number): Date {
+  return DateTime.fromJSDate(date).minus({ days: amount }).toJSDate();
+}
+
+function addMonths(date: Date, amount: number): Date {
+  return DateTime.fromJSDate(date).plus({ months: amount }).toJSDate();
+}
+
+function addSeconds(date: Date, amount: number): Date {
+  return DateTime.fromJSDate(date).plus({ seconds: amount }).toJSDate();
+}
+
+function addMinutes(date: Date, amount: number): Date {
+  return DateTime.fromJSDate(date).plus({ minutes: amount }).toJSDate();
+}
+
+function addHours(date: Date, amount: number): Date {
+  return DateTime.fromJSDate(date).plus({ hours: amount }).toJSDate();
+}
+
+function addWeeks(date: Date, amount: number): Date {
+  return DateTime.fromJSDate(date).plus({ weeks: amount }).toJSDate();
+}
+
+function addQuarters(date: Date, amount: number): Date {
+  return DateTime.fromJSDate(date).plus({ quarters: amount }).toJSDate();
+}
+
+function addYears(date: Date, amount: number): Date {
+  return DateTime.fromJSDate(date).plus({ years: amount }).toJSDate();
+}
+
+function differenceInYears(dateLeft: Date, dateRight: Date): number {
+  const left = DateTime.fromJSDate(dateLeft);
+  const right = DateTime.fromJSDate(dateRight);
+  return Math.floor(left.diff(right, 'years').years);
+}
+
+function differenceInQuarters(dateLeft: Date, dateRight: Date): number {
+  const left = DateTime.fromJSDate(dateLeft);
+  const right = DateTime.fromJSDate(dateRight);
+  return Math.floor(left.diff(right, 'quarters').quarters);
+}
+
+function differenceInMonths(dateLeft: Date, dateRight: Date): number {
+  const left = DateTime.fromJSDate(dateLeft);
+  const right = DateTime.fromJSDate(dateRight);
+  return Math.floor(left.diff(right, 'months').months);
+}
+
+function differenceInWeeks(dateLeft: Date, dateRight: Date): number {
+  const left = DateTime.fromJSDate(dateLeft);
+  const right = DateTime.fromJSDate(dateRight);
+  return Math.floor(left.diff(right, 'weeks').weeks);
+}
+
+function differenceInDays(dateLeft: Date, dateRight: Date): number {
+  const left = DateTime.fromJSDate(dateLeft);
+  const right = DateTime.fromJSDate(dateRight);
+  return Math.floor(left.diff(right, 'days').days);
+}
+
+function differenceInHours(dateLeft: Date, dateRight: Date): number {
+  const left = DateTime.fromJSDate(dateLeft);
+  const right = DateTime.fromJSDate(dateRight);
+  return Math.floor(left.diff(right, 'hours').hours);
+}
+
+function differenceInMinutes(dateLeft: Date, dateRight: Date): number {
+  const left = DateTime.fromJSDate(dateLeft);
+  const right = DateTime.fromJSDate(dateRight);
+  return Math.floor(left.diff(right, 'minutes').minutes);
+}
+
+function differenceInSeconds(dateLeft: Date, dateRight: Date): number {
+  const left = DateTime.fromJSDate(dateLeft);
+  const right = DateTime.fromJSDate(dateRight);
+  return Math.floor(left.diff(right, 'seconds').seconds);
+}
+
+function getDayOfYear(date: Date): number {
+  return DateTime.fromJSDate(date).ordinal;
+}
+
+function getQuarter(date: Date): number {
+  return DateTime.fromJSDate(date).quarter;
+}
+
+function getMonth(date: Date): number {
+  return DateTime.fromJSDate(date).month - 1; // date-fns returns 0-11, Luxon returns 1-12
+}
+
+function getWeek(date: Date, options?: { weekStartsOn?: number }): number {
+  return DateTime.fromJSDate(date).weekNumber;
+}
+
+function getDate(date: Date): number {
+  return DateTime.fromJSDate(date).day;
+}
+
+function startOfWeek(date: Date, options?: { weekStartsOn?: number }): Date {
+  const dt = DateTime.fromJSDate(date);
+  return dt.startOf('week').toJSDate();
+}
+
+function startOfQuarter(date: Date): Date {
+  return DateTime.fromJSDate(date).startOf('quarter').toJSDate();
+}
+
+function eachDayOfInterval(interval: { start: Date; end: Date }): Date[] {
+  const start = DateTime.fromJSDate(interval.start).startOf('day');
+  const end = DateTime.fromJSDate(interval.end).startOf('day');
+  const days: Date[] = [];
+
+  let current = start;
+  while (current <= end) {
+    days.push(current.toJSDate());
+    current = current.plus({ days: 1 });
+  }
+
+  return days;
+}
+
+function isMonday(date: Date): boolean {
+  return DateTime.fromJSDate(date).weekday === 1;
+}
+
+function isTuesday(date: Date): boolean {
+  return DateTime.fromJSDate(date).weekday === 2;
+}
+
+function isWednesday(date: Date): boolean {
+  return DateTime.fromJSDate(date).weekday === 3;
+}
+
+function isThursday(date: Date): boolean {
+  return DateTime.fromJSDate(date).weekday === 4;
+}
+
+function isFriday(date: Date): boolean {
+  return DateTime.fromJSDate(date).weekday === 5;
+}
+
+function isSaturday(date: Date): boolean {
+  return DateTime.fromJSDate(date).weekday === 6;
+}
+
+function isSunday(date: Date): boolean {
+  return DateTime.fromJSDate(date).weekday === 7;
+}
+
+function format(date: Date, formatStr: string): string {
+  const dt = DateTime.fromJSDate(date);
+  return dt.toFormat(formatStr);
+}
+
+function isValid(date: Date): boolean {
+  if (!date) {
+    return false;
+  }
+  if (!(date instanceof Date)) {
+    return false;
+  }
+  const dt = DateTime.fromJSDate(date);
+  return dt.isValid && !isNaN(date.getTime());
+}
 
 export class Utils {
   private helpers: IOptions;
@@ -176,18 +310,49 @@ export class Utils {
       // v3.3 老应用升级的场景，UTC 零时区，零时区展示上用 'Z'，后向兼容
       // v3.4 新应用，使用默认时区时选项，tz 为空
       if (!tz) {
-        const d = momentTZ.tz(v, 'UTC').format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+        // 将字符串直接解析为 UTC 时间（而不是解析为本地时间再转换）
+        let dt = DateTime.fromISO(v, { zone: 'UTC' });
+        // 如果 ISO 格式解析失败且输入是字符串，尝试其他常见格式
+        if (!dt.isValid && typeof v === 'string') {
+          dt = DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss', { zone: 'UTC' });
+        }
+        if (!dt.isValid && typeof v === 'string') {
+          dt = DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss.SSS', { zone: 'UTC' });
+        }
+        // 如果还是失败，回退到原来的方式
+        const d = dt.isValid
+          ? dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ")
+          : DateTime.fromJSDate(safeNewDate(v), { zone: 'UTC' }).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
         return JSON.stringify(d);
       }
       // 新应用，设置为零时区，零时区展示上用 'Z'，后向兼容.
       if (tz === 'UTC') {
         // TODO: 想用 "+00:00" 展示零时区
-        const d = momentTZ.tz(v, 'UTC').format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+        let dt = DateTime.fromISO(v, { zone: 'UTC' });
+        if (!dt.isValid && typeof v === 'string') {
+          dt = DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss', { zone: 'UTC' });
+        }
+        if (!dt.isValid && typeof v === 'string') {
+          dt = DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss.SSS', { zone: 'UTC' });
+        }
+        const d = dt.isValid
+          ? dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ")
+          : DateTime.fromJSDate(safeNewDate(v), { zone: 'UTC' }).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
         return JSON.stringify(d);
       }
       // 新应用，设置为其他时区
       if (tz) {
-        const d = momentTZ.tz(v, getAppTimezone(tz)).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+        const targetZone = getAppTimezone(tz);
+        let dt = DateTime.fromISO(v, { zone: targetZone });
+        if (!dt.isValid && typeof v === 'string') {
+          dt = DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss', { zone: targetZone });
+        }
+        if (!dt.isValid && typeof v === 'string') {
+          dt = DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss.SSS', { zone: targetZone });
+        }
+        const d = dt.isValid
+          ? dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ")
+          : DateTime.fromJSDate(safeNewDate(v), { zone: targetZone }).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
         return JSON.stringify(d);
       }
     } else if (typeof v === 'string' && /^\d{2}:\d{2}:\d{2}$/.test(v)) {
@@ -875,12 +1040,12 @@ export class Utils {
 
   CurrDate(tz = 'global') {
     const localDate = convertJSDateInTargetTimeZone(new Date(), tz);
-    return moment(localDate).format('YYYY-MM-DD');
+    return DateTime.fromJSDate(localDate).toFormat('yyyy-MM-dd');
   }
 
   CurrTime(tz = 'global') {
     const localDate = convertJSDateInTargetTimeZone(new Date(), tz);
-    return moment(localDate).format('HH:mm:ss');
+    return DateTime.fromJSDate(localDate).toFormat('HH:mm:ss');
   }
 
   CurrDateTime(tz = 'global') {
@@ -889,16 +1054,16 @@ export class Utils {
   }
 
   AddDays(date = new Date(), amount = 1, converter = 'json') {
-    return toValue(addDays(safeNewDate(date), amount), converter);
+    return toValue.call(this, addDays(safeNewDate(date), amount), converter);
   }
 
   AddMonths(date = new Date(), amount = 1, converter = 'json') {
     /** 传入的值为标准的时间格式 */
-    return toValue(addMonths(safeNewDate(date), amount), converter);
+    return toValue.call(this, addMonths(safeNewDate(date), amount), converter);
   }
 
   SubDays(date = new Date(), amount = 1, converter = 'json') {
-    return toValue(subDays(safeNewDate(date), amount), converter);
+    return toValue.call(this, subDays(safeNewDate(date), amount), converter);
   }
 
   // 兼容性策略：老应用升级到 3.10，保持老行为不变
@@ -999,7 +1164,7 @@ export class Utils {
         switch (metric2) {
           case 'month': {
             // 构造 date 所在月的第一天
-            const startOfMonth = new Date(moment(date).startOf('month').format('YYYY-MM-DD hh:mm:ss'));
+            const startOfMonth = new Date(DateTime.fromJSDate(date).startOf('month').toFormat('yyyy-MM-dd HH:mm:ss'));
             // 获取该天是周几
             let wod = startOfMonth.getDay(); // 以为返回 1-7，实际返回 0-6；0 是星期天
             wod = wod === 0 ? 7 : wod;
@@ -1061,7 +1226,7 @@ export class Utils {
         break;
     }
     if (typeof dateString === 'object' || isInputValidNaslDateTime(dateString)) {
-      return format(addDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+      return format(addDate, "yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
     } else {
       return format(addDate, 'yyyy-MM-dd');
     }
@@ -1101,9 +1266,9 @@ export class Utils {
     const isDays = fns.filter((_, index) => arr.includes(index + 1));
     const filtereddate = dateInRange.filter((day) => isDays.some((fn) => fn(day)));
     if (typeof startdatetr === 'object' || startdatetr.includes('T')) {
-      return filtereddate.map((date) => moment(date).format('YYYY-MM-DDTHH:mm:ss.SSSZ'));
+      return filtereddate.map((date) => DateTime.fromJSDate(date).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
     } else {
-      return filtereddate.map((date) => moment(date).format('YYYY-MM-DD'));
+      return filtereddate.map((date) => DateTime.fromJSDate(date).toFormat('yyyy-MM-dd'));
     }
   }
 
@@ -1251,7 +1416,7 @@ export class Utils {
 
   Convert(value, typeAnnotation: Partial<TypeAnnotation>) {
     if (typeAnnotation && typeAnnotation.typeKind === 'primitive') {
-      if (typeAnnotation.typeName === 'DateTime') return format(safeNewDate(value), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+      if (typeAnnotation.typeName === 'DateTime') return format(safeNewDate(value), "yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
       else if (typeAnnotation.typeName === 'Date') return format(safeNewDate(value), 'yyyy-MM-dd');
       else if (typeAnnotation.typeName === 'Time') {
         if (/^\d{2}:\d{2}:\d{2}$/.test(value))
@@ -1407,7 +1572,11 @@ export class Utils {
     return isAbs ? Math.abs(diffRes) : diffRes;
   }
 
-  // 时区转换
+  /**
+   * 时区转换
+   * 很早很早的3.1版本，升级脚本塞入的函数
+   * 从升级脚本描述看应该是后端的CurrDateTime有问题，不知道为啥前端也要加这个函数？？？
+   */
   ConvertTimezone(dateTime, tz) {
     if (!dateTime) {
       this.helpers.throwError(`内置函数ConvertTimezone入参错误：指定日期为空`);
@@ -1419,7 +1588,7 @@ export class Utils {
       this.helpers.throwError(`内置函数ConvertTimezone入参错误：传入时区${tz}不是合法时区字符`);
     }
 
-    const result = formatInTimeZone(dateTime, tz, "yyyy-MM-dd'T'HH:mm:ssxxx");
+    const result = dateTime;
     return result;
   }
 

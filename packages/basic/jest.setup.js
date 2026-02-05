@@ -1,7 +1,7 @@
 const fc = require('fast-check');
 fc.configureGlobal({ numRuns: 100 });
 
-const { default: NaslSDK, Helpers } = require('./src/sdk');
+const { default: NaslSDK, Helpers, Formatters } = require('./src/sdk');
 const { toString, fromString } = require('./src/init/dataTypes/tools');
 
 try {
@@ -17,6 +17,7 @@ try {
   // 全局变量
   global.sdkUtils = utils;
   global.sdkHelpers = Helpers;
+  global.sdkFormatters = Formatters;
 } catch (error) {
   console.log('Error initializing NaslSDK:', error);
 }
