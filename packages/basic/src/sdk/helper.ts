@@ -73,7 +73,7 @@ export const sortRule = (valueA, valueB, sort) => {
  * 2. 如果输入的时区是其他非 'user' 的值，则使用该值作为时区
  * 3. 如果输入的时区是 'user' 或者没有输入，则使用用户本地的时区（Intl.DateTimeFormat().resolvedOptions().timeZone）
  */
-export const getAppTimezone = (tz: string) => {
+export const getAppTimezone = (tz?: string) => {
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const globalTimeZone = window?.appInfo?.appTimeZone === 'user' ? userTimeZone : window?.appInfo?.appTimeZone;
 

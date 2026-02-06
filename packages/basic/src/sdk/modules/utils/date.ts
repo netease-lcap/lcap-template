@@ -100,7 +100,8 @@ export function getMonth(date: Date): number {
   return DateTime.fromJSDate(date).month - 1; // date-fns returns 0-11, Luxon returns 1-12
 }
 
-export function getWeek(date: Date, options?: { weekStartsOn?: number }): number {
+export function getWeek(date: Date): number {
+  // Luxon 的 weekNumber 始终遵循 ISO 标准（周一为一周起始日）
   return DateTime.fromJSDate(date).weekNumber;
 }
 

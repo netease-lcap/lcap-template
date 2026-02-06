@@ -174,42 +174,18 @@ export class Utils {
     if (isInputValidNaslDateTime(v)) {
       // v3.3 老应用升级的场景，UTC 零时区，零时区展示上用 'Z'，后向兼容
       // v3.4 新应用，使用默认时区时选项，tz 为空
-      if (!tz) {
-        let dt =
-          v instanceof Date
-            ? DateTime.fromJSDate(v, { zone: 'UTC' })
-            : v?.includes('T')
-              ? DateTime.fromISO(v, { zone: 'UTC' })
-              : DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss', { zone: 'UTC' });
-
-        const d = dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
-        return JSON.stringify(d);
-      }
       // 新应用，设置为零时区，零时区展示上用 'Z'，后向兼容.
-      if (tz === 'UTC') {
-        let dt =
-          v instanceof Date
-            ? DateTime.fromJSDate(v, { zone: 'UTC' })
-            : v?.includes('T')
-              ? DateTime.fromISO(v, { zone: 'UTC' })
-              : DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss', { zone: 'UTC' });
-
-        const d = dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
-        return JSON.stringify(d);
-      }
       // 新应用，设置为其他时区
-      if (tz) {
-        const targetZone = getAppTimezone(tz);
-        let dt =
-          v instanceof Date
-            ? DateTime.fromJSDate(v, { zone: targetZone })
-            : v?.includes('T')
-              ? DateTime.fromISO(v, { zone: targetZone })
-              : DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss', { zone: targetZone });
 
-        const d = dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
-        return JSON.stringify(d);
-      }
+      const targetZone = !tz || tz === 'UTC' ? 'UTC' : getAppTimezone(tz);
+      let dt =
+        v instanceof Date
+          ? DateTime.fromJSDate(v, { zone: targetZone })
+          : v?.includes('T')
+            ? DateTime.fromISO(v, { zone: targetZone })
+            : DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss', { zone: targetZone });
+      const d = dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+      return JSON.stringify(d);
     } else if (typeof v === 'string' && /^\d{2}:\d{2}:\d{2}$/.test(v)) {
       // test if the input v is a pure time-format string in the form of hh:mm:ss
       return JSON.stringify(v);
@@ -939,9 +915,9 @@ export class Utils {
     const [metric1, metric2] = metric.split('-');
     // 获取当年的最后一天的所在周会返回1，需要额外判断一下
     function getCurrentWeek(value) {
-      let count = getWeek(value, { weekStartsOn: 1 });
+      let count = getWeek(value);
       if (value.getMonth() + 1 === 12 && count === 1) {
-        count = getWeek(addDays(value, -7), { weekStartsOn: 1 }) + 1;
+        count = getWeek(addDays(value, -7)) + 1;
       }
       return count;
     }
@@ -949,7 +925,7 @@ export class Utils {
       case 'day':
         switch (metric2) {
           case 'week':
-            return differenceInDays(date, startOfWeek(date, { weekStartsOn: 1 })) + 1;
+            return differenceInDays(date, startOfWeek(date)) + 1;
           case 'month':
             return getDate(date);
           case 'quarter':
@@ -997,9 +973,9 @@ export class Utils {
     const [metric1, metric2] = metric.split('-');
     // 获取当年的最后一天的所在周会返回1，需要额外判断一下
     function getCurrentWeek(value) {
-      let count = getWeek(value, { weekStartsOn: 1 });
+      let count = getWeek(value);
       if (value.getMonth() + 1 === 12 && count === 1) {
-        count = getWeek(addDays(value, -7), { weekStartsOn: 1 }) + 1;
+        count = getWeek(addDays(value, -7)) + 1;
       }
       return count;
     }
@@ -1007,7 +983,7 @@ export class Utils {
       case 'day':
         switch (metric2) {
           case 'week':
-            return differenceInDays(date, startOfWeek(date, { weekStartsOn: 1 })) + 1;
+            return differenceInDays(date, startOfWeek(date)) + 1;
           case 'month':
             return getDate(date);
           case 'quarter':
@@ -1019,7 +995,7 @@ export class Utils {
         switch (metric2) {
           case 'month': {
             // 构造 date 所在月的第一天
-            const startOfMonth = new Date(DateTime.fromJSDate(date).startOf('month').toFormat('yyyy-MM-dd HH:mm:ss'));
+            const startOfMonth = DateTime.fromJSDate(date).startOf('month').toJSDate();
             // 获取该天是周几
             let wod = startOfMonth.getDay(); // 以为返回 1-7，实际返回 0-6；0 是星期天
             wod = wod === 0 ? 7 : wod;

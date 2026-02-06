@@ -56,7 +56,7 @@ export class DateFormatter extends Formatter {
       let dt =
         value instanceof Date
           ? DateTime.fromJSDate(value)
-          : value?.includes('T')
+          : typeof value === 'string' && value?.includes('T')
             ? DateTime.fromISO(value)
             : DateTime.fromJSDate(new Date(value));
 
