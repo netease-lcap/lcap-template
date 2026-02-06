@@ -884,15 +884,24 @@ export class Utils {
     return localDate.toJSON();
   }
 
+  /**
+   * @deprecated
+   */
   AddDays(date = new Date(), amount = 1, converter = 'json') {
     return toValue.call(this, addDays(safeNewDate(date), amount), converter);
   }
 
+  /**
+   * @deprecated
+   */
   AddMonths(date = new Date(), amount = 1, converter = 'json') {
     /** 传入的值为标准的时间格式 */
     return toValue.call(this, addMonths(safeNewDate(date), amount), converter);
   }
 
+  /**
+   * @deprecated
+   */
   SubDays(date = new Date(), amount = 1, converter = 'json') {
     return toValue.call(this, subDays(safeNewDate(date), amount), converter);
   }
