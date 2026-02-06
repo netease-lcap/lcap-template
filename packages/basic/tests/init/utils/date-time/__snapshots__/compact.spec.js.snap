@@ -48,8 +48,6 @@ exports[`测试与老版本的一致性 AlterDateTime 17`] = `"2026-02-05T12:00:
 
 exports[`测试与老版本的一致性 AlterDateTime 18`] = `"2026-02-05T12:00:03.000+08:00"`;
 
-exports[`测试与老版本的一致性 CurrDate 1`] = `"2026-02-06"`;
-
 exports[`测试与老版本的一致性 DateDiff 1`] = `0`;
 
 exports[`测试与老版本的一致性 DateDiff 2`] = `0`;

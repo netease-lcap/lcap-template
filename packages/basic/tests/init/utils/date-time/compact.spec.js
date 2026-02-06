@@ -66,7 +66,6 @@ describe('测试与老版本的一致性', () => {
     const before = OldUtils.CurrDate();
     const after = Utils.CurrDate();
     expect(after).toBe(before);
-    expect(after).toMatchSnapshot();
 
     // 有时区
     const timezone = 'Asia/Tokyo';
