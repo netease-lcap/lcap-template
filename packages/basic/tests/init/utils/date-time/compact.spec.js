@@ -21,7 +21,7 @@ const jsDate = new Date(datetime);
 const isoDatetime = jsDate.toJSON(); // '2026-02-05T04:00:00.000Z'
 const [date, time] = datetime.split(' ');
 
-describe('测试与老版本的兼容', () => {
+describe('测试与老版本的一致性', () => {
   test('JsonSerialize', () => {
     const timezone = 'Asia/Tokyo';
     // 普通日期时间（无时区）
@@ -230,7 +230,44 @@ describe('测试与老版本的兼容', () => {
   });
 
   // GetSpecificDaysOfWeek
-  test.skip('GetSpecificDaysOfWeek', () => {});
+  test('GetSpecificDaysOfWeek', () => {
+    const daysOfWeek = [1, 3, 5]; // 周一、周三、周五
+    const datetime2 = '2026-02-15 12:00:00';
+    const jsDate2 = new Date(datetime2);
+    const isoDatetime2 = jsDate2.toJSON();
+
+    const timezone = 'Asia/Tokyo';
+
+    // dateTime 字符串
+    const before = OldUtils.GetSpecificDaysOfWeek(datetime, datetime2, daysOfWeek);
+    const after = Utils.GetSpecificDaysOfWeek(datetime, datetime2, daysOfWeek);
+    expect(after).toEqual(before);
+
+    // dateTime 字符串，带时区
+    const beforeTZ = OldUtils.GetSpecificDaysOfWeek(datetime, datetime2, daysOfWeek, timezone);
+    const afterTZ = Utils.GetSpecificDaysOfWeek(datetime, datetime2, daysOfWeek, timezone);
+    expect(afterTZ).toEqual(beforeTZ);
+
+    // Date 对象
+    const beforeDate = OldUtils.GetSpecificDaysOfWeek(jsDate, jsDate2, daysOfWeek);
+    const afterDate = Utils.GetSpecificDaysOfWeek(jsDate, jsDate2, daysOfWeek);
+    expect(afterDate).toEqual(beforeDate);
+
+    // Date 对象，带时区
+    const beforeDateTZ = OldUtils.GetSpecificDaysOfWeek(jsDate, jsDate2, daysOfWeek, timezone);
+    const afterDateTZ = Utils.GetSpecificDaysOfWeek(jsDate, jsDate2, daysOfWeek, timezone);
+    expect(afterDateTZ).toEqual(beforeDateTZ);
+
+    // ISO 字符串
+    const beforeISO = OldUtils.GetSpecificDaysOfWeek(isoDatetime, isoDatetime2, daysOfWeek);
+    const afterISO = Utils.GetSpecificDaysOfWeek(isoDatetime, isoDatetime2, daysOfWeek);
+    expect(afterISO).toEqual(beforeISO);
+
+    // ISO 字符串，带时区
+    const beforeISOTZ = OldUtils.GetSpecificDaysOfWeek(isoDatetime, isoDatetime2, daysOfWeek, timezone);
+    const afterISOTZ = Utils.GetSpecificDaysOfWeek(isoDatetime, isoDatetime2, daysOfWeek, timezone);
+    expect(afterISOTZ).toEqual(beforeISOTZ);
+  });
 
   // FormatDate
   test('FormatDate', () => {
@@ -255,7 +292,16 @@ describe('测试与老版本的兼容', () => {
   });
 
   // FormatTime
-  test.skip('FormatTime', () => {});
+  test('FormatTime', () => {
+    const formatters = ['HH:mm:ss', 'hh:mm', 'HHmmss'];
+
+    for (const format of formatters) {
+      // time 字符串
+      const before = OldUtils.FormatTime(time, format);
+      const after = Utils.FormatTime(time, format);
+      expect(after).toBe(before);
+    }
+  });
 
   // FormatDateTime
   test('FormatDateTime', () => {

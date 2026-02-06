@@ -1,6 +1,5 @@
 import type { TypeAnnotation } from '@lcap/nasl';
 import { DateTime } from 'luxon';
-import { getWeekOfMonth } from 'date-fns';
 import { isObject, set, isEqual, cloneDeep } from 'lodash';
 import Decimal from 'decimal.js';
 import {
@@ -22,181 +21,47 @@ import {
   isDefString,
   isDefRegExp,
   RegExpLike,
-} from '../helper';
-import { dateFormatter } from '../Formatters';
-import type { IOptions } from '../types';
+} from '../../helper';
+import { dateFormatter } from '../../Formatters';
+import type { IOptions } from '../../types';
 
-// Luxon 辅助函数 - 替代 date-fns
-function addDays(date: Date, amount: number): Date {
-  return DateTime.fromJSDate(date).plus({ days: amount }).toJSDate();
-}
-
-function subDays(date: Date, amount: number): Date {
-  return DateTime.fromJSDate(date).minus({ days: amount }).toJSDate();
-}
-
-function addMonths(date: Date, amount: number): Date {
-  return DateTime.fromJSDate(date).plus({ months: amount }).toJSDate();
-}
-
-function addSeconds(date: Date, amount: number): Date {
-  return DateTime.fromJSDate(date).plus({ seconds: amount }).toJSDate();
-}
-
-function addMinutes(date: Date, amount: number): Date {
-  return DateTime.fromJSDate(date).plus({ minutes: amount }).toJSDate();
-}
-
-function addHours(date: Date, amount: number): Date {
-  return DateTime.fromJSDate(date).plus({ hours: amount }).toJSDate();
-}
-
-function addWeeks(date: Date, amount: number): Date {
-  return DateTime.fromJSDate(date).plus({ weeks: amount }).toJSDate();
-}
-
-function addQuarters(date: Date, amount: number): Date {
-  return DateTime.fromJSDate(date).plus({ quarters: amount }).toJSDate();
-}
-
-function addYears(date: Date, amount: number): Date {
-  return DateTime.fromJSDate(date).plus({ years: amount }).toJSDate();
-}
-
-function differenceInYears(dateLeft: Date, dateRight: Date): number {
-  const left = DateTime.fromJSDate(dateLeft);
-  const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'years').years);
-}
-
-function differenceInQuarters(dateLeft: Date, dateRight: Date): number {
-  const left = DateTime.fromJSDate(dateLeft);
-  const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'quarters').quarters);
-}
-
-function differenceInMonths(dateLeft: Date, dateRight: Date): number {
-  const left = DateTime.fromJSDate(dateLeft);
-  const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'months').months);
-}
-
-function differenceInWeeks(dateLeft: Date, dateRight: Date): number {
-  const left = DateTime.fromJSDate(dateLeft);
-  const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'weeks').weeks);
-}
-
-function differenceInDays(dateLeft: Date, dateRight: Date): number {
-  const left = DateTime.fromJSDate(dateLeft);
-  const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'days').days);
-}
-
-function differenceInHours(dateLeft: Date, dateRight: Date): number {
-  const left = DateTime.fromJSDate(dateLeft);
-  const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'hours').hours);
-}
-
-function differenceInMinutes(dateLeft: Date, dateRight: Date): number {
-  const left = DateTime.fromJSDate(dateLeft);
-  const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'minutes').minutes);
-}
-
-function differenceInSeconds(dateLeft: Date, dateRight: Date): number {
-  const left = DateTime.fromJSDate(dateLeft);
-  const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'seconds').seconds);
-}
-
-function getDayOfYear(date: Date): number {
-  return DateTime.fromJSDate(date).ordinal;
-}
-
-function getQuarter(date: Date): number {
-  return DateTime.fromJSDate(date).quarter;
-}
-
-function getMonth(date: Date): number {
-  return DateTime.fromJSDate(date).month - 1; // date-fns returns 0-11, Luxon returns 1-12
-}
-
-function getWeek(date: Date, options?: { weekStartsOn?: number }): number {
-  return DateTime.fromJSDate(date).weekNumber;
-}
-
-function getDate(date: Date): number {
-  return DateTime.fromJSDate(date).day;
-}
-
-function startOfWeek(date: Date, options?: { weekStartsOn?: number }): Date {
-  const dt = DateTime.fromJSDate(date);
-  return dt.startOf('week').toJSDate();
-}
-
-function startOfQuarter(date: Date): Date {
-  return DateTime.fromJSDate(date).startOf('quarter').toJSDate();
-}
-
-function eachDayOfInterval(interval: { start: Date; end: Date }): Date[] {
-  const start = DateTime.fromJSDate(interval.start).startOf('day');
-  const end = DateTime.fromJSDate(interval.end).startOf('day');
-  const days: Date[] = [];
-
-  let current = start;
-  while (current <= end) {
-    days.push(current.toJSDate());
-    current = current.plus({ days: 1 });
-  }
-
-  return days;
-}
-
-function isMonday(date: Date): boolean {
-  return DateTime.fromJSDate(date).weekday === 1;
-}
-
-function isTuesday(date: Date): boolean {
-  return DateTime.fromJSDate(date).weekday === 2;
-}
-
-function isWednesday(date: Date): boolean {
-  return DateTime.fromJSDate(date).weekday === 3;
-}
-
-function isThursday(date: Date): boolean {
-  return DateTime.fromJSDate(date).weekday === 4;
-}
-
-function isFriday(date: Date): boolean {
-  return DateTime.fromJSDate(date).weekday === 5;
-}
-
-function isSaturday(date: Date): boolean {
-  return DateTime.fromJSDate(date).weekday === 6;
-}
-
-function isSunday(date: Date): boolean {
-  return DateTime.fromJSDate(date).weekday === 7;
-}
-
-function format(date: Date, formatStr: string): string {
-  const dt = DateTime.fromJSDate(date);
-  return dt.toFormat(formatStr);
-}
-
-function isValid(date: Date): boolean {
-  if (!date) {
-    return false;
-  }
-  if (!(date instanceof Date)) {
-    return false;
-  }
-  const dt = DateTime.fromJSDate(date);
-  return dt.isValid && !isNaN(date.getTime());
-}
+import {
+  addDays,
+  subDays,
+  addMonths,
+  format,
+  isValid,
+  differenceInYears,
+  differenceInQuarters,
+  differenceInMonths,
+  differenceInWeeks,
+  differenceInDays,
+  differenceInHours,
+  differenceInMinutes,
+  differenceInSeconds,
+  getDayOfYear,
+  getWeekOfMonth,
+  getQuarter,
+  startOfWeek,
+  getMonth,
+  getWeek,
+  getDate,
+  startOfQuarter,
+  addSeconds,
+  addMinutes,
+  addHours,
+  addQuarters,
+  addYears,
+  addWeeks,
+  eachDayOfInterval,
+  isMonday,
+  isTuesday,
+  isWednesday,
+  isThursday,
+  isFriday,
+  isSaturday,
+  isSunday,
+} from './date';
 
 export class Utils {
   private helpers: IOptions;

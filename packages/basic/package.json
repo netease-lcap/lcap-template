@@ -12,7 +12,7 @@
     "dev": "nodemon --watch src -e 'ts,js,mjs,cjs,json' --exec 'yalc publish --push'",
     "zip": "node scripts/zip.js",
     "prepublish": "npm run clean && npm run build && npm run test",
-    "test": "jest",
+    "test": "jest --coverage",
     "prebuild": "npm run clean",
     "postbuild": "npm run zip",
     "clean": "rm -rf dist cjs esm typings",
