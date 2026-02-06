@@ -274,9 +274,6 @@ importers:
       babel-polyfill:
         specifier: ^6.26.0
         version: 6.26.0
-      date-fns:
-        specifier: ^2.6.0
-        version: 2.30.0
       lodash:
         specifier: 4.17.21
         version: 4.17.21
