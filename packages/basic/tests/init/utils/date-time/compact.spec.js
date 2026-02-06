@@ -73,11 +73,9 @@ describe('测试与老版本的一致性', () => {
     const beforeTZ = OldUtils.CurrDate(timezone);
     const afterTZ = Utils.CurrDate(timezone);
     expect(afterTZ).toBe(beforeTZ);
-    expect(afterTZ).toMatchSnapshot();
   });
 
-  // 可能存在先后顺序，先skip
-  test.skip('CurrTime', () => {
+  test('CurrTime', () => {
     // 无时区
     const before = OldUtils.CurrTime();
     const after = Utils.CurrTime();
@@ -87,6 +85,19 @@ describe('测试与老版本的一致性', () => {
     const timezone = 'Asia/Tokyo';
     const beforeTZ = OldUtils.CurrTime(timezone);
     const afterTZ = Utils.CurrTime(timezone);
+    expect(afterTZ).toBe(beforeTZ);
+  });
+
+  test('CurrDateTime', () => {
+    // 无时区
+    const before = OldUtils.CurrDateTime();
+    const after = Utils.CurrDateTime();
+    expect(after).toBe(before);
+
+    // 有时区
+    const timezone = 'Asia/Tokyo';
+    const beforeTZ = OldUtils.CurrDateTime(timezone);
+    const afterTZ = Utils.CurrDateTime(timezone);
     expect(afterTZ).toBe(beforeTZ);
   });
 
