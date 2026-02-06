@@ -43,49 +43,49 @@ export function addYears(date: Date, amount: number): Date {
 export function differenceInYears(dateLeft: Date, dateRight: Date): number {
   const left = DateTime.fromJSDate(dateLeft);
   const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'years').years);
+  return Math.trunc(left.diff(right, 'years').years);
 }
 
 export function differenceInQuarters(dateLeft: Date, dateRight: Date): number {
   const left = DateTime.fromJSDate(dateLeft);
   const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'quarters').quarters);
+  return Math.trunc(left.diff(right, 'quarters').quarters);
 }
 
 export function differenceInMonths(dateLeft: Date, dateRight: Date): number {
   const left = DateTime.fromJSDate(dateLeft);
   const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'months').months);
+  return Math.trunc(left.diff(right, 'months').months);
 }
 
 export function differenceInWeeks(dateLeft: Date, dateRight: Date): number {
   const left = DateTime.fromJSDate(dateLeft);
   const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'weeks').weeks);
+  return Math.trunc(left.diff(right, 'weeks').weeks);
 }
 
 export function differenceInDays(dateLeft: Date, dateRight: Date): number {
   const left = DateTime.fromJSDate(dateLeft);
   const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'days').days);
+  return Math.trunc(left.diff(right, 'days').days);
 }
 
 export function differenceInHours(dateLeft: Date, dateRight: Date): number {
   const left = DateTime.fromJSDate(dateLeft);
   const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'hours').hours);
+  return Math.trunc(left.diff(right, 'hours').hours);
 }
 
 export function differenceInMinutes(dateLeft: Date, dateRight: Date): number {
   const left = DateTime.fromJSDate(dateLeft);
   const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'minutes').minutes);
+  return Math.trunc(left.diff(right, 'minutes').minutes);
 }
 
 export function differenceInSeconds(dateLeft: Date, dateRight: Date): number {
   const left = DateTime.fromJSDate(dateLeft);
   const right = DateTime.fromJSDate(dateRight);
-  return Math.floor(left.diff(right, 'seconds').seconds);
+  return Math.trunc(left.diff(right, 'seconds').seconds);
 }
 
 export function getDayOfYear(date: Date): number {
