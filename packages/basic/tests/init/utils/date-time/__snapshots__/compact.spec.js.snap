@@ -132,65 +132,125 @@ exports[`测试与老版本的一致性 FromString 2`] = `"2026-02-05T12:00:00.0
 
 exports[`测试与老版本的一致性 FromString 3`] = `"2026-02-05T12:00:00.000+08:00"`;
 
-exports[`测试与老版本的一致性 GetDateCount 1`] = `5`;
+exports[`测试与老版本的一致性 GetDateCount: day-month 1`] = `5`;
 
-exports[`测试与老版本的一致性 GetDateCount 2`] = `5`;
+exports[`测试与老版本的一致性 GetDateCount: day-month 2`] = `5`;
 
-exports[`测试与老版本的一致性 GetDateCount 3`] = `5`;
+exports[`测试与老版本的一致性 GetDateCount: day-month 3`] = `5`;
 
-exports[`测试与老版本的一致性 GetDateCount 4`] = `4`;
+exports[`测试与老版本的一致性 GetDateCount: day-month 4`] = `4`;
 
-exports[`测试与老版本的一致性 GetDateCount 5`] = `4`;
+exports[`测试与老版本的一致性 GetDateCount: day-month 5`] = `4`;
 
-exports[`测试与老版本的一致性 GetDateCount 6`] = `4`;
+exports[`测试与老版本的一致性 GetDateCount: day-month 6`] = `4`;
 
-exports[`测试与老版本的一致性 GetDateCount 7`] = `4`;
+exports[`测试与老版本的一致性 GetDateCount: day-quarter 1`] = `36`;
 
-exports[`测试与老版本的一致性 GetDateCount 8`] = `4`;
+exports[`测试与老版本的一致性 GetDateCount: day-quarter 2`] = `36`;
 
-exports[`测试与老版本的一致性 GetDateCount 9`] = `4`;
+exports[`测试与老版本的一致性 GetDateCount: day-quarter 3`] = `36`;
 
-exports[`测试与老版本的一致性 GetDateCount 10`] = `3`;
+exports[`测试与老版本的一致性 GetDateCount: day-quarter 4`] = `35`;
 
-exports[`测试与老版本的一致性 GetDateCount 11`] = `3`;
+exports[`测试与老版本的一致性 GetDateCount: day-quarter 5`] = `35`;
 
-exports[`测试与老版本的一致性 GetDateCount 12`] = `3`;
+exports[`测试与老版本的一致性 GetDateCount: day-quarter 6`] = `35`;
 
-exports[`测试与老版本的一致性 GetDateCount 13`] = `2`;
+exports[`测试与老版本的一致性 GetDateCount: day-week 1`] = `4`;
 
-exports[`测试与老版本的一致性 GetDateCount 14`] = `2`;
+exports[`测试与老版本的一致性 GetDateCount: day-week 2`] = `4`;
 
-exports[`测试与老版本的一致性 GetDateCount 15`] = `2`;
+exports[`测试与老版本的一致性 GetDateCount: day-week 3`] = `4`;
 
-exports[`测试与老版本的一致性 GetDateCount 16`] = `2`;
+exports[`测试与老版本的一致性 GetDateCount: day-week 4`] = `3`;
 
-exports[`测试与老版本的一致性 GetDateCount 17`] = `2`;
+exports[`测试与老版本的一致性 GetDateCount: day-week 5`] = `3`;
 
-exports[`测试与老版本的一致性 GetDateCount 18`] = `2`;
+exports[`测试与老版本的一致性 GetDateCount: day-week 6`] = `3`;
 
-exports[`测试与老版本的一致性 GetDateCount 19`] = `6`;
+exports[`测试与老版本的一致性 GetDateCount: day-year 1`] = `36`;
 
-exports[`测试与老版本的一致性 GetDateCount 20`] = `6`;
+exports[`测试与老版本的一致性 GetDateCount: day-year 2`] = `36`;
 
-exports[`测试与老版本的一致性 GetDateCount 21`] = `6`;
+exports[`测试与老版本的一致性 GetDateCount: day-year 3`] = `36`;
 
-exports[`测试与老版本的一致性 GetDateCount 22`] = `6`;
+exports[`测试与老版本的一致性 GetDateCount: day-year 4`] = `35`;
 
-exports[`测试与老版本的一致性 GetDateCount 23`] = `6`;
+exports[`测试与老版本的一致性 GetDateCount: day-year 5`] = `35`;
 
-exports[`测试与老版本的一致性 GetDateCount 24`] = `6`;
+exports[`测试与老版本的一致性 GetDateCount: day-year 6`] = `35`;
 
-exports[`测试与老版本的一致性 GetDateCount 25`] = `2`;
+exports[`测试与老版本的一致性 GetDateCount: month-quarter 1`] = `2`;
 
-exports[`测试与老版本的一致性 GetDateCount 26`] = `2`;
+exports[`测试与老版本的一致性 GetDateCount: month-quarter 2`] = `2`;
 
-exports[`测试与老版本的一致性 GetDateCount 27`] = `2`;
+exports[`测试与老版本的一致性 GetDateCount: month-quarter 3`] = `2`;
 
-exports[`测试与老版本的一致性 GetDateCount 28`] = `2`;
+exports[`测试与老版本的一致性 GetDateCount: month-quarter 4`] = `2`;
 
-exports[`测试与老版本的一致性 GetDateCount 29`] = `2`;
+exports[`测试与老版本的一致性 GetDateCount: month-quarter 5`] = `2`;
 
-exports[`测试与老版本的一致性 GetDateCount 30`] = `2`;
+exports[`测试与老版本的一致性 GetDateCount: month-quarter 6`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount: month-year 1`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount: month-year 2`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount: month-year 3`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount: month-year 4`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount: month-year 5`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount: month-year 6`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount: quarter 1`] = `1`;
+
+exports[`测试与老版本的一致性 GetDateCount: quarter 2`] = `1`;
+
+exports[`测试与老版本的一致性 GetDateCount: quarter 3`] = `1`;
+
+exports[`测试与老版本的一致性 GetDateCount: quarter 4`] = `1`;
+
+exports[`测试与老版本的一致性 GetDateCount: quarter 5`] = `1`;
+
+exports[`测试与老版本的一致性 GetDateCount: quarter 6`] = `1`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-month 1`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-month 2`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-month 3`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-month 4`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-month 5`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-month 6`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-quarter 1`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-quarter 2`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-quarter 3`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-quarter 4`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-quarter 5`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-quarter 6`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-year 1`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-year 2`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-year 3`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-year 4`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-year 5`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount: week-year 6`] = `6`;
 
 exports[`测试与老版本的一致性 GetDateCountOld 1`] = `5`;
 

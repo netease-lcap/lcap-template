@@ -206,44 +206,55 @@ describe('测试与老版本的一致性', () => {
 
   // GetDateCount
   test('GetDateCount', () => {
-    const metrics = ['day-month', 'day-week', 'week-month', 'week-year', 'month-year'];
+    const metrics = [
+      'day-week',
+      'day-month',
+      'day-quarter',
+      'day-year',
+      'week-month',
+      'week-quarter',
+      'week-year',
+      'month-quarter',
+      'month-year',
+      'quarter',
+    ];
     for (const metric of metrics) {
       // dateTime 字符串
       const before = OldUtils.GetDateCount(datetime, metric);
       const after = Utils.GetDateCount(datetime, metric);
       expect(after).toBe(before);
-      expect(after).toMatchSnapshot();
+      expect(after).toMatchSnapshot(metric);
 
       // Date 对象
       const beforeDate = OldUtils.GetDateCount(jsDate, metric);
       const afterDate = Utils.GetDateCount(jsDate, metric);
       expect(afterDate).toBe(beforeDate);
-      expect(afterDate).toMatchSnapshot();
+      expect(afterDate).toMatchSnapshot(metric);
 
       // ISO 字符串
       const beforeISO = OldUtils.GetDateCount(isoDatetime, metric);
       const afterISO = Utils.GetDateCount(isoDatetime, metric);
       expect(afterISO).toBe(beforeISO);
-      expect(afterISO).toMatchSnapshot();
+      expect(afterISO).toMatchSnapshot(metric);
 
       const timezone = 'Pacific/Midway';
       // dateTime 字符串，带时区
       const beforeTZ = OldUtils.GetDateCount(datetime, metric, timezone);
       const afterTZ = Utils.GetDateCount(datetime, metric, timezone);
       expect(afterTZ).toBe(beforeTZ);
-      expect(afterTZ).toMatchSnapshot();
+      expect(afterTZ).toMatchSnapshot(metric);
 
       // Date 对象，带时区
       const beforeDateTZ = OldUtils.GetDateCount(jsDate, metric, timezone);
       const afterDateTZ = Utils.GetDateCount(jsDate, metric, timezone);
       expect(afterDateTZ).toBe(beforeDateTZ);
-      expect(afterDateTZ).toMatchSnapshot();
+      expect(afterDateTZ).toMatchSnapshot(metric);
 
       // ISO 字符串，带时区
       const beforeISOTZ = OldUtils.GetDateCount(isoDatetime, metric, timezone);
       const afterISOTZ = Utils.GetDateCount(isoDatetime, metric, timezone);
       expect(afterISOTZ).toBe(beforeISOTZ);
-      expect(afterISOTZ).toMatchSnapshot();
+      expect(afterISOTZ).toMatchSnapshot(metric);
     }
   });
 
