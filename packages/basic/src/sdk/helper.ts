@@ -103,24 +103,26 @@ export function isValidTimezoneIANAString(timezoneString) {
 
 export function naslDateToLocalDate(date) {
   const localTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-  if (date instanceof Date) {
-    const localDate = DateTime.fromJSDate(date).setZone(localTZ);
-    return safeNewDate(localDate.toFormat('yyyy-MM-dd HH:mm:ss'));
-  }
-
-  if (date?.includes('T')) {
-    const localDate = DateTime.fromISO(date, { zone: localTZ });
-    return safeNewDate(localDate.toFormat('yyyy-MM-dd HH:mm:ss'));
-  }
-
   // 仅日期部分
   if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     const localDate = DateTime.fromFormat(date, 'yyyy-MM-dd', { zone: localTZ });
     return safeNewDate(localDate.toFormat('yyyy-MM-dd HH:mm:ss'));
   }
-  // 包含时间部分
-  const localDate = DateTime.fromFormat(date, 'yyyy-MM-dd HH:mm:ss', { zone: localTZ });
+
+  // 日期时间
+  if (/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/.test(date)) {
+    const localDate = DateTime.fromFormat(date, 'yyyy-MM-dd HH:mm:ss', { zone: localTZ });
+    return safeNewDate(localDate.toFormat('yyyy-MM-dd HH:mm:ss'));
+  }
+
+  // ISO 字符串
+  if (typeof date === 'string' && date.includes('T')) {
+    const localDate = DateTime.fromISO(date, { zone: localTZ });
+    return safeNewDate(localDate.toFormat('yyyy-MM-dd HH:mm:ss'));
+  }
+
+  // 其他情况直接转换
+  const localDate = DateTime.fromJSDate(safeNewDate(date), { zone: localTZ });
   return safeNewDate(localDate.toFormat('yyyy-MM-dd HH:mm:ss'));
 }
 

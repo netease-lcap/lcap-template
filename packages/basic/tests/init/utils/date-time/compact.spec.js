@@ -163,44 +163,67 @@ describe('测试与老版本的一致性', () => {
 
   // GetDateCountOld
   test('GetDateCountOld', () => {
-    const metrics = ['day-month', 'day-week', 'week-month', 'week-year', 'month-year'];
+    const metrics = [
+      'day-week',
+      'day-month',
+      'day-quarter',
+      'day-year',
+      'week-month',
+      'week-quarter',
+      'week-year',
+      'month-quarter',
+      'month-year',
+      'quarter',
+    ];
     for (const metric of metrics) {
       // dateTime 字符串
       const before = OldUtils.GetDateCountOld(datetime, metric);
       const after = Utils.GetDateCountOld(datetime, metric);
       expect(after).toBe(before);
-      expect(after).toMatchSnapshot();
+      expect(after).toMatchSnapshot(metric);
 
       // Date 对象
       const beforeDate = OldUtils.GetDateCountOld(jsDate, metric);
       const afterDate = Utils.GetDateCountOld(jsDate, metric);
       expect(afterDate).toBe(beforeDate);
-      expect(afterDate).toMatchSnapshot();
+      expect(afterDate).toMatchSnapshot(metric);
 
       // ISO 字符串
       const beforeISO = OldUtils.GetDateCountOld(isoDatetime, metric);
       const afterISO = Utils.GetDateCountOld(isoDatetime, metric);
       expect(afterISO).toBe(beforeISO);
-      expect(afterISO).toMatchSnapshot();
+      expect(afterISO).toMatchSnapshot(metric);
+
+      // date 字符串
+      const beforeDateOnly = OldUtils.GetDateCountOld(date, metric);
+      const afterDateOnly = Utils.GetDateCountOld(date, metric);
+      expect(afterDateOnly).toBe(beforeDateOnly);
+      expect(afterDateOnly).toMatchSnapshot(metric);
 
       const timezone = 'Pacific/Midway';
       // dateTime 字符串，带时区
       const beforeTZ = OldUtils.GetDateCountOld(datetime, metric, timezone);
       const afterTZ = Utils.GetDateCountOld(datetime, metric, timezone);
       expect(afterTZ).toBe(beforeTZ);
-      expect(afterTZ).toMatchSnapshot();
+      expect(afterTZ).toMatchSnapshot(metric);
 
       // Date 对象，带时区
       const beforeDateTZ = OldUtils.GetDateCountOld(jsDate, metric, timezone);
       const afterDateTZ = Utils.GetDateCountOld(jsDate, metric, timezone);
       expect(afterDateTZ).toBe(beforeDateTZ);
-      expect(afterDateTZ).toMatchSnapshot();
+      expect(afterDateTZ).toMatchSnapshot(metric);
 
       // ISO 字符串，带时区
       const beforeISOTZ = OldUtils.GetDateCountOld(isoDatetime, metric, timezone);
       const afterISOTZ = Utils.GetDateCountOld(isoDatetime, metric, timezone);
       expect(afterISOTZ).toBe(beforeISOTZ);
-      expect(afterISOTZ).toMatchSnapshot();
+      expect(afterISOTZ).toMatchSnapshot(metric);
+
+      // date 字符串，带时区
+      const beforeDateOnlyTZ = OldUtils.GetDateCountOld(date, metric, timezone);
+      const afterDateOnlyTZ = Utils.GetDateCountOld(date, metric, timezone);
+      expect(afterDateOnlyTZ).toBe(beforeDateOnlyTZ);
+      expect(afterDateOnlyTZ).toMatchSnapshot(metric);
     }
   });
 
@@ -237,6 +260,12 @@ describe('测试与老版本的一致性', () => {
       expect(afterISO).toBe(beforeISO);
       expect(afterISO).toMatchSnapshot(metric);
 
+      // date 字符串
+      const beforeDateOnly = OldUtils.GetDateCount(date, metric);
+      const afterDateOnly = Utils.GetDateCount(date, metric);
+      expect(afterDateOnly).toBe(beforeDateOnly);
+      expect(afterDateOnly).toMatchSnapshot(metric);
+
       const timezone = 'Pacific/Midway';
       // dateTime 字符串，带时区
       const beforeTZ = OldUtils.GetDateCount(datetime, metric, timezone);
@@ -255,6 +284,12 @@ describe('测试与老版本的一致性', () => {
       const afterISOTZ = Utils.GetDateCount(isoDatetime, metric, timezone);
       expect(afterISOTZ).toBe(beforeISOTZ);
       expect(afterISOTZ).toMatchSnapshot(metric);
+
+      // date 字符串，带时区
+      const beforeDateOnlyTZ = OldUtils.GetDateCount(date, metric, timezone);
+      const afterDateOnlyTZ = Utils.GetDateCount(date, metric, timezone);
+      expect(afterDateOnlyTZ).toBe(beforeDateOnlyTZ);
+      expect(afterDateOnlyTZ).toMatchSnapshot(metric);
     }
   });
 
@@ -289,6 +324,7 @@ describe('测试与老版本的一致性', () => {
     const datetime2 = '2026-02-15 12:00:00';
     const jsDate2 = new Date(datetime2);
     const isoDatetime2 = jsDate2.toJSON();
+    const [date2, time2] = datetime2.split(' ');
 
     const timezone = 'Pacific/Midway';
 
@@ -327,6 +363,18 @@ describe('测试与老版本的一致性', () => {
     const afterISOTZ = Utils.GetSpecificDaysOfWeek(isoDatetime, isoDatetime2, daysOfWeek, timezone);
     expect(afterISOTZ).toEqual(beforeISOTZ);
     expect(afterISOTZ).toMatchSnapshot();
+
+    // date 字符串
+    const beforeDateOnly = OldUtils.GetSpecificDaysOfWeek(date, date2, daysOfWeek);
+    const afterDateOnly = Utils.GetSpecificDaysOfWeek(date, date2, daysOfWeek);
+    expect(afterDateOnly).toEqual(beforeDateOnly);
+    expect(afterDateOnly).toMatchSnapshot();
+
+    // date 字符串，带时区
+    const beforeDateOnlyTZ = OldUtils.GetSpecificDaysOfWeek(date, date2, daysOfWeek, timezone);
+    const afterDateOnlyTZ = Utils.GetSpecificDaysOfWeek(date, date2, daysOfWeek, timezone);
+    expect(afterDateOnlyTZ).toEqual(beforeDateOnlyTZ);
+    expect(afterDateOnlyTZ).toMatchSnapshot();
   });
 
   // FormatDate
@@ -351,6 +399,12 @@ describe('测试与老版本的一致性', () => {
       const afterISO = Utils.FormatDate(isoDatetime, format);
       expect(afterISO).toBe(beforeISO);
       expect(afterISO).toMatchSnapshot();
+
+      // date 字符串
+      const beforeDateOnly = OldUtils.FormatDate(date, format);
+      const afterDateOnly = Utils.FormatDate(date, format);
+      expect(afterDateOnly).toBe(beforeDateOnly);
+      expect(afterDateOnly).toMatchSnapshot();
     }
   });
 
