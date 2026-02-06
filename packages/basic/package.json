@@ -13,6 +13,7 @@
     "zip": "node scripts/zip.js",
     "prepublish": "npm run clean && npm run build && npm run test",
     "test": "jest --coverage",
+    "test:update": "jest --updateSnapshot",
     "prebuild": "npm run clean",
     "postbuild": "npm run zip",
     "clean": "rm -rf dist cjs esm typings",

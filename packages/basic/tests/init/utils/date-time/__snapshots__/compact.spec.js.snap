@@ -1,0 +1,341 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`测试与老版本的一致性 AddDays 1`] = `""2026-02-10T04:00:00.000+00:00""`;
+
+exports[`测试与老版本的一致性 AddDays 2`] = `""2026-02-10T04:00:00.000+00:00""`;
+
+exports[`测试与老版本的一致性 AddDays 3`] = `""2026-02-10T04:00:00.000+00:00""`;
+
+exports[`测试与老版本的一致性 AddMonths 1`] = `""2026-04-05T04:00:00.000+00:00""`;
+
+exports[`测试与老版本的一致性 AddMonths 2`] = `""2026-04-05T04:00:00.000+00:00""`;
+
+exports[`测试与老版本的一致性 AddMonths 3`] = `""2026-04-05T04:00:00.000+00:00""`;
+
+exports[`测试与老版本的一致性 AlterDateTime 1`] = `"2029-02-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 2`] = `"2029-02-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 3`] = `"2029-02-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 4`] = `"2026-05-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 5`] = `"2026-05-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 6`] = `"2026-05-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 7`] = `"2026-02-08T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 8`] = `"2026-02-08T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 9`] = `"2026-02-08T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 10`] = `"2026-02-05T15:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 11`] = `"2026-02-05T15:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 12`] = `"2026-02-05T15:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 13`] = `"2026-02-05T12:03:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 14`] = `"2026-02-05T12:03:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 15`] = `"2026-02-05T12:03:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 16`] = `"2026-02-05T12:00:03.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 17`] = `"2026-02-05T12:00:03.000+08:00"`;
+
+exports[`测试与老版本的一致性 AlterDateTime 18`] = `"2026-02-05T12:00:03.000+08:00"`;
+
+exports[`测试与老版本的一致性 CurrDate 1`] = `"2026-02-06"`;
+
+exports[`测试与老版本的一致性 CurrDate 2`] = `"2026-02-06"`;
+
+exports[`测试与老版本的一致性 DateDiff 1`] = `0`;
+
+exports[`测试与老版本的一致性 DateDiff 2`] = `0`;
+
+exports[`测试与老版本的一致性 DateDiff 3`] = `0`;
+
+exports[`测试与老版本的一致性 DateDiff 4`] = `0`;
+
+exports[`测试与老版本的一致性 DateDiff 5`] = `0`;
+
+exports[`测试与老版本的一致性 DateDiff 6`] = `0`;
+
+exports[`测试与老版本的一致性 DateDiff 7`] = `0`;
+
+exports[`测试与老版本的一致性 DateDiff 8`] = `0`;
+
+exports[`测试与老版本的一致性 DateDiff 9`] = `0`;
+
+exports[`测试与老版本的一致性 DateDiff 10`] = `0`;
+
+exports[`测试与老版本的一致性 DateDiff 11`] = `0`;
+
+exports[`测试与老版本的一致性 DateDiff 12`] = `0`;
+
+exports[`测试与老版本的一致性 DateDiff 13`] = `5`;
+
+exports[`测试与老版本的一致性 DateDiff 14`] = `5`;
+
+exports[`测试与老版本的一致性 DateDiff 15`] = `5`;
+
+exports[`测试与老版本的一致性 DateDiff 16`] = `120`;
+
+exports[`测试与老版本的一致性 DateDiff 17`] = `120`;
+
+exports[`测试与老版本的一致性 DateDiff 18`] = `120`;
+
+exports[`测试与老版本的一致性 FormatDate 1`] = `"2026-02-05"`;
+
+exports[`测试与老版本的一致性 FormatDate 2`] = `"2026-02-05"`;
+
+exports[`测试与老版本的一致性 FormatDate 3`] = `"2026-02-05"`;
+
+exports[`测试与老版本的一致性 FormatDate 4`] = `"05/02/2026"`;
+
+exports[`测试与老版本的一致性 FormatDate 5`] = `"05/02/2026"`;
+
+exports[`测试与老版本的一致性 FormatDate 6`] = `"05/02/2026"`;
+
+exports[`测试与老版本的一致性 FormatDate 7`] = `"02-05-2026"`;
+
+exports[`测试与老版本的一致性 FormatDate 8`] = `"02-05-2026"`;
+
+exports[`测试与老版本的一致性 FormatDate 9`] = `"02-05-2026"`;
+
+exports[`测试与老版本的一致性 FormatDate 10`] = `"20260205"`;
+
+exports[`测试与老版本的一致性 FormatDate 11`] = `"20260205"`;
+
+exports[`测试与老版本的一致性 FormatDate 12`] = `"20260205"`;
+
+exports[`测试与老版本的一致性 FormatDateTime 1`] = `"2026-02-05 12:00:00"`;
+
+exports[`测试与老版本的一致性 FormatDateTime 2`] = `"2026-02-05 12:00:00"`;
+
+exports[`测试与老版本的一致性 FormatDateTime 3`] = `"2026-02-05 12:00:00"`;
+
+exports[`测试与老版本的一致性 FormatDateTime 4`] = `"2026-02-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 FormatDateTime 5`] = `"2026-02-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 FormatDateTime 6`] = `"2026-02-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 FormatTime 1`] = `"12:00:00"`;
+
+exports[`测试与老版本的一致性 FormatTime 2`] = `"hh:00"`;
+
+exports[`测试与老版本的一致性 FormatTime 3`] = `"120000"`;
+
+exports[`测试与老版本的一致性 FromString 1`] = `"2026-02-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 FromString 2`] = `"2026-02-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 FromString 3`] = `"2026-02-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 GetDateCount 1`] = `5`;
+
+exports[`测试与老版本的一致性 GetDateCount 2`] = `5`;
+
+exports[`测试与老版本的一致性 GetDateCount 3`] = `5`;
+
+exports[`测试与老版本的一致性 GetDateCount 4`] = `5`;
+
+exports[`测试与老版本的一致性 GetDateCount 5`] = `5`;
+
+exports[`测试与老版本的一致性 GetDateCount 6`] = `5`;
+
+exports[`测试与老版本的一致性 GetDateCount 7`] = `4`;
+
+exports[`测试与老版本的一致性 GetDateCount 8`] = `4`;
+
+exports[`测试与老版本的一致性 GetDateCount 9`] = `4`;
+
+exports[`测试与老版本的一致性 GetDateCount 10`] = `4`;
+
+exports[`测试与老版本的一致性 GetDateCount 11`] = `4`;
+
+exports[`测试与老版本的一致性 GetDateCount 12`] = `4`;
+
+exports[`测试与老版本的一致性 GetDateCount 13`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount 14`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount 15`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount 16`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount 17`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount 18`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount 19`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount 20`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount 21`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount 22`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount 23`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount 24`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCount 25`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount 26`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount 27`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount 28`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount 29`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCount 30`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 1`] = `5`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 2`] = `5`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 3`] = `5`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 4`] = `5`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 5`] = `5`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 6`] = `5`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 7`] = `4`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 8`] = `4`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 9`] = `4`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 10`] = `4`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 11`] = `4`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 12`] = `4`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 13`] = `1`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 14`] = `1`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 15`] = `1`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 16`] = `1`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 17`] = `1`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 18`] = `1`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 19`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 20`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 21`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 22`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 23`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 24`] = `6`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 25`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 26`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 27`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 28`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 29`] = `2`;
+
+exports[`测试与老版本的一致性 GetDateCountOld 30`] = `2`;
+
+exports[`测试与老版本的一致性 GetSpecificDaysOfWeek 1`] = `
+[
+  "2026-02-06",
+  "2026-02-09",
+  "2026-02-11",
+  "2026-02-13",
+]
+`;
+
+exports[`测试与老版本的一致性 GetSpecificDaysOfWeek 2`] = `
+[
+  "2026-02-06",
+  "2026-02-09",
+  "2026-02-11",
+  "2026-02-13",
+]
+`;
+
+exports[`测试与老版本的一致性 GetSpecificDaysOfWeek 3`] = `
+[
+  "2026-02-06T00:00:00.000+08:00",
+  "2026-02-09T00:00:00.000+08:00",
+  "2026-02-11T00:00:00.000+08:00",
+  "2026-02-13T00:00:00.000+08:00",
+]
+`;
+
+exports[`测试与老版本的一致性 GetSpecificDaysOfWeek 4`] = `
+[
+  "2026-02-06T00:00:00.000+08:00",
+  "2026-02-09T00:00:00.000+08:00",
+  "2026-02-11T00:00:00.000+08:00",
+  "2026-02-13T00:00:00.000+08:00",
+]
+`;
+
+exports[`测试与老版本的一致性 GetSpecificDaysOfWeek 5`] = `
+[
+  "2026-02-06T00:00:00.000+08:00",
+  "2026-02-09T00:00:00.000+08:00",
+  "2026-02-11T00:00:00.000+08:00",
+  "2026-02-13T00:00:00.000+08:00",
+]
+`;
+
+exports[`测试与老版本的一致性 GetSpecificDaysOfWeek 6`] = `
+[
+  "2026-02-06T00:00:00.000+08:00",
+  "2026-02-09T00:00:00.000+08:00",
+  "2026-02-11T00:00:00.000+08:00",
+  "2026-02-13T00:00:00.000+08:00",
+]
+`;
+
+exports[`测试与老版本的一致性 JsonSerialize 1`] = `""2026-02-05T12:00:00.000+00:00""`;
+
+exports[`测试与老版本的一致性 JsonSerialize 2`] = `""2026-02-05T12:00:00.000+09:00""`;
+
+exports[`测试与老版本的一致性 JsonSerialize 3`] = `""2026-02-05T04:00:00.000+00:00""`;
+
+exports[`测试与老版本的一致性 JsonSerialize 4`] = `""2026-02-05T13:00:00.000+09:00""`;
+
+exports[`测试与老版本的一致性 JsonSerialize 5`] = `""2026-02-05T04:00:00.000+00:00""`;
+
+exports[`测试与老版本的一致性 JsonSerialize 6`] = `""2026-02-05T13:00:00.000+09:00""`;
+
+exports[`测试与老版本的一致性 SubDays 1`] = `""2026-01-31T04:00:00.000+00:00""`;
+
+exports[`测试与老版本的一致性 SubDays 2`] = `""2026-01-31T04:00:00.000+00:00""`;
+
+exports[`测试与老版本的一致性 SubDays 3`] = `""2026-01-31T04:00:00.000+00:00""`;
+
+exports[`测试与老版本的一致性 ToString 1`] = `"2026-02-05 12:00:00"`;
+
+exports[`测试与老版本的一致性 ToString 2`] = `"2026-02-05 13:00:00"`;
+
+exports[`测试与老版本的一致性 ToString 3`] = `"2026-02-05 12:00:00"`;
+
+exports[`测试与老版本的一致性 ToString 4`] = `"2026-02-05 13:00:00"`;
+
+exports[`测试与老版本的一致性 ToString 5`] = `"2026-02-05 12:00:00"`;
+
+exports[`测试与老版本的一致性 ToString 6`] = `"2026-02-05 13:00:00"`;
