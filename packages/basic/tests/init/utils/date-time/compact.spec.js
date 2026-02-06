@@ -23,7 +23,7 @@ const [date, time] = datetime.split(' ');
 
 describe('测试与老版本的一致性', () => {
   test('JsonSerialize', () => {
-    const timezone = 'Asia/Tokyo';
+    const timezone = 'Pacific/Midway';
     // 普通日期时间（无时区）
     const before = OldUtils.JsonSerialize(datetime);
     const after = Utils.JsonSerialize(datetime);
@@ -68,7 +68,7 @@ describe('测试与老版本的一致性', () => {
     expect(after).toBe(before);
 
     // 有时区
-    const timezone = 'Asia/Tokyo';
+    const timezone = 'Pacific/Midway';
     const beforeTZ = OldUtils.CurrDate(timezone);
     const afterTZ = Utils.CurrDate(timezone);
     expect(afterTZ).toBe(beforeTZ);
@@ -81,7 +81,7 @@ describe('测试与老版本的一致性', () => {
     expect(after).toBe(before);
 
     // 有时区
-    const timezone = 'Asia/Tokyo';
+    const timezone = 'Pacific/Midway';
     const beforeTZ = OldUtils.CurrTime(timezone);
     const afterTZ = Utils.CurrTime(timezone);
     expect(afterTZ).toBe(beforeTZ);
@@ -94,7 +94,7 @@ describe('测试与老版本的一致性', () => {
     expect(after).toBe(before);
 
     // 有时区
-    const timezone = 'Asia/Tokyo';
+    const timezone = 'Pacific/Midway';
     const beforeTZ = OldUtils.CurrDateTime(timezone);
     const afterTZ = Utils.CurrDateTime(timezone);
     expect(afterTZ).toBe(beforeTZ);
@@ -183,7 +183,7 @@ describe('测试与老版本的一致性', () => {
       expect(afterISO).toBe(beforeISO);
       expect(afterISO).toMatchSnapshot();
 
-      const timezone = 'Asia/Tokyo';
+      const timezone = 'Pacific/Midway';
       // dateTime 字符串，带时区
       const beforeTZ = OldUtils.GetDateCountOld(datetime, metric, timezone);
       const afterTZ = Utils.GetDateCountOld(datetime, metric, timezone);
@@ -226,7 +226,7 @@ describe('测试与老版本的一致性', () => {
       expect(afterISO).toBe(beforeISO);
       expect(afterISO).toMatchSnapshot();
 
-      const timezone = 'Asia/Tokyo';
+      const timezone = 'Pacific/Midway';
       // dateTime 字符串，带时区
       const beforeTZ = OldUtils.GetDateCount(datetime, metric, timezone);
       const afterTZ = Utils.GetDateCount(datetime, metric, timezone);
@@ -279,7 +279,7 @@ describe('测试与老版本的一致性', () => {
     const jsDate2 = new Date(datetime2);
     const isoDatetime2 = jsDate2.toJSON();
 
-    const timezone = 'Asia/Tokyo';
+    const timezone = 'Pacific/Midway';
 
     // dateTime 字符串
     const before = OldUtils.GetSpecificDaysOfWeek(datetime, datetime2, daysOfWeek);
@@ -419,7 +419,7 @@ describe('测试与老版本的一致性', () => {
     expect(after).toMatchSnapshot();
 
     // dateTime 字符串，带时区
-    const timezone = 'Asia/Tokyo';
+    const timezone = 'Pacific/Midway';
     const beforeTZ = OldUtils.ToString(typeKey, datetime, timezone);
     const afterTZ = Utils.ToString(typeKey, datetime, timezone);
     expect(afterTZ).toBe(beforeTZ);

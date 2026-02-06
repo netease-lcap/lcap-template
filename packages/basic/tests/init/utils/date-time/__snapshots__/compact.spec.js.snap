@@ -138,11 +138,11 @@ exports[`测试与老版本的一致性 GetDateCount 2`] = `5`;
 
 exports[`测试与老版本的一致性 GetDateCount 3`] = `5`;
 
-exports[`测试与老版本的一致性 GetDateCount 4`] = `5`;
+exports[`测试与老版本的一致性 GetDateCount 4`] = `4`;
 
-exports[`测试与老版本的一致性 GetDateCount 5`] = `5`;
+exports[`测试与老版本的一致性 GetDateCount 5`] = `4`;
 
-exports[`测试与老版本的一致性 GetDateCount 6`] = `5`;
+exports[`测试与老版本的一致性 GetDateCount 6`] = `4`;
 
 exports[`测试与老版本的一致性 GetDateCount 7`] = `4`;
 
@@ -150,11 +150,11 @@ exports[`测试与老版本的一致性 GetDateCount 8`] = `4`;
 
 exports[`测试与老版本的一致性 GetDateCount 9`] = `4`;
 
-exports[`测试与老版本的一致性 GetDateCount 10`] = `4`;
+exports[`测试与老版本的一致性 GetDateCount 10`] = `3`;
 
-exports[`测试与老版本的一致性 GetDateCount 11`] = `4`;
+exports[`测试与老版本的一致性 GetDateCount 11`] = `3`;
 
-exports[`测试与老版本的一致性 GetDateCount 12`] = `4`;
+exports[`测试与老版本的一致性 GetDateCount 12`] = `3`;
 
 exports[`测试与老版本的一致性 GetDateCount 13`] = `2`;
 
@@ -198,11 +198,11 @@ exports[`测试与老版本的一致性 GetDateCountOld 2`] = `5`;
 
 exports[`测试与老版本的一致性 GetDateCountOld 3`] = `5`;
 
-exports[`测试与老版本的一致性 GetDateCountOld 4`] = `5`;
+exports[`测试与老版本的一致性 GetDateCountOld 4`] = `4`;
 
-exports[`测试与老版本的一致性 GetDateCountOld 5`] = `5`;
+exports[`测试与老版本的一致性 GetDateCountOld 5`] = `4`;
 
-exports[`测试与老版本的一致性 GetDateCountOld 6`] = `5`;
+exports[`测试与老版本的一致性 GetDateCountOld 6`] = `4`;
 
 exports[`测试与老版本的一致性 GetDateCountOld 7`] = `4`;
 
@@ -210,11 +210,11 @@ exports[`测试与老版本的一致性 GetDateCountOld 8`] = `4`;
 
 exports[`测试与老版本的一致性 GetDateCountOld 9`] = `4`;
 
-exports[`测试与老版本的一致性 GetDateCountOld 10`] = `4`;
+exports[`测试与老版本的一致性 GetDateCountOld 10`] = `3`;
 
-exports[`测试与老版本的一致性 GetDateCountOld 11`] = `4`;
+exports[`测试与老版本的一致性 GetDateCountOld 11`] = `3`;
 
-exports[`测试与老版本的一致性 GetDateCountOld 12`] = `4`;
+exports[`测试与老版本的一致性 GetDateCountOld 12`] = `3`;
 
 exports[`测试与老版本的一致性 GetDateCountOld 13`] = `1`;
 
@@ -263,6 +263,7 @@ exports[`测试与老版本的一致性 GetSpecificDaysOfWeek 1`] = `
 
 exports[`测试与老版本的一致性 GetSpecificDaysOfWeek 2`] = `
 [
+  "2026-02-04",
   "2026-02-06",
   "2026-02-09",
   "2026-02-11",
@@ -281,6 +282,7 @@ exports[`测试与老版本的一致性 GetSpecificDaysOfWeek 3`] = `
 
 exports[`测试与老版本的一致性 GetSpecificDaysOfWeek 4`] = `
 [
+  "2026-02-04T00:00:00.000+08:00",
   "2026-02-06T00:00:00.000+08:00",
   "2026-02-09T00:00:00.000+08:00",
   "2026-02-11T00:00:00.000+08:00",
@@ -299,6 +301,7 @@ exports[`测试与老版本的一致性 GetSpecificDaysOfWeek 5`] = `
 
 exports[`测试与老版本的一致性 GetSpecificDaysOfWeek 6`] = `
 [
+  "2026-02-04T00:00:00.000+08:00",
   "2026-02-06T00:00:00.000+08:00",
   "2026-02-09T00:00:00.000+08:00",
   "2026-02-11T00:00:00.000+08:00",
@@ -308,15 +311,15 @@ exports[`测试与老版本的一致性 GetSpecificDaysOfWeek 6`] = `
 
 exports[`测试与老版本的一致性 JsonSerialize 1`] = `""2026-02-05T12:00:00.000+00:00""`;
 
-exports[`测试与老版本的一致性 JsonSerialize 2`] = `""2026-02-05T12:00:00.000+09:00""`;
+exports[`测试与老版本的一致性 JsonSerialize 2`] = `""2026-02-05T12:00:00.000-11:00""`;
 
 exports[`测试与老版本的一致性 JsonSerialize 3`] = `""2026-02-05T04:00:00.000+00:00""`;
 
-exports[`测试与老版本的一致性 JsonSerialize 4`] = `""2026-02-05T13:00:00.000+09:00""`;
+exports[`测试与老版本的一致性 JsonSerialize 4`] = `""2026-02-04T17:00:00.000-11:00""`;
 
 exports[`测试与老版本的一致性 JsonSerialize 5`] = `""2026-02-05T04:00:00.000+00:00""`;
 
-exports[`测试与老版本的一致性 JsonSerialize 6`] = `""2026-02-05T13:00:00.000+09:00""`;
+exports[`测试与老版本的一致性 JsonSerialize 6`] = `""2026-02-04T17:00:00.000-11:00""`;
 
 exports[`测试与老版本的一致性 SubDays 1`] = `""2026-01-31T04:00:00.000+00:00""`;
 
@@ -326,12 +329,12 @@ exports[`测试与老版本的一致性 SubDays 3`] = `""2026-01-31T04:00:00.000
 
 exports[`测试与老版本的一致性 ToString 1`] = `"2026-02-05 12:00:00"`;
 
-exports[`测试与老版本的一致性 ToString 2`] = `"2026-02-05 13:00:00"`;
+exports[`测试与老版本的一致性 ToString 2`] = `"2026-02-04 17:00:00"`;
 
 exports[`测试与老版本的一致性 ToString 3`] = `"2026-02-05 12:00:00"`;
 
-exports[`测试与老版本的一致性 ToString 4`] = `"2026-02-05 13:00:00"`;
+exports[`测试与老版本的一致性 ToString 4`] = `"2026-02-04 17:00:00"`;
 
 exports[`测试与老版本的一致性 ToString 5`] = `"2026-02-05 12:00:00"`;
 
-exports[`测试与老版本的一致性 ToString 6`] = `"2026-02-05 13:00:00"`;
+exports[`测试与老版本的一致性 ToString 6`] = `"2026-02-04 17:00:00"`;
