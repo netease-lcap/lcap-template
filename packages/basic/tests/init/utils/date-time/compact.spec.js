@@ -3,6 +3,7 @@ const OldBasic = require('./old-basic');
 OldBasic.initDataTypes({
   dataTypesMap: {
     'nasl.core.DateTime': { typeName: 'DateTime' },
+    'nasl.core.Date': { typeName: 'Date' },
   },
 });
 const { utils: OldUtils } = OldBasic.initUtils({
@@ -476,67 +477,136 @@ describe('测试与老版本的一致性', () => {
 
   // ToString
   test('ToString', () => {
-    const typeKey = 'nasl.core.DateTime';
-    // dateTime 字符串
-    const before = OldUtils.ToString(typeKey, datetime);
-    const after = Utils.ToString(typeKey, datetime);
-    expect(after).toBe(before);
-    expect(after).toMatchSnapshot();
+    const typeKeys = ['nasl.core.DateTime', 'nasl.core.Date'];
 
-    // dateTime 字符串，带时区
-    const timezone = 'Pacific/Midway';
-    const beforeTZ = OldUtils.ToString(typeKey, datetime, timezone);
-    const afterTZ = Utils.ToString(typeKey, datetime, timezone);
-    expect(afterTZ).toBe(beforeTZ);
-    expect(afterTZ).toMatchSnapshot();
+    for (const typeKey of typeKeys) {
+      // dateTime 字符串
+      const before = OldUtils.ToString(typeKey, datetime);
+      const after = Utils.ToString(typeKey, datetime);
+      expect(after).toBe(before);
+      expect(after).toMatchSnapshot();
 
-    // Date 对象
-    const beforeDate = OldUtils.ToString(typeKey, jsDate);
-    const afterDate = Utils.ToString(typeKey, jsDate);
-    expect(afterDate).toBe(beforeDate);
-    expect(afterDate).toMatchSnapshot();
+      // dateTime 字符串，带时区
+      const timezone = 'Pacific/Midway';
+      const beforeTZ = OldUtils.ToString(typeKey, datetime, timezone);
+      const afterTZ = Utils.ToString(typeKey, datetime, timezone);
+      expect(afterTZ).toBe(beforeTZ);
+      expect(afterTZ).toMatchSnapshot();
 
-    // Date 对象，带时区
-    const beforeDateTZ = OldUtils.ToString(typeKey, jsDate, timezone);
-    const afterDateTZ = Utils.ToString(typeKey, jsDate, timezone);
-    expect(afterDateTZ).toBe(beforeDateTZ);
-    expect(afterDateTZ).toMatchSnapshot();
+      // Date 对象
+      const beforeDate = OldUtils.ToString(typeKey, jsDate);
+      const afterDate = Utils.ToString(typeKey, jsDate);
+      expect(afterDate).toBe(beforeDate);
+      expect(afterDate).toMatchSnapshot();
 
-    // ISO 字符串
-    const beforeISO = OldUtils.ToString(typeKey, isoDatetime);
-    const afterISO = Utils.ToString(typeKey, isoDatetime);
-    expect(afterISO).toBe(beforeISO);
-    expect(afterISO).toMatchSnapshot();
+      // Date 对象，带时区
+      const beforeDateTZ = OldUtils.ToString(typeKey, jsDate, timezone);
+      const afterDateTZ = Utils.ToString(typeKey, jsDate, timezone);
+      expect(afterDateTZ).toBe(beforeDateTZ);
+      expect(afterDateTZ).toMatchSnapshot();
 
-    // ISO 字符串，带时区
-    const beforeISOTZ = OldUtils.ToString(typeKey, isoDatetime, timezone);
-    const afterISOTZ = Utils.ToString(typeKey, isoDatetime, timezone);
-    expect(afterISOTZ).toBe(beforeISOTZ);
-    expect(afterISOTZ).toMatchSnapshot();
+      // ISO 字符串
+      const beforeISO = OldUtils.ToString(typeKey, isoDatetime);
+      const afterISO = Utils.ToString(typeKey, isoDatetime);
+      expect(afterISO).toBe(beforeISO);
+      expect(afterISO).toMatchSnapshot();
+
+      // ISO 字符串，带时区
+      const beforeISOTZ = OldUtils.ToString(typeKey, isoDatetime, timezone);
+      const afterISOTZ = Utils.ToString(typeKey, isoDatetime, timezone);
+      expect(afterISOTZ).toBe(beforeISOTZ);
+      expect(afterISOTZ).toMatchSnapshot();
+    }
   });
 
   // FromString
   test('FromString', () => {
-    const typeKey = 'nasl.core.DateTime';
-    // dateTime 字符串
-    const before = OldUtils.FromString(datetime, typeKey);
-    const after = Utils.FromString(datetime, typeKey);
-    expect(after).toBe(before);
-    expect(after).toMatchSnapshot();
+    const typeKeys = ['nasl.core.DateTime', 'nasl.core.Date'];
 
-    // Date 对象
-    const beforeDate = OldUtils.FromString(jsDate, typeKey);
-    const afterDate = Utils.FromString(jsDate, typeKey);
-    expect(afterDate).toBe(beforeDate);
-    expect(afterDate).toMatchSnapshot();
+    for (const typeKey of typeKeys) {
+      // dateTime 字符串
+      const before = OldUtils.FromString(datetime, typeKey);
+      const after = Utils.FromString(datetime, typeKey);
+      expect(after).toBe(before);
+      expect(after).toMatchSnapshot();
 
-    // ISO 字符串
-    const beforeISO = OldUtils.FromString(isoDatetime, typeKey);
-    const afterISO = Utils.FromString(isoDatetime, typeKey);
-    expect(afterISO).toBe(beforeISO);
-    expect(afterISO).toMatchSnapshot();
+      // Date 对象
+      const beforeDate = OldUtils.FromString(jsDate, typeKey);
+      const afterDate = Utils.FromString(jsDate, typeKey);
+      expect(afterDate).toBe(beforeDate);
+      expect(afterDate).toMatchSnapshot();
+
+      // ISO 字符串
+      const beforeISO = OldUtils.FromString(isoDatetime, typeKey);
+      const afterISO = Utils.FromString(isoDatetime, typeKey);
+      expect(afterISO).toBe(beforeISO);
+      expect(afterISO).toMatchSnapshot();
+    }
   });
 
   // genInitData
   test.skip('genInitData', () => {});
+
+  // Convert
+  test('Convert DateTime', () => {
+    const typeAnnotation = {
+      typeKind: 'primitive',
+      typeName: 'DateTime',
+    };
+
+    // dateTime 字符串
+    const before = OldUtils.Convert(datetime, typeAnnotation);
+    const after = Utils.Convert(datetime, typeAnnotation);
+    expect(after).toBe(before);
+    expect(after).toMatchSnapshot();
+
+    // Date 对象
+    const beforeDate = OldUtils.Convert(jsDate, typeAnnotation);
+    const afterDate = Utils.Convert(jsDate, typeAnnotation);
+    expect(afterDate).toBe(beforeDate);
+    expect(afterDate).toMatchSnapshot();
+
+    // ISO 字符串
+    const beforeISO = OldUtils.Convert(isoDatetime, typeAnnotation);
+    const afterISO = Utils.Convert(isoDatetime, typeAnnotation);
+    expect(afterISO).toBe(beforeISO);
+    expect(afterISO).toMatchSnapshot();
+
+    // date 字符串
+    const beforeDateOnly = OldUtils.Convert(date, typeAnnotation);
+    const afterDateOnly = Utils.Convert(date, typeAnnotation);
+    expect(afterDateOnly).toBe(beforeDateOnly);
+    expect(afterDateOnly).toMatchSnapshot();
+  });
+
+  test('Convert Date', () => {
+    const typeAnnotation = {
+      typeKind: 'primitive',
+      typeName: 'Date',
+    };
+
+    // dateTime 字符串
+    const before = OldUtils.Convert(datetime, typeAnnotation);
+    const after = Utils.Convert(datetime, typeAnnotation);
+    expect(after).toBe(before);
+    expect(after).toMatchSnapshot();
+
+    // Date 对象
+    const beforeDate = OldUtils.Convert(jsDate, typeAnnotation);
+    const afterDate = Utils.Convert(jsDate, typeAnnotation);
+    expect(afterDate).toBe(beforeDate);
+    expect(afterDate).toMatchSnapshot();
+
+    // ISO 字符串
+    const beforeISO = OldUtils.Convert(isoDatetime, typeAnnotation);
+    const afterISO = Utils.Convert(isoDatetime, typeAnnotation);
+    expect(afterISO).toBe(beforeISO);
+    expect(afterISO).toMatchSnapshot();
+
+    // date 字符串
+    const beforeDateOnly = OldUtils.Convert(date, typeAnnotation);
+    const afterDateOnly = Utils.Convert(date, typeAnnotation);
+    expect(afterDateOnly).toBe(beforeDateOnly);
+    expect(afterDateOnly).toMatchSnapshot();
+  });
 });

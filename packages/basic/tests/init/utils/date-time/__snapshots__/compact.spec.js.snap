@@ -48,6 +48,22 @@ exports[`测试与老版本的一致性 AlterDateTime 17`] = `"2026-02-05T12:00:
 
 exports[`测试与老版本的一致性 AlterDateTime 18`] = `"2026-02-05T12:00:03.000+08:00"`;
 
+exports[`测试与老版本的一致性 Convert Date 1`] = `"2026-02-05"`;
+
+exports[`测试与老版本的一致性 Convert Date 2`] = `"2026-02-05"`;
+
+exports[`测试与老版本的一致性 Convert Date 3`] = `"2026-02-05"`;
+
+exports[`测试与老版本的一致性 Convert Date 4`] = `"2026-02-05"`;
+
+exports[`测试与老版本的一致性 Convert DateTime 1`] = `"2026-02-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 Convert DateTime 2`] = `"2026-02-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 Convert DateTime 3`] = `"2026-02-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 Convert DateTime 4`] = `"2026-02-05T08:00:00.000+08:00"`;
+
 exports[`测试与老版本的一致性 DateDiff 1`] = `0`;
 
 exports[`测试与老版本的一致性 DateDiff 2`] = `0`;
@@ -139,6 +155,12 @@ exports[`测试与老版本的一致性 FromString 1`] = `"2026-02-05T12:00:00.0
 exports[`测试与老版本的一致性 FromString 2`] = `"2026-02-05T12:00:00.000+08:00"`;
 
 exports[`测试与老版本的一致性 FromString 3`] = `"2026-02-05T12:00:00.000+08:00"`;
+
+exports[`测试与老版本的一致性 FromString 4`] = `"2026-02-05"`;
+
+exports[`测试与老版本的一致性 FromString 5`] = `"2026-02-05"`;
+
+exports[`测试与老版本的一致性 FromString 6`] = `"2026-02-05"`;
 
 exports[`测试与老版本的一致性 GetDateCount: day-month 1`] = `5`;
 
@@ -564,3 +586,15 @@ exports[`测试与老版本的一致性 ToString 4`] = `"2026-02-04 17:00:00"`;
 exports[`测试与老版本的一致性 ToString 5`] = `"2026-02-05 12:00:00"`;
 
 exports[`测试与老版本的一致性 ToString 6`] = `"2026-02-04 17:00:00"`;
+
+exports[`测试与老版本的一致性 ToString 7`] = `"2026-02-05"`;
+
+exports[`测试与老版本的一致性 ToString 8`] = `"2026-02-04"`;
+
+exports[`测试与老版本的一致性 ToString 9`] = `"2026-02-05"`;
+
+exports[`测试与老版本的一致性 ToString 10`] = `"2026-02-04"`;
+
+exports[`测试与老版本的一致性 ToString 11`] = `"2026-02-05"`;
+
+exports[`测试与老版本的一致性 ToString 12`] = `"2026-02-04"`;

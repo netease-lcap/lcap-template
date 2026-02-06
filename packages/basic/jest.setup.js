@@ -8,6 +8,7 @@ try {
   Basic.initDataTypes({
     dataTypesMap: {
       'nasl.core.DateTime': { typeName: 'DateTime' },
+      'nasl.core.Date': { typeName: 'Date' },
     },
   });
   const { utils } = Basic.initUtils({
