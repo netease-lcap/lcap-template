@@ -889,16 +889,16 @@ export class Utils {
   }
 
   AddDays(date = new Date(), amount = 1, converter = 'json') {
-    return toValue(addDays(safeNewDate(date), amount), converter);
+    return toValue.call(this, addDays(safeNewDate(date), amount), converter);
   }
 
   AddMonths(date = new Date(), amount = 1, converter = 'json') {
     /** 传入的值为标准的时间格式 */
-    return toValue(addMonths(safeNewDate(date), amount), converter);
+    return toValue.call(this, addMonths(safeNewDate(date), amount), converter);
   }
 
   SubDays(date = new Date(), amount = 1, converter = 'json') {
-    return toValue(subDays(safeNewDate(date), amount), converter);
+    return toValue.call(this, subDays(safeNewDate(date), amount), converter);
   }
 
   // 兼容性策略：老应用升级到 3.10，保持老行为不变
