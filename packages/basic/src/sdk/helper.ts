@@ -104,13 +104,23 @@ export function isValidTimezoneIANAString(timezoneString) {
 export function naslDateToLocalDate(date) {
   const localTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  // 如果输入是 Date 对象，先转为字符串
-  let dateString = date;
   if (date instanceof Date) {
-    dateString = DateTime.fromJSDate(date).toFormat('yyyy-MM-dd');
+    const localDate = DateTime.fromJSDate(date).setZone(localTZ);
+    return safeNewDate(localDate.toFormat('yyyy-MM-dd HH:mm:ss'));
   }
 
-  const localDate = DateTime.fromFormat(dateString, 'yyyy-MM-dd', { zone: localTZ });
+  if (date?.includes('T')) {
+    const localDate = DateTime.fromISO(date, { zone: localTZ });
+    return safeNewDate(localDate.toFormat('yyyy-MM-dd HH:mm:ss'));
+  }
+
+  // 仅日期部分
+  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    const localDate = DateTime.fromFormat(date, 'yyyy-MM-dd', { zone: localTZ });
+    return safeNewDate(localDate.toFormat('yyyy-MM-dd HH:mm:ss'));
+  }
+  // 包含时间部分
+  const localDate = DateTime.fromFormat(date, 'yyyy-MM-dd HH:mm:ss', { zone: localTZ });
   return safeNewDate(localDate.toFormat('yyyy-MM-dd HH:mm:ss'));
 }
 

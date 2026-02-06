@@ -1,4 +1,4 @@
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('测试所有列表函数的边界输入场景', () => {
   const fns = [

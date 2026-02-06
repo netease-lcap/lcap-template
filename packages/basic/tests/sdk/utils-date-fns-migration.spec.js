@@ -3,7 +3,7 @@
  * 确保所有函数输出结果与 date-fns 一致
  */
 
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('date-fns 迁移到 Luxon - 日期加减操作', () => {
   describe('AddDays', () => {

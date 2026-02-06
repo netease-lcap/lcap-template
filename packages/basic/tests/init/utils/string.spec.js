@@ -1,4 +1,4 @@
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('字符串函数', () => {
   test('PadStart', () => {

@@ -1,4 +1,4 @@
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('日期时间计数函数', () => {
   test('给皇上修历法咯 新历法', () => {

@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('序列化函数', () => {
   test('JSON 序列化兼容性测试，无时区', () => {

@@ -1,4 +1,4 @@
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('列表去重', () => {
   const obj1 = { name: 'Zhang San', gender: 'M', salary: '10000' };

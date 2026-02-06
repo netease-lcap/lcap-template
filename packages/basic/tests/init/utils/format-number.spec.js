@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js';
 
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('FormatNumber 函数', () => {
   test('FormatNumber', () => {

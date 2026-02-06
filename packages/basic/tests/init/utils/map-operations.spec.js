@@ -1,4 +1,4 @@
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('Map 测试', () => {
   test('MapGet MapPut', () => {

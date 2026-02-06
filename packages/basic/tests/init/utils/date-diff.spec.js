@@ -1,4 +1,4 @@
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('日期插值 DateDiff', () => {
   test('DateDiff 按月', () => {

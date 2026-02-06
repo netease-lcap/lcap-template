@@ -1,4 +1,4 @@
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('Convert 函数', () => {
   test('Convert 函数，string 到 string', () => {});

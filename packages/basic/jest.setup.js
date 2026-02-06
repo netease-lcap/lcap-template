@@ -1,23 +1,27 @@
 const fc = require('fast-check');
 fc.configureGlobal({ numRuns: 100 });
 
-const { default: NaslSDK, Helpers, Formatters } = require('./src/sdk');
-const { toString, fromString } = require('./src/init/dataTypes/tools');
+const Basic = require('./src/index');
+const { Helpers } = require('./src/sdk');
 
 try {
-  const utils = NaslSDK.initUtils({
+  Basic.initDataTypes({
+    dataTypesMap: {
+      'nasl.core.DateTime': { typeName: 'DateTime' },
+    },
+  });
+  const { utils } = Basic.initUtils({
     typeDefinitionMap: new Map(),
     enumsMap: {},
     dataTypesMap: {},
 
-    toString,
-    fromString,
+    toString: Basic.Tools.toString,
+    fromString: Basic.Tools.fromString,
   });
 
   // 全局变量
-  global.sdkUtils = utils;
-  global.sdkHelpers = Helpers;
-  global.sdkFormatters = Formatters;
+  global.Utils = utils;
+  global.Helpers = Helpers;
 } catch (error) {
-  console.log('Error initializing NaslSDK:', error);
+  console.log('Error initializing Basic:', error);
 }

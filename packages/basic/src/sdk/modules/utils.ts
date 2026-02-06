@@ -310,49 +310,39 @@ export class Utils {
       // v3.3 老应用升级的场景，UTC 零时区，零时区展示上用 'Z'，后向兼容
       // v3.4 新应用，使用默认时区时选项，tz 为空
       if (!tz) {
-        // 将字符串直接解析为 UTC 时间（而不是解析为本地时间再转换）
-        let dt = DateTime.fromISO(v, { zone: 'UTC' });
-        // 如果 ISO 格式解析失败且输入是字符串，尝试其他常见格式
-        if (!dt.isValid && typeof v === 'string') {
-          dt = DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss', { zone: 'UTC' });
-        }
-        if (!dt.isValid && typeof v === 'string') {
-          dt = DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss.SSS', { zone: 'UTC' });
-        }
-        // 如果还是失败，回退到原来的方式
-        const d = dt.isValid
-          ? dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ")
-          : DateTime.fromJSDate(safeNewDate(v), { zone: 'UTC' }).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+        let dt =
+          v instanceof Date
+            ? DateTime.fromJSDate(v, { zone: 'UTC' })
+            : v?.includes('T')
+              ? DateTime.fromISO(v, { zone: 'UTC' })
+              : DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss', { zone: 'UTC' });
+
+        const d = dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
         return JSON.stringify(d);
       }
       // 新应用，设置为零时区，零时区展示上用 'Z'，后向兼容.
       if (tz === 'UTC') {
-        // TODO: 想用 "+00:00" 展示零时区
-        let dt = DateTime.fromISO(v, { zone: 'UTC' });
-        if (!dt.isValid && typeof v === 'string') {
-          dt = DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss', { zone: 'UTC' });
-        }
-        if (!dt.isValid && typeof v === 'string') {
-          dt = DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss.SSS', { zone: 'UTC' });
-        }
-        const d = dt.isValid
-          ? dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ")
-          : DateTime.fromJSDate(safeNewDate(v), { zone: 'UTC' }).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+        let dt =
+          v instanceof Date
+            ? DateTime.fromJSDate(v, { zone: 'UTC' })
+            : v?.includes('T')
+              ? DateTime.fromISO(v, { zone: 'UTC' })
+              : DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss', { zone: 'UTC' });
+
+        const d = dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
         return JSON.stringify(d);
       }
       // 新应用，设置为其他时区
       if (tz) {
         const targetZone = getAppTimezone(tz);
-        let dt = DateTime.fromISO(v, { zone: targetZone });
-        if (!dt.isValid && typeof v === 'string') {
-          dt = DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss', { zone: targetZone });
-        }
-        if (!dt.isValid && typeof v === 'string') {
-          dt = DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss.SSS', { zone: targetZone });
-        }
-        const d = dt.isValid
-          ? dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ")
-          : DateTime.fromJSDate(safeNewDate(v), { zone: targetZone }).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+        let dt =
+          v instanceof Date
+            ? DateTime.fromJSDate(v, { zone: targetZone })
+            : v?.includes('T')
+              ? DateTime.fromISO(v, { zone: targetZone })
+              : DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss', { zone: targetZone });
+
+        const d = dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
         return JSON.stringify(d);
       }
     } else if (typeof v === 'string' && /^\d{2}:\d{2}:\d{2}$/.test(v)) {

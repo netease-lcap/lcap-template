@@ -1,6 +1,6 @@
 const { DateTime } = require('luxon');
 
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('当前日期时间系列函数', () => {
   test.skip('CurrentDateTime', () => {

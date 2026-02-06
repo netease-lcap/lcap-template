@@ -53,7 +53,14 @@ export class DateFormatter extends Formatter {
     pattern = pattern || this.pattern;
 
     if (pattern === `yyyy-MM-dd'T'HH:mm:ss.SSSxxx`) {
-      return DateTime.fromJSDate(value).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+      let dt =
+        value instanceof Date
+          ? DateTime.fromJSDate(value)
+          : value?.includes('T')
+            ? DateTime.fromISO(value)
+            : DateTime.fromJSDate(new Date(value));
+
+      return dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
     }
 
     if (value && !isNaN(value)) value = +value;
