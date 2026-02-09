@@ -30,7 +30,7 @@ const dates = [
 
 for (const datetime of dates) {
   const jsDate = new Date(datetime);
-  const isoDatetime = jsDate.toJSON(); // '2026-02-05T04:00:00.000Z'
+  const isoDatetime = jsDate.toJSON();
   const [date, time] = datetime.split(' ');
 
   describe('测试与老版本的一致性', () => {

@@ -14,7 +14,7 @@ import { DateTime } from 'luxon';
  * getWeekOfMonth(new Date(2024, 5, 2), { weekStartsOn: 1 }) // => 1
  */
 export function getWeekOfMonth(date: Date, options?: { weekStartsOn?: number }): number {
-  const weekStartsOn = options?.weekStartsOn ?? 0; // 默认周一开始
+  const weekStartsOn = options?.weekStartsOn ?? 0;
 
   // 将 Date 转换为 Luxon DateTime
   const dt = DateTime.fromJSDate(date);
@@ -176,7 +176,7 @@ function getWeekYear(date: Date, options?: { weekStartsOn?: number; firstWeekCon
  * @returns The start of the week-numbering year
  */
 function startOfWeekYear(date: Date, options?: { weekStartsOn?: number; firstWeekContainsDate?: number }): Date {
-  const weekStartsOn = options?.weekStartsOn ?? 0; // Default: Monday
+  const weekStartsOn = options?.weekStartsOn ?? 0;
   const firstWeekContainsDate = options?.firstWeekContainsDate ?? 1; // Default: 1 (January 1st is always in the first week)
 
   const year = getWeekYear(date, options);
@@ -222,7 +222,7 @@ export function getDate(date: Date): number {
 }
 
 export function startOfWeek(date: Date, options?: { weekStartsOn?: number }): Date {
-  const weekStartsOn = options?.weekStartsOn ?? 0; // Default: Monday
+  const weekStartsOn = options?.weekStartsOn ?? 0;
   const dt = DateTime.fromJSDate(date);
 
   // Luxon weekday: 1 (Monday) - 7 (Sunday)

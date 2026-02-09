@@ -75,7 +75,8 @@ export const sortRule = (valueA, valueB, sort) => {
  */
 export const getAppTimezone = (tz?: string) => {
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const globalTimeZone = window?.appInfo?.appTimeZone === 'user' ? userTimeZone : window?.appInfo?.appTimeZone;
+  const globalTimeZone =
+    (window?.appInfo?.appTimeZone === 'user' ? userTimeZone : window?.appInfo?.appTimeZone) ?? userTimeZone;
 
   tz = tz ?? 'user';
   switch (tz) {
