@@ -924,9 +924,9 @@ export class Utils {
     const [metric1, metric2] = metric.split('-');
     // 获取当年的最后一天的所在周会返回1，需要额外判断一下
     function getCurrentWeek(value) {
-      let count = getWeek(value);
+      let count = getWeek(value, { weekStartsOn: 1 });
       if (value.getMonth() + 1 === 12 && count === 1) {
-        count = getWeek(addDays(value, -7)) + 1;
+        count = getWeek(addDays(value, -7), { weekStartsOn: 1 }) + 1;
       }
       return count;
     }
@@ -934,7 +934,7 @@ export class Utils {
       case 'day':
         switch (metric2) {
           case 'week':
-            return differenceInDays(date, startOfWeek(date)) + 1;
+            return differenceInDays(date, startOfWeek(date, { weekStartsOn: 1 })) + 1;
           case 'month':
             return getDate(date);
           case 'quarter':
@@ -982,9 +982,9 @@ export class Utils {
     const [metric1, metric2] = metric.split('-');
     // 获取当年的最后一天的所在周会返回1，需要额外判断一下
     function getCurrentWeek(value) {
-      let count = getWeek(value);
+      let count = getWeek(value, { weekStartsOn: 1 });
       if (value.getMonth() + 1 === 12 && count === 1) {
-        count = getWeek(addDays(value, -7)) + 1;
+        count = getWeek(addDays(value, -7), { weekStartsOn: 1 }) + 1;
       }
       return count;
     }
@@ -992,7 +992,7 @@ export class Utils {
       case 'day':
         switch (metric2) {
           case 'week':
-            return differenceInDays(date, startOfWeek(date)) + 1;
+            return differenceInDays(date, startOfWeek(date, { weekStartsOn: 1 })) + 1;
           case 'month':
             return getDate(date);
           case 'quarter':
