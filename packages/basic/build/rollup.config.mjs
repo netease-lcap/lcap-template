@@ -4,6 +4,7 @@ import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
 import { visualizer } from 'rollup-plugin-visualizer';
 import terser from '@rollup/plugin-terser';
+import isCI from 'is-ci';
 
 export default {
 	input: 'src/index.ts',
@@ -38,11 +39,11 @@ export default {
         comments: false,
       },
     }),
-    visualizer({
+    !isCI && visualizer({
       filename: 'dist/stats.html',
       open: false,
       gzipSize: true,
       brotliSize: true,
     }),
-  ],
+  ].filter(Boolean),
 };

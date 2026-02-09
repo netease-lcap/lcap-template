@@ -220,6 +220,9 @@ importers:
       fast-check:
         specifier: ^3.14.0
         version: 3.23.1
+      is-ci:
+        specifier: ^4.1.0
+        version: 4.1.0
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.17.6)
