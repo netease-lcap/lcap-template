@@ -152,7 +152,6 @@ for (const datetime of dates) {
       expect(afterISO).toMatchSnapshot();
     });
 
-    // SubDays
     test('SubDays', () => {
       // dateTime 字符串
       const before = OldUtils.SubDays(datetime, 5);
@@ -185,7 +184,6 @@ for (const datetime of dates) {
       'month-year',
       'quarter',
     ];
-    // GetDateCountOld
 
     for (const metric of metrics) {
       test(`GetDateCountOld ${datetime} ${metric}`, () => {
@@ -240,7 +238,6 @@ for (const datetime of dates) {
       });
     }
 
-    // GetDateCount
     for (const metric of metrics) {
       test(`GetDateCount ${datetime} ${metric}`, () => {
         // dateTime 字符串
@@ -294,7 +291,6 @@ for (const datetime of dates) {
       });
     }
 
-    // AlterDateTime
     test('AlterDateTime', () => {
       const units = ['year', 'month', 'day', 'hour', 'minute', 'second'];
 
@@ -319,7 +315,6 @@ for (const datetime of dates) {
       }
     });
 
-    // GetSpecificDaysOfWeek
     test('GetSpecificDaysOfWeek', () => {
       const daysOfWeek = [1, 3, 5]; // 周一、周三、周五
       const datetime2 = '2026-02-15 12:00:00';
@@ -378,7 +373,6 @@ for (const datetime of dates) {
       expect(afterDateOnlyTZ).toMatchSnapshot();
     });
 
-    // FormatDate
     test(`FormatDate ${datetime}`, () => {
       const formatters = ['YYYY-MM-dd', 'dd/MM/YYYY', 'MM-dd-YYYY', 'yyyyMMdd'];
 
@@ -403,7 +397,6 @@ for (const datetime of dates) {
       }
     });
 
-    // FormatTime
     test('FormatTime', () => {
       const formatters = ['HH:mm:ss', 'hh:mm', 'HHmmss'];
 
@@ -416,7 +409,6 @@ for (const datetime of dates) {
       }
     });
 
-    // FormatDateTime
     test('FormatDateTime', () => {
       const formatters = ['YYYY-MM-dd HH:mm:ss', `yyyy-MM-dd'T'HH:mm:ss.SSSxxx`];
       for (const format of formatters) {
@@ -440,7 +432,6 @@ for (const datetime of dates) {
       }
     });
 
-    // DateDiff
     test('DateDiff', () => {
       const calcTypes = ['y', 'q', 'M', 'w', 'd', 'h'];
 
@@ -469,7 +460,6 @@ for (const datetime of dates) {
       }
     });
 
-    // ToString
     test('ToString', () => {
       const typeKeys = ['nasl.core.DateTime', 'nasl.core.Date'];
 
@@ -513,7 +503,6 @@ for (const datetime of dates) {
       }
     });
 
-    // FromString
     test('FromString', () => {
       const typeKeys = ['nasl.core.DateTime', 'nasl.core.Date'];
 
@@ -538,10 +527,8 @@ for (const datetime of dates) {
       }
     });
 
-    // genInitData
     test.skip('genInitData', () => {});
 
-    // Convert
     test('Convert DateTime', () => {
       const typeAnnotation = {
         typeKind: 'primitive',
