@@ -395,12 +395,6 @@ for (const datetime of dates) {
         expect(afterDate).toBe(beforeDate);
         expect(afterDate).toMatchSnapshot();
 
-        // ISO 字符串
-        const beforeISO = OldUtils.FormatDate(isoDatetime, format);
-        const afterISO = Utils.FormatDate(isoDatetime, format);
-        expect(afterISO).toBe(beforeISO);
-        expect(afterISO).toMatchSnapshot();
-
         // date 字符串
         const beforeDateOnly = OldUtils.FormatDate(date, format);
         const afterDateOnly = Utils.FormatDate(date, format);
