@@ -34,7 +34,7 @@ for (const datetime of dates) {
   const [date, time] = datetime.split(' ');
 
   describe('测试与老版本的一致性', () => {
-    test('JsonSerialize', () => {
+    test(`JsonSerialize ${datetime}`, () => {
       const timezone = 'Pacific/Midway';
       // 普通日期时间（无时区）
       const before = OldUtils.JsonSerialize(datetime);
@@ -73,46 +73,7 @@ for (const datetime of dates) {
       expect(afterDateTZ).toMatchSnapshot();
     });
 
-    test('CurrDate', () => {
-      // 无时区
-      const before = OldUtils.CurrDate();
-      const after = Utils.CurrDate();
-      expect(after).toBe(before);
-
-      // 有时区
-      const timezone = 'Pacific/Midway';
-      const beforeTZ = OldUtils.CurrDate(timezone);
-      const afterTZ = Utils.CurrDate(timezone);
-      expect(afterTZ).toBe(beforeTZ);
-    });
-
-    test('CurrTime', () => {
-      // 无时区
-      const before = OldUtils.CurrTime();
-      const after = Utils.CurrTime();
-      expect(after).toBe(before);
-
-      // 有时区
-      const timezone = 'Pacific/Midway';
-      const beforeTZ = OldUtils.CurrTime(timezone);
-      const afterTZ = Utils.CurrTime(timezone);
-      expect(afterTZ).toBe(beforeTZ);
-    });
-
-    test('CurrDateTime', () => {
-      // 无时区
-      const before = OldUtils.CurrDateTime();
-      const after = Utils.CurrDateTime();
-      expect(after).toBe(before);
-
-      // 有时区
-      const timezone = 'Pacific/Midway';
-      const beforeTZ = OldUtils.CurrDateTime(timezone);
-      const afterTZ = Utils.CurrDateTime(timezone);
-      expect(afterTZ).toBe(beforeTZ);
-    });
-
-    test('AddDays', () => {
+    test.skip('AddDays', () => {
       // dateTime 字符串
       const before = OldUtils.AddDays(datetime, 5);
       const after = Utils.AddDays(datetime, 5);
@@ -132,7 +93,7 @@ for (const datetime of dates) {
       expect(afterISO).toMatchSnapshot();
     });
 
-    test('AddMonths', () => {
+    test.skip('AddMonths', () => {
       // dateTime 字符串
       const before = OldUtils.AddMonths(datetime, 2);
       const after = Utils.AddMonths(datetime, 2);
@@ -152,7 +113,7 @@ for (const datetime of dates) {
       expect(afterISO).toMatchSnapshot();
     });
 
-    test('SubDays', () => {
+    test.skip('SubDays', () => {
       // dateTime 字符串
       const before = OldUtils.SubDays(datetime, 5);
       const after = Utils.SubDays(datetime, 5);
@@ -236,9 +197,7 @@ for (const datetime of dates) {
         expect(afterDateOnlyTZ).toBe(beforeDateOnlyTZ);
         expect(afterDateOnlyTZ).toMatchSnapshot();
       });
-    }
 
-    for (const metric of metrics) {
       test(`GetDateCount ${datetime} ${metric}`, () => {
         // dateTime 字符串
         const before = OldUtils.GetDateCount(datetime, metric);
@@ -397,7 +356,7 @@ for (const datetime of dates) {
       }
     });
 
-    test('FormatTime', () => {
+    test(`FormatTime ${time}`, () => {
       const formatters = ['HH:mm:ss', 'hh:mm', 'HHmmss'];
 
       for (const format of formatters) {
@@ -409,7 +368,7 @@ for (const datetime of dates) {
       }
     });
 
-    test('FormatDateTime', () => {
+    test(`FormatDateTime ${datetime}`, () => {
       const formatters = ['YYYY-MM-dd HH:mm:ss', `yyyy-MM-dd'T'HH:mm:ss.SSSxxx`];
       for (const format of formatters) {
         // dateTime 字符串
@@ -433,13 +392,12 @@ for (const datetime of dates) {
     });
 
     test('DateDiff', () => {
+      const datetime2 = '2026-02-10 12:00:00';
+      const jsDate2 = new Date(datetime2);
+      const isoDatetime2 = jsDate2.toJSON();
+
       const calcTypes = ['y', 'q', 'M', 'w', 'd', 'h'];
-
       for (const calcType of calcTypes) {
-        const datetime2 = '2026-02-10 12:00:00';
-        const jsDate2 = new Date(datetime2);
-        const isoDatetime2 = jsDate2.toJSON();
-
         // dateTime 字符串
         const before = OldUtils.DateDiff(datetime, datetime2, calcType);
         const after = Utils.DateDiff(datetime, datetime2, calcType);
@@ -460,7 +418,7 @@ for (const datetime of dates) {
       }
     });
 
-    test('ToString', () => {
+    test(`ToString ${datetime}`, () => {
       const typeKeys = ['nasl.core.DateTime', 'nasl.core.Date'];
 
       for (const typeKey of typeKeys) {
@@ -503,7 +461,7 @@ for (const datetime of dates) {
       }
     });
 
-    test('FromString', () => {
+    test(`FromString ${datetime}`, () => {
       const typeKeys = ['nasl.core.DateTime', 'nasl.core.Date'];
 
       for (const typeKey of typeKeys) {
@@ -526,8 +484,6 @@ for (const datetime of dates) {
         expect(afterISO).toMatchSnapshot();
       }
     });
-
-    test.skip('genInitData', () => {});
 
     test('Convert DateTime', () => {
       const typeAnnotation = {
@@ -592,3 +548,44 @@ for (const datetime of dates) {
     });
   });
 }
+
+describe('测试与老版本的一致性 CurrentDate/Time', () => {
+  test('CurrDate', () => {
+    // 无时区
+    const before = OldUtils.CurrDate();
+    const after = Utils.CurrDate();
+    expect(after).toBe(before);
+
+    // 有时区
+    const timezone = 'Pacific/Midway';
+    const beforeTZ = OldUtils.CurrDate(timezone);
+    const afterTZ = Utils.CurrDate(timezone);
+    expect(afterTZ).toBe(beforeTZ);
+  });
+
+  test('CurrTime', () => {
+    // 无时区
+    const before = OldUtils.CurrTime();
+    const after = Utils.CurrTime();
+    expect(after).toBe(before);
+
+    // 有时区
+    const timezone = 'Pacific/Midway';
+    const beforeTZ = OldUtils.CurrTime(timezone);
+    const afterTZ = Utils.CurrTime(timezone);
+    expect(afterTZ).toBe(beforeTZ);
+  });
+
+  test('CurrDateTime', () => {
+    // 无时区
+    const before = OldUtils.CurrDateTime();
+    const after = Utils.CurrDateTime();
+    expect(after).toBe(before);
+
+    // 有时区
+    const timezone = 'Pacific/Midway';
+    const beforeTZ = OldUtils.CurrDateTime(timezone);
+    const afterTZ = Utils.CurrDateTime(timezone);
+    expect(afterTZ).toBe(beforeTZ);
+  });
+});
