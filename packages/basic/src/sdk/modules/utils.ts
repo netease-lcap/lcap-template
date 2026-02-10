@@ -71,7 +71,14 @@ export class Utils {
     this.helpers = optinos;
   }
 
-  private isArrayInBounds<T>(arr: T[], index: number): boolean {
+  /**
+   * 判断数组访问是否越界
+   * @param arr
+   * @param index
+   * @param boundaryChecker
+   * @returns
+   */
+  private isArrayInBounds<T>(arr: T[], index: number, boundaryChecker?: (index: number, arr: T[]) => boolean): boolean {
     if (!Array.isArray(arr)) {
       this.helpers.throwError('传入内容不是数组');
       return false;
@@ -82,7 +89,10 @@ export class Utils {
       return false;
     }
 
-    if (index < 0 || index >= arr.length) {
+    const defaultBoundaryChecker = (idx: number, array: T[]) => idx >= 0 && idx < array.length;
+    const checker = boundaryChecker ?? defaultBoundaryChecker;
+
+    if (!checker(index, arr)) {
       this.helpers.throwError(`列表访问越界，访问下标 ${index}，列表长度 ${arr.length}`);
       return false;
     }
@@ -316,7 +326,8 @@ export class Utils {
   }
 
   Insert<T>(arr: T[], index: number, item: T) {
-    if (this.isArrayInBounds(arr, index)) {
+    const boundaryChecker = (idx: number, array: T[]) => idx >= 0 && idx <= array.length;
+    if (this.isArrayInBounds(arr, index, boundaryChecker)) {
       arr.splice(index, 0, item);
     }
   }
