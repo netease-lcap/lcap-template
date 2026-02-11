@@ -1,7 +1,7 @@
 const utils = global.Utils;
 
 describe('日期时间计数函数', () => {
-  test('给皇上修历法咯 新历法', () => {
+  test('新历法', () => {
     expect(utils.GetDateCount('2024-06-01', 'week-month')).toBe(1);
     expect(utils.GetDateCount('2024-06-02', 'week-month')).toBe(1);
     expect(utils.GetDateCount('2024-06-03', 'week-month')).toBe(2);
@@ -10,7 +10,7 @@ describe('日期时间计数函数', () => {
     expect(utils.GetDateCount('2024-09-30', 'week-month')).toBe(6);
   });
 
-  test('给皇上修历法咯 旧历法', () => {
+  test('旧历法', () => {
     expect(utils.GetDateCountOld('2024-06-01', 'week-month')).toBe(1);
     expect(utils.GetDateCountOld('2024-06-02', 'week-month')).toBe(2);
     expect(utils.GetDateCountOld('2024-06-03', 'week-month')).toBe(2);
