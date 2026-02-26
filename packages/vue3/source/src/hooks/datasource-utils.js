@@ -38,13 +38,13 @@ export function useDataSourceUtils() {
     cache.set([key, ...deps], fn);
   }
 
-  function __getOrCreateDataSource(key, deps = [], newFn) {
-    let fn = __getDataSourceCacheFn(key, deps);
-    if (!fn) {
-      fn = newFn;
-      __setDataSourceCacheFn(key, deps, fn);
+  function __getOrCreateDataSource(key, deps = [], fn) {
+    let load = __getDataSourceCacheFn(key, deps);
+    if (!load) {
+      load = fn;
+      __setDataSourceCacheFn(key, deps, load);
     }
-    return fn;
+    return load;
   }
 
   return {
