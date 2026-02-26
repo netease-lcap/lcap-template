@@ -7,12 +7,14 @@ export function useDataSourceUtils() {
     if (arr1.length !== arr2.length) return false;
     return arr1.every((a, idx) => {
       const b = arr2[idx];
+      // 类型不同直接返回 false
       if (typeof a !== typeof b) return false;
-      if (typeof a === 'string') return a === b;
+      // null 直接比较
+      if (a === null || b === null) return a === b;
       if (typeof a === 'object') {
         return _isEqual(a, b);
       }
-      return false;
+      return Object.is(a, b);
     });
   }
 
@@ -21,6 +23,7 @@ export function useDataSourceUtils() {
       return cache.get(key);
     }
     for (let [cacheKey, value] of cache.entries()) {
+      if (!Array.isArray(cacheKey)) continue;
       if (__isShallowEqualArray(cacheKey, [key, ...deps])) {
         return value;
       }
