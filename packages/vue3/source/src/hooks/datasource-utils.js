@@ -5,43 +5,46 @@ export function useDataSourceUtils() {
 
   function __isShallowEqualArray(arr1, arr2) {
     if (arr1.length !== arr2.length) return false;
-    return arr1.every((current, i) => {
-      const other = arr2[i];
-      if (typeof current !== typeof other) return false;
-      if (typeof current === 'string') return current === other;
-      if (typeof current === 'object') {
-        return _isEqual(current, other);
+    return arr1.every((a, idx) => {
+      const b = arr2[idx];
+      // 类型不同直接返回 false
+      if (typeof a !== typeof b) return false;
+      // null 直接比较
+      if (a === null || b === null) return a === b;
+      if (typeof a === 'object') {
+        return _isEqual(a, b);
       }
-      return false;
+      return Object.is(a, b);
     });
   }
 
-  function __getDataSourceCacheFn(methodName, currentArray = []) {
-    if (!currentArray.length) {
-      return cache.get(methodName);
+  function __getDataSourceCacheFn(key, deps = []) {
+    if (!deps.length) {
+      return cache.get(key);
     }
-    for (let [key, value] of cache.entries()) {
-      if (__isShallowEqualArray(key, [methodName, ...currentArray])) {
+    for (let [cacheKey, value] of cache.entries()) {
+      if (!Array.isArray(cacheKey)) continue;
+      if (__isShallowEqualArray(cacheKey, [key, ...deps])) {
         return value;
       }
     }
   }
 
-  function __setDataSourceCacheFn(methodName, currentArray = [], fn) {
-    if (!currentArray.length) {
-      cache.set(methodName, fn);
+  function __setDataSourceCacheFn(key, deps = [], fn) {
+    if (!deps.length) {
+      cache.set(key, fn);
       return;
     }
-    cache.set([methodName, ...currentArray], fn);
+    cache.set([key, ...deps], fn);
   }
 
-  function __getOrCreateDataSource(methodName, currentArray = [], newFn) {
-    let fn = __getDataSourceCacheFn(methodName, currentArray);
-    if (!fn) {
-      fn = newFn;
-      __setDataSourceCacheFn(methodName, currentArray, fn);
+  function __getOrCreateDataSource(key, deps = [], fn) {
+    let load = __getDataSourceCacheFn(key, deps);
+    if (!load) {
+      load = fn;
+      __setDataSourceCacheFn(key, deps, load);
     }
-    return fn;
+    return load;
   }
 
   return {
