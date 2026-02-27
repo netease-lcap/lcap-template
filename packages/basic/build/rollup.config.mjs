@@ -35,6 +35,7 @@ export default {
         drop_console: false,
         pure_funcs: [],
       },
+      mangle: false, // 禁用变量名混淆，避免对已压缩代码的二次混淆问题
       format: {
         comments: false,
       },
