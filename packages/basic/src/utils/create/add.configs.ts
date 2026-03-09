@@ -1,4 +1,4 @@
-import { isNil, camelCase, upperFirst, lowerFirst } from 'lodash';
+import { camelCase, upperFirst, lowerFirst } from 'lodash';
 
 import errHandles from './errHandles';
 
@@ -109,7 +109,7 @@ export function shortResponse(response, params, requestInfo) {
   const result = response.data;
 
   if (response.skipShortResponseCopy || requestInfo.config?.concept === 'Logic') {
-    if (!isNil(result?.data) || !isNil(result?.Data)) {
+    if (result?.data !== undefined || result?.Data !== undefined) {
       return result.Data ?? result.data;
     }
   }
