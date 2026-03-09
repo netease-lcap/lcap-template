@@ -1,4 +1,3 @@
-import isNil from 'lodash/isNil';
 import camelCase from 'lodash/camelCase';
 import upperFirst from 'lodash/upperFirst';
 import lowerFirst from 'lodash/lowerFirst';
@@ -111,7 +110,7 @@ export function shortResponse(response, params, requestInfo) {
   const result = response.data;
 
   if (response.skipShortResponseCopy || requestInfo.config?.concept === 'Logic') {
-    if (!isNil(result?.data) || !isNil(result?.Data)) {
+    if (result?.data !== undefined || result?.Data !== undefined) {
       return result.Data ?? result.data;
     }
   }
