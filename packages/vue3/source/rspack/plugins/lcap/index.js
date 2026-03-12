@@ -1,5 +1,4 @@
 const rspack = require('@rspack/core');
-const { lazyLoadCode } = require('./constant');
 
 const plugin = 'lcap-plugin';
 
@@ -139,8 +138,6 @@ function emitClientResource(compiler, options) {
         ];
 
         const clientCode = `(function() {
-          ${lazyLoadCode}
-
           function loadAssets() {
             // chunksMap
             ${isDev} && LazyLoad.js(["${publicPath}router.min.js"].map(item => {
