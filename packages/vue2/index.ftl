@@ -284,9 +284,9 @@
   });
 </script>
 <script>
-  window.UIBasePath = "${'$'}{uiBasePath}";
+  window.UIBasePath = "${uiBasePath}";
 </script>
-<script src="${'$'}{uiResourceAddress}?t=${'$'}{timestamp}" charset="utf-8"></script>
+<script src="${uiResourceAddress}?t=${timestamp}" charset="utf-8"></script>
 <script>
   var reportSwitch = ${reportSwitch};
   if (!reportSwitch) return;
