@@ -289,7 +289,7 @@
 <script src="${uiResourceAddress}?t=${timestamp}" charset="utf-8"></script>
 <script>
   var reportSwitch = ${reportSwitch};
-  if (!reportSwitch) return;
+  if (!reportSwitch) {return;}
 
   /******/ (function() { // webpackBootstrap
   /******/ 	"use strict";
