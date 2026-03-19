@@ -12,6 +12,8 @@ module.exports = {
     config.resolve.alias["@lcap/pc-ui/css$"] = path.resolve(__dirname, "node_modules/@lcap/pc-ui/dist-theme/index.css");
     config.resolve.alias["cloud-ui.vusion"] = "@lcap/pc-ui";
     /// cloud-ui-alias-end
+
+    /// configureWebpack
   },
   chainWebpack(config) {
     // 构建产物中删除console相关代码
@@ -20,6 +22,8 @@ module.exports = {
             args[0].terserOptions.compress.drop_console = ['info', 'log', 'warn'];
             return args;
         });
+
+    /// chainWebpack
   },
   lintOnSave: false,
   runtimeCompiler: true,
