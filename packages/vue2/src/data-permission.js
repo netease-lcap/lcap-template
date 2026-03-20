@@ -1,7 +1,7 @@
 import platformConfig from './platform.config.json';
 
 export async function fetchAnnotationData() {
-  const { enableDataPermission, sysPrefixPath } = platformConfig;
+  const { enableDataPermission, sysPrefixPath = '' } = platformConfig;
 
   if (!enableDataPermission || window.annotationAllData) {
     return;
