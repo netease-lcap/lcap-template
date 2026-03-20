@@ -16,6 +16,7 @@ import '@/style/global.css';
 import '@/style/theme.css';
 import '@/style/index.css';
 
+// 获取数据权限注解数据
 fetchAnnotationData();
 
 // 写入国际化配置
