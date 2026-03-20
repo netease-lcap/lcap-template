@@ -5,10 +5,14 @@ import { routes } from "./router/routes";
 import "./library";
 import i18nInfo from './language';
 import platformConfig from "./platform.config.json";
+import { fetchAnnotationData } from './data-permission';
 
 import '@/style/global.css';
 import '@/style/theme.css';
 import '@/style/index.css';
+
+// 获取数据权限注解数据
+fetchAnnotationData();
 
 // 写入国际化配置
 platformConfig.appConfig.i18nInfo = i18nInfo;
