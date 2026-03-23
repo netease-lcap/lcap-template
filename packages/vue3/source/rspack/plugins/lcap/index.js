@@ -140,13 +140,13 @@ function emitClientResource(compiler, options) {
         const clientCode = `(function() {
           function loadAssets() {
             // chunksMap
-            ${isDev} && window.LazyLoad.js(["${publicPath}router.min.js"].map(item => {
+            ${isDev} && LazyLoad.js(["${publicPath}router.min.js"].map(item => {
               var timestamp = Date.now();
               return item + '?timestamp=' + timestamp;
             }));
 
-            window.LazyLoad.js(${JSON.stringify(allJS)});
-            window.LazyLoad.css(${JSON.stringify(allCSS)});
+            LazyLoad.js(${JSON.stringify(allJS)});
+            LazyLoad.css(${JSON.stringify(allCSS)});
           }
 
           ${extra.entryCode}
