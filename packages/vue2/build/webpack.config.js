@@ -1,8 +1,10 @@
 const path = require('path');
+const isCI = require('is-ci');
 const webpack = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const CopyPlugin = require('copy-webpack-plugin');
 const EsbuildPlugin = require('./plugins/esbuild-plugin');
 
 const root = path.resolve(__dirname, '..');
@@ -14,7 +16,7 @@ const library = 'cloudAdminDesigner';
 
 const extensions = ['.vue', '.js', '.ts', '.json', '.css'];
 
-const isRelease = process.env.LCAP_RELEASE == 1;
+const isRelease = isCI || process.env.LCAP_RELEASE == 1;
 
 const baseConfig = (type) => {
   return {
@@ -104,6 +106,9 @@ const baseConfig = (type) => {
         filename: `${library}.css`,
       }),
       new webpack.ProgressPlugin(),
+      new CopyPlugin({
+        patterns: [{ from: '../index.ftl' }],
+      }),
       // new BundleAnalyzerPlugin({
       //   analyzerMode: "static",
       //   openAnalyzer: false,

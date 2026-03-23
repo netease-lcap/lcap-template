@@ -106,6 +106,9 @@ const baseConfig = (type) =>
         'process.env.BASE_URL': JSON.stringify(process.env.BASE_URL),
         __VUE_PROD_DEVTOOLS__: false,
       }),
+      new rspack.CopyRspackPlugin({
+        patterns: [{ from: '../index.ftl' }],
+      }),
     ],
     experiments: {
       css: true,

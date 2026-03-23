@@ -1,4 +1,4 @@
-import JSONbig from '../../json-bigint';
+import * as JSONbig from '../../json-bigint';
 import {
   isFormData,
   isArrayBuffer,

@@ -63,4 +63,7 @@ const distDir = path.resolve(__dirname, '../dist');
 
   const writer = fileWriter(`${sourceDir}/${item.type}`, `${distDir}/${item.type}/sandbox-template.json`);
   writer();
+
+  // 将index.ftl复制到dist目录下
+  fs.copyFileSync(path.resolve(__dirname, '../index.ftl'), path.resolve(distDir, item.type, 'index.ftl'));
 });
