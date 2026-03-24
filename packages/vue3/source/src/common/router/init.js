@@ -18,6 +18,25 @@ export function createRouterInstance(routes) {
     sensitive: true,
   });
 
+  router.afterEach((to) => {
+    const miniEnvQueryList = [
+      '_wx_openid',
+      '_wx_headimg',
+      '_wx_nickname',
+      '_wx_phone',
+      '_wx_scan_code',
+      '_wx_location',
+      '_wx_is_mini',
+    ];
+    if (to.query) {
+      for (const i in to.query) {
+        if (miniEnvQueryList.includes(i)) {
+          window.localStorage.setItem(i, to.query[i]);
+        }
+      }
+    }
+  })
+
   if (window.LcapVueRouterConfig?.initRoute) {
     router.replace(window.LcapVueRouterConfig.initRoute);
   }
