@@ -1,8 +1,8 @@
-import { fetchEventSource, EventSourceMessage } from "@microsoft/fetch-event-source";
-import { genBaseOptions } from "./index";
+import { fetchEventSource, EventSourceMessage } from '@microsoft/fetch-event-source';
+import { genBaseOptions } from './index';
 
 const MAX_RETRY_TIME = 0;
-const EventStreamContentType = "text/event-stream";
+const EventStreamContentType = 'text/event-stream';
 
 export const sseRequester = function (requestInfo) {
   const { url, config = {} } = requestInfo;
@@ -29,6 +29,7 @@ export const sseRequester = function (requestInfo) {
   let leftRetries = Math.max((body?.retryTimes ?? MAX_RETRY_TIME) - 1, 0);
   fetchEventSource(url.path, {
     ...options,
+    credentials: 'include',
     // 请求处理
     body: JSON.stringify(rest),
     signal: controller.signal,
@@ -39,7 +40,7 @@ export const sseRequester = function (requestInfo) {
       if (leftRetries < 0) {
         close();
       }
-      const contentType = response.headers.get("content-type");
+      const contentType = response.headers.get('content-type');
       if (contentType !== EventStreamContentType) {
         throw new Error(`Expected content-type to be ${EventStreamContentType}, Actual: ${contentType}`);
       }
