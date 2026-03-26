@@ -29,6 +29,7 @@ export const sseRequester = function (requestInfo) {
   let leftRetries = Math.max((body?.retryTimes ?? MAX_RETRY_TIME) - 1, 0);
   fetchEventSource(url.path, {
     ...options,
+    credentials: 'include',
     // 请求处理
     body: JSON.stringify(rest),
     signal: controller.signal,
