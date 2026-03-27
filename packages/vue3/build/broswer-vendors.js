@@ -21,7 +21,6 @@ exports.vendorConfig = (type) =>
         name: 'LcapBrowserVendors',
         type: 'umd',
         umdNamedDefine: true,
-        export: 'default',
       },
     },
     module: {
