@@ -1,4 +1,4 @@
-import _isEqual from 'lodash/isEqual';
+import { isEqual } from 'lodash';
 
 export function useDataSourceUtils() {
   const cache = new Map();
@@ -12,7 +12,7 @@ export function useDataSourceUtils() {
       // null 直接比较
       if (a === null || b === null) return a === b;
       if (typeof a === 'object') {
-        return _isEqual(a, b);
+        return isEqual(a, b);
       }
       return Object.is(a, b);
     });

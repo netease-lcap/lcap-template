@@ -2,6 +2,7 @@ const path = require('path');
 const { defineConfig } = require('@rspack/cli');
 const rspack = require('@rspack/core');
 const { VueLoaderPlugin } = require('vue-loader');
+const { vendorConfig } = require('./broswer-vendors');
 
 const root = path.resolve(__dirname, '..');
 const library = 'cloudAdminDesigner';
@@ -116,4 +117,4 @@ const baseConfig = (type) =>
     stats: 'minimal',
   });
 
-module.exports = [baseConfig('pc'), baseConfig('mobile')];
+module.exports = [baseConfig('pc'), baseConfig('mobile'), vendorConfig('pc'), vendorConfig('mobile')];
