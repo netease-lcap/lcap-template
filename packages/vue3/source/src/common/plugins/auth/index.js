@@ -1,4 +1,4 @@
-import { initAuth, authService } from '@lcap/basic-template';
+import { initAuth, authService, getBasePath } from '@lcap/basic-template';
 
 export default {
   install(vm, options = {}) {
@@ -20,6 +20,7 @@ export default {
 
           let hasPermission = true;
 
+          const basePath = getBasePath();
           const authPathSegments = authPath.split('/').filter(Boolean);
           const parentAuthPaths = authPathSegments.reduce((acc, segment) => {
             const lastPath = acc.length > 0 ? acc[acc.length - 1] : '';
@@ -30,6 +31,11 @@ export default {
 
           while (parentAuthPaths.length > 0) {
             const path = parentAuthPaths.shift();
+            // 忽略 basePath 的权限检查，因为 basePath 可能是公共的，不需要权限控制
+            if (path === basePath) {
+              continue;
+            }
+
             if (!_map.has(path)) {
               hasPermission = false;
               console.warn(`权限资源：缺少权限 ${path}，请确认是否已配置该权限项`);
