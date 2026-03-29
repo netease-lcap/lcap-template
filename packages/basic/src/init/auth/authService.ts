@@ -48,6 +48,7 @@ export interface IService {
       resourceType: string;
     }>,
   ) => void;
+  _getResourceMap?: () => Map<string, any>;
 }
 
 let _map;
@@ -297,6 +298,10 @@ const Service: IService = {
    */
   has(authPath) {
     return (_map && _map.has(authPath)) || false;
+  },
+
+  _getResourceMap() {
+    return _map;
   },
 
   _setCustomResources(list = []) {

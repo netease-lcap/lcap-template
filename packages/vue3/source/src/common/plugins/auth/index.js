@@ -2,7 +2,45 @@ import { initAuth, authService } from '@lcap/basic-template';
 
 export default {
   install(vm, options = {}) {
-    initAuth(options);
+    initAuth({
+      ...options,
+      configureAuthService(service) {
+        /**
+         * 严格的权限判断，父级权限未配置时，子权限即使配置了也无效
+          * 例如：当只有 /dashboard/entity/list 配置了权限，而没有 /dashboard/entity 时，访问 /dashboard/entity/list 的权限会失效，并在控制台警告缺少 /dashboard/entity 权限
+        * 反之，当 /dashboard/entity 和 /dashboard/entity/list 都配置了权限时，访问 /dashboard/entity/list 的权限才会生效
+        */
+        service.has = function(authPath) {
+          const _map = service._getResourceMap();
+
+          if (!_map) {
+            console.warn('权限资源未获取到，请检查权限资源接口');
+            return false;
+          }
+
+          let hasPermission = true;
+
+          const authPathSegments = authPath.split('/').filter(Boolean);
+          const parentAuthPaths = authPathSegments.reduce((acc, segment) => {
+            const lastPath = acc.length > 0 ? acc[acc.length - 1] : '';
+            const newPath = `${lastPath}/${segment}`;
+            acc.push(newPath);
+            return acc;
+          }, []);
+
+          while (parentAuthPaths.length > 0) {
+            const path = parentAuthPaths.shift();
+            if (!_map.has(path)) {
+              hasPermission = false;
+              console.warn(`权限资源：缺少权限 ${path}，请确认是否已配置该权限项`);
+              break;
+            }
+          }
+
+          return hasPermission;
+        }
+      }
+    });
 
     const base = (options.base || '').replace(/\/$/, '');
     /**
