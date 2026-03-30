@@ -1,6 +1,6 @@
-const momentTZ = require('moment-timezone');
+const { DateTime } = require('luxon');
 
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('当前日期时间系列函数', () => {
   test.skip('CurrentDateTime', () => {
@@ -11,25 +11,25 @@ describe('当前日期时间系列函数', () => {
     expect(utils.DateDiff(new Date(bDateTime), new Date(aDateTime), 'h', false)).toBe(-25);
     expect(utils.DateDiff(new Date(bDateTime), new Date(aDateTime), 'h')).toBe(25);
 
-    const utcDate = momentTZ.tz(new Date(), 'UTC');
+    const utcDate = DateTime.now().setZone('UTC');
     const cDate = utils.CurrDateTime('noUse');
-    if (utcDate.hours() > 10) {
+    if (utcDate.hour > 10) {
       // 可能跨月：-30, -29, -28, -27
-      expect([1, -30, -29, -28]).toContain(momentTZ.tz(cDate, 'Pacific/Kiritimati').date() - utcDate.date());
+      expect([1, -30, -29, -28]).toContain(DateTime.fromISO(cDate).setZone('Pacific/Kiritimati').day - utcDate.day);
     } else {
       // 可能跨月
-      expect([-1, 30, 29, 28, 27]).toContain(momentTZ.tz(cDate, 'Pacific/Midway').date() - utcDate.date());
+      expect([-1, 30, 29, 28, 27]).toContain(DateTime.fromISO(cDate).setZone('Pacific/Midway').day - utcDate.day);
     }
   });
 
   test('CurrentDate', () => {
     // - 11:00
     const aDate = utils.CurrDate('Pacific/Midway');
-    const a = momentTZ.tz(aDate, 'YYYY-MM-DD', 'Pacific/Midway').date();
+    const a = DateTime.fromFormat(aDate, 'yyyy-MM-dd', { zone: 'Pacific/Midway' }).day;
 
     // +14:00
     const bDate = utils.CurrDate('Pacific/Kiritimati');
-    const b = momentTZ.tz(bDate, 'YYYY-MM-DD', 'Pacific/Kiritimati').date();
+    const b = DateTime.fromFormat(bDate, 'yyyy-MM-dd', { zone: 'Pacific/Kiritimati' }).day;
 
     if (b - a > 0) {
       expect([2, 1]).toContain(b - a);
@@ -41,13 +41,13 @@ describe('当前日期时间系列函数', () => {
 
   test('CurrentTime', () => {
     const nycTime = utils.CurrTime('Etc/GMT+4');
-    const a = momentTZ.tz(nycTime, 'HH:mm:ss', 'Etc/GMT+4').hours();
+    const a = DateTime.fromFormat(nycTime, 'HH:mm:ss', { zone: 'Etc/GMT+4' }).hour;
 
     const shTime = utils.CurrTime('Asia/Shanghai');
-    const b = momentTZ.tz(shTime, 'HH:mm:ss', 'Asia/Shanghai').hours();
+    const b = DateTime.fromFormat(shTime, 'HH:mm:ss', { zone: 'Asia/Shanghai' }).hour;
 
     const utcTime = utils.CurrTime('UTC');
-    const c = momentTZ.tz(utcTime, 'HH:mm:ss', 'UTC').hours();
+    const c = DateTime.fromFormat(utcTime, 'HH:mm:ss', { zone: 'UTC' }).hour;
 
     expect([12, -12]).toContain(b - a);
     expect([8, -16]).toContain(b - c);

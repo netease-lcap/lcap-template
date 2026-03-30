@@ -1,0 +1,7 @@
+{
+  "name": "@lcap/basic-template-old-fixture",
+  "version": "2.2.0",
+  "description": "",
+  "main": "./index.js",
+  "types": "typings/index.d.ts"
+}

@@ -1,4 +1,4 @@
-const { convertJSDateInTargetTimeZone } = global.sdkHelpers;
+const { convertJSDateInTargetTimeZone } = global.Helpers;
 
 describe('日期时间格式化辅助函数', () => {
   test('convertJSDateInTargetTimeZone', () => {

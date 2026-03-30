@@ -23,7 +23,6 @@
     "@lcap/basic-template": "workspace:*",
     "@vue/composition-api": "1.7.1",
     "babel-polyfill": "^6.26.0",
-    "date-fns": "^2.6.0",
     "lodash": "4.17.21",
     "pinia": "2.2.8",
     "process": "^0.11.10",

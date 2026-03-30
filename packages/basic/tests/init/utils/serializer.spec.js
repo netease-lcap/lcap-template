@@ -1,6 +1,6 @@
-import momentTZ from 'moment-timezone';
+import { DateTime } from 'luxon';
 
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('序列化函数', () => {
   test('JSON 序列化兼容性测试，无时区', () => {
@@ -51,7 +51,7 @@ describe('序列化函数', () => {
     const curTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const cur = new Date('2023-09-21T17:01:56+08:00');
     expect(utils.ToString('nasl.core.DateTime', cur)).toBe(
-      momentTZ.tz('2023-09-21T17:01:56+08:00', curTZ).format('YYYY-MM-DD HH:mm:ss'),
+      DateTime.fromISO('2023-09-21T17:01:56+08:00').setZone(curTZ).toFormat('yyyy-MM-dd HH:mm:ss'),
     );
   });
 
@@ -59,7 +59,7 @@ describe('序列化函数', () => {
     const curTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const cur = '2023-09-21T17:01:56+08:00';
     expect(utils.ToString('nasl.core.DateTime', cur)).toBe(
-      momentTZ.tz('2023-09-21T17:01:56+08:00', curTZ).format('YYYY-MM-DD HH:mm:ss'),
+      DateTime.fromISO('2023-09-21T17:01:56+08:00').setZone(curTZ).toFormat('yyyy-MM-dd HH:mm:ss'),
     );
   });
 

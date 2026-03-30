@@ -1,4 +1,4 @@
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('Split 函数', () => {
   test('Split 函数 保留末尾空串', () => {

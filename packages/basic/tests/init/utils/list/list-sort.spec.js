@@ -1,4 +1,4 @@
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 const ascCallback = [
   (item) => {

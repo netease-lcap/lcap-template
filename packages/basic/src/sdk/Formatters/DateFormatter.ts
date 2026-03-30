@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { DateTime } from 'luxon';
 import Formatter from './Formatter';
 
 /**
@@ -53,7 +53,14 @@ export class DateFormatter extends Formatter {
     pattern = pattern || this.pattern;
 
     if (pattern === `yyyy-MM-dd'T'HH:mm:ss.SSSxxx`) {
-      return format(value, pattern);
+      let dt =
+        value instanceof Date
+          ? DateTime.fromJSDate(value)
+          : typeof value === 'string' && value?.includes('T')
+            ? DateTime.fromISO(value)
+            : DateTime.fromJSDate(new Date(value));
+
+      return dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
     }
 
     if (value && !isNaN(value)) value = +value;

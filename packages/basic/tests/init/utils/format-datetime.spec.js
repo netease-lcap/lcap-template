@@ -1,4 +1,4 @@
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('日期时间格式化函数', () => {
   const curTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;

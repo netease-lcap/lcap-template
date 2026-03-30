@@ -1,4 +1,4 @@
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('List range functions', () => {
   test('List range step > 0', () => {

@@ -1,6 +1,6 @@
 import fc from 'fast-check';
 
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('Test List Contains', () => {
   test('测试非正常输入', () => {

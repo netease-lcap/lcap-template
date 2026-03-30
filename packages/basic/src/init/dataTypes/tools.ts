@@ -1,6 +1,4 @@
-import { format } from 'date-fns';
-import momentTZ from 'moment-timezone';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import { flatMap, difference } from 'lodash';
 import { Helpers } from '../../sdk';
 
@@ -694,7 +692,7 @@ export const genInitData = (typeKey, defaultValue, parentLevel?) => {
     }
     if (typeName === 'DateTime' && parsedValue !== undefined) {
       if (parsedValue instanceof Date) {
-        parsedValue = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+        parsedValue = DateTime.fromJSDate(parsedValue).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
       }
       return parsedValue;
     } else if (['nasl.io.File'].includes(typeKey)) {
@@ -769,7 +767,7 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
 
     // 日期时间处理
     if (typeKey === 'nasl.core.Date') {
-      str = momentTZ.tz(safeNewDate(variable), getAppTimezone(tz)).format('YYYY-MM-DD');
+      str = DateTime.fromJSDate(safeNewDate(variable)).setZone(getAppTimezone(tz)).toFormat('yyyy-MM-dd');
     } else if (typeKey === 'nasl.core.Time') {
       const timeRegex = /^([01]?\d|2[0-3])(?::([0-5]?\d)(?::([0-5]?\d))?)?$/;
       // 纯时间 12:30:00
@@ -797,14 +795,14 @@ export const toString = (typeKey, variable, tz?, tabSize = 0, collection = new S
           }
           varArr.push(varItem || '00');
         });
-        str = momentTZ
-          .tz(safeNewDate('2022-01-01 ' + varArr.join(':')), getAppTimezone(tz))
-          .format(formatArr.join(':'));
+        str = DateTime.fromJSDate(safeNewDate('2022-01-01 ' + varArr.join(':')))
+          .setZone(getAppTimezone(tz))
+          .toFormat(formatArr.join(':'));
       } else {
-        str = momentTZ.tz(safeNewDate(variable), getAppTimezone(tz)).format('HH:mm:ss');
+        str = DateTime.fromJSDate(safeNewDate(variable)).setZone(getAppTimezone(tz)).toFormat('HH:mm:ss');
       }
     } else if (typeKey === 'nasl.core.DateTime') {
-      str = momentTZ.tz(safeNewDate(variable), getAppTimezone(tz)).format('YYYY-MM-DD HH:mm:ss');
+      str = DateTime.fromJSDate(safeNewDate(variable)).setZone(getAppTimezone(tz)).toFormat('yyyy-MM-dd HH:mm:ss');
     }
     if (tabSize > 0) {
       if (['nasl.core.String', 'nasl.core.Text'].includes(typeKey)) {
@@ -1032,13 +1030,12 @@ export const fromString = (variable, typeKey) => {
   // 日期
   if (typeName === 'DateTime') {
     const date = safeNewDate(variable);
-    const outputDate = format(date, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+    const outputDate = DateTime.fromJSDate(date).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
     return outputDate;
   } else if (typeName === 'Date') {
-    return moment(safeNewDate(variable)).format('YYYY-MM-DD');
+    return DateTime.fromJSDate(safeNewDate(variable)).toFormat('yyyy-MM-dd');
   } else if (typeName === 'Time' && TimeReg.test(variable)) {
-    // ???
-    return moment(safeNewDate('2022-01-01 ' + variable)).format('HH:mm:ss');
+    return DateTime.fromJSDate(safeNewDate('2022-01-01 ' + variable)).toFormat('HH:mm:ss');
   }
   // 浮点数
   else if (['Decimal', 'Double'].includes(typeName) && FloatNumberReg.test(variable)) {

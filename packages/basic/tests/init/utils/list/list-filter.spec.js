@@ -1,4 +1,4 @@
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('ListFilter', () => {
   test('兼容性测试，原生数字', () => {

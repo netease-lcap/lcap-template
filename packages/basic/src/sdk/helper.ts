@@ -1,5 +1,4 @@
-import moment from 'moment';
-import momentTZ from 'moment-timezone';
+import { DateTime } from 'luxon';
 import { isObject } from 'lodash';
 
 export const findAsync = async (arr, callback) => {
@@ -67,16 +66,26 @@ export const sortRule = (valueA, valueB, sort) => {
   }
 };
 
-export const getAppTimezone = (inputTz) => {
-  const _appTimeZone = window?.appInfo?.appTimeZone;
-  const tz = inputTz === 'global' ? _appTimeZone : inputTz;
+/**
+ * 获取应用的时区
+ * 逻辑：
+ * 1. 如果输入的时区是 'global'，则使用应用配置的时区（window.appInfo.appTimeZone）
+ * 2. 如果输入的时区是其他非 'user' 的值，则使用该值作为时区
+ * 3. 如果输入的时区是 'user' 或者没有输入，则使用用户本地的时区（Intl.DateTimeFormat().resolvedOptions().timeZone）
+ */
+export const getAppTimezone = (tz?: string) => {
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const globalTimeZone =
+    (window?.appInfo?.appTimeZone === 'user' ? userTimeZone : window?.appInfo?.appTimeZone) ?? userTimeZone;
 
-  if (tz && tz !== 'user') {
-    // 指定的固定的时区
-    return tz;
-  } else {
-    // 用户本地时区，包括 tz 是 null 的场景
-    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  tz = tz ?? 'user';
+  switch (tz) {
+    case 'global':
+      return globalTimeZone;
+    case 'user':
+      return userTimeZone;
+    default:
+      return tz;
   }
 };
 
@@ -95,12 +104,33 @@ export function isValidTimezoneIANAString(timezoneString) {
 
 export function naslDateToLocalDate(date) {
   const localTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const localDate = momentTZ.tz(date, 'YYYY-MM-DD', localTZ);
-  return safeNewDate(localDate.format('YYYY-MM-DD HH:mm:ss'));
+  // 仅日期部分
+  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    const localDate = DateTime.fromFormat(date, 'yyyy-MM-dd', { zone: localTZ });
+    return safeNewDate(localDate.toFormat('yyyy-MM-dd HH:mm:ss'));
+  }
+
+  // 日期时间
+  if (/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/.test(date)) {
+    const localDate = DateTime.fromFormat(date, 'yyyy-MM-dd HH:mm:ss', { zone: localTZ });
+    return safeNewDate(localDate.toFormat('yyyy-MM-dd HH:mm:ss'));
+  }
+
+  // ISO 字符串
+  if (typeof date === 'string' && date.includes('T')) {
+    const localDate = DateTime.fromISO(date, { zone: localTZ });
+    return safeNewDate(localDate.toFormat('yyyy-MM-dd HH:mm:ss'));
+  }
+
+  // 其他情况直接转换
+  const localDate = DateTime.fromJSDate(safeNewDate(date), { zone: localTZ });
+  return safeNewDate(localDate.toFormat('yyyy-MM-dd HH:mm:ss'));
 }
 
 export function convertJSDateInTargetTimeZone(date, tz) {
-  return safeNewDate(momentTZ.tz(safeNewDate(date), getAppTimezone(tz)).format('YYYY-MM-DD HH:mm:ss'));
+  return safeNewDate(
+    DateTime.fromJSDate(safeNewDate(date)).setZone(getAppTimezone(tz)).toFormat('yyyy-MM-dd HH:mm:ss'),
+  );
 }
 
 export const safeNewDate = (dateStr) => {
@@ -198,7 +228,7 @@ export function isInputValidNaslDateTime(input) {
 export function toValue(date, typeKey) {
   if (!date) return date;
   if (typeKey === 'format')
-    return moment(date).format('YYYY-MM-DD'); // value 的真实格式
+    return DateTime.fromJSDate(date).toFormat('yyyy-MM-dd'); // value 的真实格式
   else if (typeKey === 'json') return this.JsonSerialize(date);
   else if (typeKey === 'timestamp') return date.getTime();
   else return date;

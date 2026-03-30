@@ -1,6 +1,30 @@
 import type { TypeAnnotation } from '@lcap/nasl';
-import moment from 'moment';
-import momentTZ from 'moment-timezone';
+import { DateTime } from 'luxon';
+import { isObject, set, isEqual, cloneDeep } from 'lodash';
+import Decimal from 'decimal.js';
+import {
+  isInputValidNaslDateTime,
+  getAppTimezone,
+  mapAsync,
+  findAsync,
+  filterAsync,
+  findIndexAsync,
+  sortRule,
+  convertJSDateInTargetTimeZone,
+  safeNewDate,
+  toValue,
+  naslDateToLocalDate,
+  isValidTimezoneIANAString,
+  isDefList,
+  isDefMap,
+  isDefNumber,
+  isDefString,
+  isDefRegExp,
+  RegExpLike,
+} from '../../helper';
+import { dateFormatter } from '../../Formatters';
+import type { IOptions } from '../../types';
+
 import {
   addDays,
   subDays,
@@ -37,32 +61,7 @@ import {
   isFriday,
   isSaturday,
   isSunday,
-} from 'date-fns';
-import { formatInTimeZone } from 'date-fns-tz';
-import { isObject, set, isEqual, cloneDeep } from 'lodash';
-import Decimal from 'decimal.js';
-import {
-  isInputValidNaslDateTime,
-  getAppTimezone,
-  mapAsync,
-  findAsync,
-  filterAsync,
-  findIndexAsync,
-  sortRule,
-  convertJSDateInTargetTimeZone,
-  safeNewDate,
-  toValue,
-  naslDateToLocalDate,
-  isValidTimezoneIANAString,
-  isDefList,
-  isDefMap,
-  isDefNumber,
-  isDefString,
-  isDefRegExp,
-  RegExpLike,
-} from '../helper';
-import { dateFormatter } from '../Formatters';
-import type { IOptions } from '../types';
+} from './date';
 
 export class Utils {
   private helpers: IOptions;
@@ -185,21 +184,18 @@ export class Utils {
     if (isInputValidNaslDateTime(v)) {
       // v3.3 老应用升级的场景，UTC 零时区，零时区展示上用 'Z'，后向兼容
       // v3.4 新应用，使用默认时区时选项，tz 为空
-      if (!tz) {
-        const d = momentTZ.tz(v, 'UTC').format('YYYY-MM-DDTHH:mm:ss.SSSZ');
-        return JSON.stringify(d);
-      }
       // 新应用，设置为零时区，零时区展示上用 'Z'，后向兼容.
-      if (tz === 'UTC') {
-        // TODO: 想用 "+00:00" 展示零时区
-        const d = momentTZ.tz(v, 'UTC').format('YYYY-MM-DDTHH:mm:ss.SSSZ');
-        return JSON.stringify(d);
-      }
       // 新应用，设置为其他时区
-      if (tz) {
-        const d = momentTZ.tz(v, getAppTimezone(tz)).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
-        return JSON.stringify(d);
-      }
+
+      const targetZone = !tz || tz === 'UTC' ? 'UTC' : getAppTimezone(tz);
+      let dt =
+        v instanceof Date
+          ? DateTime.fromJSDate(v, { zone: targetZone })
+          : v?.includes('T')
+            ? DateTime.fromISO(v, { zone: targetZone })
+            : DateTime.fromFormat(v, 'yyyy-MM-dd HH:mm:ss', { zone: targetZone });
+      const d = dt.toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+      return JSON.stringify(d);
     } else if (typeof v === 'string' && /^\d{2}:\d{2}:\d{2}$/.test(v)) {
       // test if the input v is a pure time-format string in the form of hh:mm:ss
       return JSON.stringify(v);
@@ -886,12 +882,12 @@ export class Utils {
 
   CurrDate(tz = 'global') {
     const localDate = convertJSDateInTargetTimeZone(new Date(), tz);
-    return moment(localDate).format('YYYY-MM-DD');
+    return DateTime.fromJSDate(localDate).toFormat('yyyy-MM-dd');
   }
 
   CurrTime(tz = 'global') {
     const localDate = convertJSDateInTargetTimeZone(new Date(), tz);
-    return moment(localDate).format('HH:mm:ss');
+    return DateTime.fromJSDate(localDate).toFormat('HH:mm:ss');
   }
 
   CurrDateTime(tz = 'global') {
@@ -899,15 +895,24 @@ export class Utils {
     return localDate.toJSON();
   }
 
+  /**
+   * @deprecated
+   */
   AddDays(date = new Date(), amount = 1, converter = 'json') {
     return toValue.call(this, addDays(safeNewDate(date), amount), converter);
   }
 
+  /**
+   * @deprecated
+   */
   AddMonths(date = new Date(), amount = 1, converter = 'json') {
     /** 传入的值为标准的时间格式 */
     return toValue.call(this, addMonths(safeNewDate(date), amount), converter);
   }
 
+  /**
+   * @deprecated
+   */
   SubDays(date = new Date(), amount = 1, converter = 'json') {
     return toValue.call(this, subDays(safeNewDate(date), amount), converter);
   }
@@ -1010,7 +1015,7 @@ export class Utils {
         switch (metric2) {
           case 'month': {
             // 构造 date 所在月的第一天
-            const startOfMonth = new Date(moment(date).startOf('month').format('YYYY-MM-DD hh:mm:ss'));
+            const startOfMonth = DateTime.fromJSDate(date).startOf('month').toJSDate();
             // 获取该天是周几
             let wod = startOfMonth.getDay(); // 以为返回 1-7，实际返回 0-6；0 是星期天
             wod = wod === 0 ? 7 : wod;
@@ -1072,7 +1077,7 @@ export class Utils {
         break;
     }
     if (typeof dateString === 'object' || isInputValidNaslDateTime(dateString)) {
-      return format(addDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+      return format(addDate, "yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
     } else {
       return format(addDate, 'yyyy-MM-dd');
     }
@@ -1112,9 +1117,9 @@ export class Utils {
     const isDays = fns.filter((_, index) => arr.includes(index + 1));
     const filtereddate = dateInRange.filter((day) => isDays.some((fn) => fn(day)));
     if (typeof startdatetr === 'object' || startdatetr.includes('T')) {
-      return filtereddate.map((date) => moment(date).format('YYYY-MM-DDTHH:mm:ss.SSSZ'));
+      return filtereddate.map((date) => DateTime.fromJSDate(date).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
     } else {
-      return filtereddate.map((date) => moment(date).format('YYYY-MM-DD'));
+      return filtereddate.map((date) => DateTime.fromJSDate(date).toFormat('yyyy-MM-dd'));
     }
   }
 
@@ -1262,7 +1267,7 @@ export class Utils {
 
   Convert(value, typeAnnotation: Partial<TypeAnnotation>) {
     if (typeAnnotation && typeAnnotation.typeKind === 'primitive') {
-      if (typeAnnotation.typeName === 'DateTime') return format(safeNewDate(value), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+      if (typeAnnotation.typeName === 'DateTime') return format(safeNewDate(value), "yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
       else if (typeAnnotation.typeName === 'Date') return format(safeNewDate(value), 'yyyy-MM-dd');
       else if (typeAnnotation.typeName === 'Time') {
         if (/^\d{2}:\d{2}:\d{2}$/.test(value))
@@ -1418,7 +1423,11 @@ export class Utils {
     return isAbs ? Math.abs(diffRes) : diffRes;
   }
 
-  // 时区转换
+  /**
+   * 时区转换
+   * 很早很早的3.1版本，升级脚本塞入的函数
+   * 从升级脚本描述看应该是后端的CurrDateTime有问题，不知道为啥前端也要加这个函数？？？
+   */
   ConvertTimezone(dateTime, tz) {
     if (!dateTime) {
       this.helpers.throwError(`内置函数ConvertTimezone入参错误：指定日期为空`);
@@ -1430,7 +1439,7 @@ export class Utils {
       this.helpers.throwError(`内置函数ConvertTimezone入参错误：传入时区${tz}不是合法时区字符`);
     }
 
-    const result = formatInTimeZone(dateTime, tz, "yyyy-MM-dd'T'HH:mm:ssxxx");
+    const result = dateTime;
     return result;
   }
 

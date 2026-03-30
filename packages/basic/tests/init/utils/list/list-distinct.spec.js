@@ -1,4 +1,4 @@
-const utils = global.sdkUtils;
+const utils = global.Utils;
 
 describe('ListDistinct', () => {
   test('兼容性测试，去重原生数字', () => {
