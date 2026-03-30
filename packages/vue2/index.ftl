@@ -289,10 +289,10 @@
 <script src="${uiResourceAddress}?t=${timestamp}" charset="utf-8"></script>
 <script>
   var reportSwitch = ${reportSwitch};
-  if (!reportSwitch) {return;}
 
   /******/ (function() { // webpackBootstrap
   /******/ 	"use strict";
+  if (!reportSwitch) return;
   var __webpack_exports__ = {};
 
   ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
