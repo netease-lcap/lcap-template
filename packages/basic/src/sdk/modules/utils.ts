@@ -521,10 +521,7 @@ export class Utils {
   }
 
   ListSlice<T>(arr: T[], start: number, end: number) {
-    // 由于 slice 的特性，end 要校验的是长度，而不是下标，所以要减 1
-    if (this.isArrayInBounds(arr, start) && this.isArrayInBounds(arr, end - 1)) {
-      return arr.slice(start, end);
-    }
+    return arr.slice(start, end);
   }
 
   // 不修改原 list，返回新 list
