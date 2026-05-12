@@ -6,6 +6,8 @@ module.exports = {
     if (process.env.NODE_ENV === "production") {
       config.devtool = false;
     }
+    // 兼容源码中library里使用的别名
+    config.resolve.alias['@vusion/utils'] = path.resolve(__dirname, 'src/utils');
 
     /// cloud-ui-alias-start
     config.resolve.alias["@lcap/pc-ui$"] = path.resolve(__dirname, "node_modules/@lcap/pc-ui/dist-theme/index.js");
