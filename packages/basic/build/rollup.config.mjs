@@ -3,7 +3,6 @@ import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
 import { visualizer } from 'rollup-plugin-visualizer';
-import terser from '@rollup/plugin-terser';
 import isCI from 'is-ci';
 
 export default {
@@ -30,16 +29,6 @@ export default {
     json(),
     commonjs(),
     typescript(),
-    terser({
-      compress: {
-        drop_console: false,
-        pure_funcs: [],
-      },
-      mangle: false, // 禁用变量名混淆，避免对已压缩代码的二次混淆问题
-      format: {
-        comments: false,
-      },
-    }),
     !isCI && visualizer({
       filename: 'dist/stats.html',
       open: false,
