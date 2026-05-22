@@ -14,6 +14,9 @@ module.exports = {
     /// cloud-ui-alias-end
   },
   chainWebpack(config) {
+    config.plugins.delete("prefetch");
+    config.plugins.delete("preload");
+
     // 构建产物中删除console相关代码
     // config.optimization.minimizer('terser')
     //     .tap((args) => {

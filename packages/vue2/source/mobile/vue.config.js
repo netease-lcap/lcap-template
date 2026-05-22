@@ -7,6 +7,10 @@ module.exports = {
       config.devtool = false;
     }
   },
+  chainWebpack(config) {
+    config.plugins.delete("prefetch");
+    config.plugins.delete("preload");
+  },
   lintOnSave: false,
   runtimeCompiler: true,
   devServer: {
