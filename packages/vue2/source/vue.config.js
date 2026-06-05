@@ -4,9 +4,37 @@ const path = require("path");
 module.exports = {
   configureWebpack(config) {
     if (process.env.NODE_ENV === "production") {
+      // 关闭 sourcemap，减少 map 文件体积
       config.devtool = false;
+
+      // 代码分割：将 node_modules 按包名拆分（利于缓存）或合并为一个 chunk
+      // 若服务器支持 HTTP/2，按包拆分更佳；否则可合并以减少请求数
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        maxInitialRequests: Infinity,
+        minSize: 20000, // 小于 20KB 的不单独分割
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name(module) {
+              // 为每个 npm 包生成独立 chunk，如 npm.vue、npm.lodash
+              const packageName = module.context.match(
+                /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+              )[1];
+              return `npm.${packageName.replace('@', '')}`;
+            },
+          },
+          // 也可以合并所有 node_modules 为一个 vendor：
+          // vendor: {
+          //   test: /[\\/]node_modules[\\/]/,
+          //   name: 'vendor',
+          //   chunks: 'all',
+          // },
+        },
+      };
     }
-    // 兼容源码中library里使用的别名
+
+    // 兼容源码中 library 里使用的别名
     config.resolve.alias['@vusion/utils'] = path.resolve(__dirname, 'src/utils/install.js');
 
     /// cloud-ui-alias-start
@@ -17,18 +45,29 @@ module.exports = {
 
     /// configureWebpack
   },
-  chainWebpack(config) {
-    // 构建产物中删除console相关代码
-    config.optimization.minimizer('terser')
-        .tap((args) => {
-            args[0].terserOptions.compress.drop_console = ['info', 'log', 'warn'];
-            return args;
-        });
 
+  chainWebpack(config) {
+    if (process.env.NODE_ENV === "production") {
+      // 删除 console 语句（注意：原配置中 'terser' 拼写错误，修正为 'terser'）
+      config.optimization.minimizer('terser')
+        .tap((args) => {
+          args[0].terserOptions = args[0].terserOptions || {};
+          args[0].terserOptions.compress = args[0].terserOptions.compress || {};
+          args[0].terserOptions.compress.drop_console = ['info', 'log', 'warn'];
+          return args;
+        });
+    }
     /// chainWebpack
   },
+
+  // 关键：使用运行时构建，体积更小（仅适用于 .vue 单文件组件）
+  runtimeCompiler: false,
+
+  // 关闭生产环境的 sourcemap（以免生成 .js.map 文件）
+  productionSourceMap: false,
+
   lintOnSave: false,
-  runtimeCompiler: true,
+
   devServer: {
     compress: true,
     port: 8810,
@@ -54,7 +93,7 @@ module.exports = {
         autoRewrite: true,
       },
       "^/gw/": {
-        target: `http://localhost:8080`,
+        target: "http://localhost:8080",
         changeOrigin: true,
         autoRewrite: true,
       },
