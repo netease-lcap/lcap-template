@@ -11,25 +11,40 @@ module.exports = {
       // 若服务器支持 HTTP/2，按包拆分更佳；否则可合并以减少请求数
       config.optimization.splitChunks = {
         chunks: 'all',
-        maxInitialRequests: Infinity,
-        minSize: 20000, // 小于 20KB 的不单独分割
+        minSize: 30000,
+        maxSize: 244 * 1024,  // 全局上限
+        maxInitialRequests: 6,
+        maxAsyncRequests: 10,
         cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name(module) {
-              // 为每个 npm 包生成独立 chunk，如 npm.vue、npm.lodash
-              const packageName = module.context.match(
-                /[\\/]node_modules[\\/](.*?)([\\/]|$)/
-              )[1];
-              return `npm.${packageName.replace('@', '')}`;
-            },
+          framework: {
+            test: /[\\/]node_modules[\\/](vue|vue-router|vuex|pinia)[\\/]/,
+            name: 'chunk-framework',
+            priority: 40,
+            enforce: true,
           },
-          // 也可以合并所有 node_modules 为一个 vendor：
-          // vendor: {
-          //   test: /[\\/]node_modules[\\/]/,
-          //   name: 'vendor',
-          //   chunks: 'all',
-          // },
+          ui: {
+            test: /[\\/]node_modules[\\/](@lcap|element-ui|element-plus|ant-design-vue)[\\/]/,
+            name: 'chunk-ui',
+            priority: 30,
+            enforce: true,
+          },
+          utils: {
+            test: /[\\/]node_modules[\\/](lodash|moment|axios|dayjs|core-js)[\\/]/,
+            name: 'chunk-utils',
+            priority: 20,
+          },
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'chunk-vendors',
+            priority: 10,
+            maxSize: 200 * 1024, // 单独设上限
+          },
+          common: {
+            test: /[\\/]src[\\/]/,
+            minChunks: 2,
+            name: 'chunk-common',
+            priority: 5,
+          },
         },
       };
     }
@@ -47,21 +62,19 @@ module.exports = {
   },
 
   chainWebpack(config) {
-    if (process.env.NODE_ENV === "production") {
-      // 删除 console 语句（注意：原配置中 'terser' 拼写错误，修正为 'terser'）
-      config.optimization.minimizer('terser')
-        .tap((args) => {
-          args[0].terserOptions = args[0].terserOptions || {};
-          args[0].terserOptions.compress = args[0].terserOptions.compress || {};
-          args[0].terserOptions.compress.drop_console = ['info', 'log', 'warn'];
-          return args;
-        });
-    }
+    // 删除 console 语句
+    config.optimization.minimizer('terser')
+      .tap((args) => {
+        args[0].terserOptions = args[0].terserOptions || {};
+        args[0].terserOptions.compress = args[0].terserOptions.compress || {};
+        args[0].terserOptions.compress.drop_console = ['info', 'log', 'warn'];
+        return args;
+      });
     /// chainWebpack
   },
 
   // 关键：使用运行时构建，体积更小（仅适用于 .vue 单文件组件）
-  runtimeCompiler: false,
+  runtimeCompiler: true,
 
   // 关闭生产环境的 sourcemap（以免生成 .js.map 文件）
   productionSourceMap: false,
