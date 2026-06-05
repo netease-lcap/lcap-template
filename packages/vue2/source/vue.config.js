@@ -11,39 +11,25 @@ module.exports = {
       // 若服务器支持 HTTP/2，按包拆分更佳；否则可合并以减少请求数
       config.optimization.splitChunks = {
         chunks: 'all',
-        minSize: 30000,
-        maxSize: 244 * 1024,  // 全局上限
         maxInitialRequests: 6,
         maxAsyncRequests: 10,
         cacheGroups: {
-          framework: {
-            test: /[\\/]node_modules[\\/](vue|vue-router|vuex|pinia)[\\/]/,
-            name: 'chunk-framework',
+          vue: {
+            test: /[\\/]node_modules[\\/](@?vue|pinia)/,
+            name: 'chunk-vue',
             priority: 40,
             enforce: true,
           },
-          ui: {
-            test: /[\\/]node_modules[\\/](@lcap|element-ui|element-plus|ant-design-vue)[\\/]/,
-            name: 'chunk-ui',
+          lcap: {
+            test: /[\\/]node_modules[\\/](@?lcap)[\\/]/,
+            name: 'chunk-lcap',
             priority: 30,
             enforce: true,
-          },
-          utils: {
-            test: /[\\/]node_modules[\\/](lodash|moment|axios|dayjs|core-js)[\\/]/,
-            name: 'chunk-utils',
-            priority: 20,
           },
           vendors: {
             test: /[\\/]node_modules[\\/]/,
             name: 'chunk-vendors',
-            priority: 10,
-            maxSize: 200 * 1024, // 单独设上限
-          },
-          common: {
-            test: /[\\/]src[\\/]/,
-            minChunks: 2,
-            name: 'chunk-common',
-            priority: 5,
+            priority: 20,
           },
         },
       };
