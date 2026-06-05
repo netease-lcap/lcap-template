@@ -21,7 +21,7 @@ module.exports = {
             enforce: true,
           },
           lcap: {
-            test: /[\\/]node_modules[\\/](@?lcap)[\\/]/,
+            test: /[\\/]node_modules[\\/](@?lcap)/,
             name: 'chunk-lcap',
             priority: 30,
             enforce: true,
