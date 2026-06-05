@@ -62,6 +62,9 @@ exports.vendorConfig = (type) =>
         },
       ],
     },
+    optimization: {
+      minimize: true,
+    },
     plugins: [
       // new rspack.DefinePlugin({
       // })
