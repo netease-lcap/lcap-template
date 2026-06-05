@@ -70,7 +70,6 @@ module.exports = {
         args[0].terserOptions.compress.drop_console = ['info', 'log', 'warn'];
         return args;
       });
-    /// chainWebpack
   },
 
   // 关键：使用运行时构建，体积更小（仅适用于 .vue 单文件组件）
