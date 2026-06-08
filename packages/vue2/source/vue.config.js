@@ -58,7 +58,7 @@ module.exports = {
       });
   },
 
-  // 关键：使用运行时构建，体积更小（仅适用于 .vue 单文件组件）
+  // 注意：runtimeCompiler: true 会启用包含模板编译器的构建（runtime + compiler），产物体积更大；仅在需要运行时编译模板时开启
   runtimeCompiler: true,
 
   // 关闭生产环境的 sourcemap（以免生成 .js.map 文件）
