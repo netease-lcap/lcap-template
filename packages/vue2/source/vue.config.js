@@ -56,6 +56,9 @@ module.exports = {
         args[0].terserOptions.compress.drop_console = ['info', 'log', 'warn'];
         return args;
       });
+
+    config.plugins.delete('preload');
+    config.plugins.delete('prefetch');
   },
 
   // 注意：runtimeCompiler: true 会启用包含模板编译器的构建（runtime + compiler），产物体积更大；仅在需要运行时编译模板时开启
