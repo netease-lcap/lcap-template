@@ -1,4 +1,5 @@
 const path = require("path");
+const crypto = require('crypto');
 const { defineConfig } = require('@rspack/cli');
 const rspack = require('@rspack/core');
 const { VueLoaderPlugin } = require('vue-loader');
@@ -127,8 +128,9 @@ module.exports = defineConfig({
 					test: /src[\\/]pages[\\/]/,
 					name: (module, chunks, cacheGroupKey) => {
 						const resource = module.resource;
-						const moduleName = /[\\/]pages[\\/](.*)\.vue?/.exec(resource)[1].split(/[\\/]/g).join('_');
-						return `${cacheGroupKey}_${moduleName}`;
+						let modulePath = /[\\/]pages[\\/](.*)\.vue?/.exec(resource)[1];
+						const moduleName = crypto.createHash('sha256').update(modulePath).digest('hex').slice(0, 8);
+            return `${cacheGroupKey}_${moduleName}`;
 					},
 					enforce: true,
 					priority: 5,
