@@ -181,5 +181,8 @@ module.exports = defineConfig({
         changeOrigin: true,
       },
     ],
+    client: {
+      overlay: false,
+    },
   },
 });
