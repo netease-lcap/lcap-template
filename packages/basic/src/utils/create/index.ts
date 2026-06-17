@@ -115,6 +115,8 @@ export function genBaseOptions(requestInfo: RequestInfo): AxiosRequestConfig {
   if (window.appInfo?.frontendName) headers['LCAP-FRONTEND'] = window.appInfo?.frontendName;
   // 用户本地时区信息，传递给后端
   headers.TimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  // 标记这是 axios 请求，用于区分原生请求
+  headers['X-Requested-With'] = 'XMLHttpRequest';
 
   let data;
   const method2 = method.toUpperCase() as Method;
@@ -170,8 +172,25 @@ const requester = function (requestInfo) {
     }
   });
 
-  // 注意：$axiosHookManager 中的 hooks 已通过原生拦截器（fetch/XMLHttpRequest）应用
-  // 不需要在 axios 中重复注册，避免重复执行
+  // 依赖库定义的请求拦截器
+  if (window.$axiosHookManager) {
+    const requestHooks = window.$axiosHookManager.requestHooks.sort((a, b) => a?.order - b?.order);
+    requestHooks.forEach((hook) => {
+      if (hook && hook.onSuccess && !hook.registered) {
+        axios.interceptors.request.use(hook.onSuccess, hook.onError || defaultErrorHandler);
+        hook.registered = true;
+      }
+    });
+
+    // 依赖库定义的响应拦截器
+    const responseHooks = window.$axiosHookManager.responseHooks.sort((a, b) => a?.order - b?.order);
+    responseHooks.forEach((hook) => {
+      if (hook && hook.onSuccess && !hook.registered) {
+        axios.interceptors.response.use(hook.onSuccess, hook.onError || defaultErrorHandler);
+        hook.registered = true;
+      }
+    });
+  }
 
   const options = genBaseOptions(requestInfo);
 
