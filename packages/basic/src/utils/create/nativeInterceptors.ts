@@ -142,6 +142,14 @@ async function applyResponseErrorHooks(error: any): Promise<any> {
 }
 
 /**
+ * 检测是否是 axios 发起的请求
+ * axios 会设置 X-Requested-With: XMLHttpRequest 头
+ */
+function isAxiosRequest(headers: Record<string, string>): boolean {
+  return headers['X-Requested-With'] === 'XMLHttpRequest';
+}
+
+/**
  * 拦截原生 fetch
  */
 function interceptFetch(): void {
@@ -164,6 +172,11 @@ function interceptFetch(): void {
       } else {
         Object.assign(headers, init.headers);
       }
+    }
+
+    // 检测是否是 axios 请求，如果是则跳过原生拦截器逻辑
+    if (isAxiosRequest(headers)) {
+      return originalFetch.call(window, input, init);
     }
 
     // 构建 axios 风格的 config
@@ -263,6 +276,7 @@ function interceptXHR(): void {
     private _url: string = '';
     private _async: boolean = true;
     private _requestBody: any = null;
+    private _isAxiosRequest: boolean = false;
 
     open(
       method: string,
@@ -288,12 +302,24 @@ function interceptXHR(): void {
     setRequestHeader(header: string, value: string): void {
       this._requestHeaders[header] = value;
       this._config.headers[header] = value;
+
+      // 检测是否是 axios 请求：axios 会设置 X-Requested-With: XMLHttpRequest
+      if (header.toLowerCase() === 'x-requested-with' && value === 'XMLHttpRequest') {
+        this._isAxiosRequest = true;
+      }
+
       super.setRequestHeader(header, value);
     }
 
-    send(body?: Document | BodyInit | null): void {
+    send(body?: Document | XMLHttpRequestBodyInit | null): void {
       this._requestBody = body;
       this._config.data = body;
+
+      // 如果是 axios 请求，不走原生拦截器逻辑，直接发送
+      if (this._isAxiosRequest) {
+        super.send(body);
+        return;
+      }
 
       const executeRequest = async () => {
         try {
