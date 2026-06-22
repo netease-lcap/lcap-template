@@ -7,29 +7,28 @@ module.exports = {
       // 关闭 sourcemap，减少 map 文件体积
       config.devtool = false;
 
-      // 代码分割：将 node_modules 按包名拆分（利于缓存）或合并为一个 chunk
-      // 若服务器支持 HTTP/2，按包拆分更佳；否则可合并以减少请求数
+      // chunk分割
       config.optimization.splitChunks = {
-        chunks: 'all',
-        maxInitialRequests: 6,
-        maxAsyncRequests: 10,
         cacheGroups: {
           vue: {
-            test: /[\\/]node_modules[\\/](@?vue|pinia)/,
+            chunks: 'all',
+            test: /[\\/]node_modules[\\/](@?vue|pinia|vue-router|vue-i18n)[\\/]/,
             name: 'chunk-vue',
-            priority: 40,
             enforce: true,
+            priority: 2,
           },
           lcap: {
+            chunks: 'all',
             test: /[\\/]node_modules[\\/](@?lcap)/,
             name: 'chunk-lcap',
-            priority: 30,
             enforce: true,
+            priority: 1,
           },
           vendors: {
+            chunks: 'initial',
             test: /[\\/]node_modules[\\/]/,
-            name: 'chunk-vendors',
-            priority: 20,
+            name: 'vendors',
+            priority: 0,
           },
         },
       };
@@ -56,6 +55,9 @@ module.exports = {
         args[0].terserOptions.compress.drop_console = ['info', 'log', 'warn'];
         return args;
       });
+
+    config.plugins.delete('preload');
+    config.plugins.delete('prefetch');
   },
 
   // 注意：runtimeCompiler: true 会启用包含模板编译器的构建（runtime + compiler），产物体积更大；仅在需要运行时编译模板时开启
