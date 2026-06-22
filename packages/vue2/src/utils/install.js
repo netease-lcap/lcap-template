@@ -21,9 +21,14 @@ export const mapComponents = (Components) => {
  * @param {Object|Array} Components - 组件集合
  * @param {Vue} Vue
  */
-const installed = new Set();
+const installed = new WeakMap();
 export function installComponents(Vue, Components) {
-  if (installed.has(Components)) return;
+  let vueInstalled = installed.get(Vue);
+  if (!vueInstalled) {
+    vueInstalled = new WeakSet();
+    installed.set(Vue, vueInstalled);
+  }
+  if (vueInstalled.has(Components)) return;
 
   const caseRE = /^[A-Z]/;
   const blackList = ['directives', 'filters', 'utils', 'mixins', 'blocks', 'vendors', 'install', 'default'];
@@ -56,7 +61,7 @@ export function installComponents(Vue, Components) {
     }
   });
 
-  installed.add(Components);
+  vueInstalled.add(Components);
 }
 
 /**
