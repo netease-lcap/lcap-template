@@ -20,7 +20,6 @@ yarn-error.log*
 node_modules/
 
 # Editors
-.vscode/
 .idea/
 
 packages/basic/**/*.tgz
@@ -41,3 +40,4 @@ mini-folder/**/project.private.config.json
 docs/
 
 .turbo
+.omo/

@@ -1,13 +1,16 @@
 const path = require('path');
 const { defineConfig } = require('@rspack/cli');
+const rspack = require('@rspack/core');
 
 const root = path.resolve(__dirname, '..');
 
 const targets = ['last 2 versions', '> 0.2%', 'not dead', 'Firefox ESR'];
 
+const env = 'development';
+
 exports.vendorConfig = (type) =>
   defineConfig({
-    mode: 'production',
+    mode: env,
     devtool: 'source-map',
     entry: {
       index: [path.resolve(__dirname, '../src/broswer-vendors.ts')],
@@ -59,5 +62,12 @@ exports.vendorConfig = (type) =>
         },
       ],
     },
+    optimization: {
+      minimize: true,
+    },
+    plugins: [
+      // new rspack.DefinePlugin({
+      // })
+    ],
     stats: 'minimal',
   });

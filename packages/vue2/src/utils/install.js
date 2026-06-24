@@ -30,32 +30,31 @@ export function installComponents(Vue, Components) {
   }
   if (vueInstalled.has(Components)) return;
 
-  const caseRE = /^[A-Z]/;
-  const blackList = ['directives', 'filters', 'utils', 'mixins', 'blocks', 'vendors', 'install', 'default'];
-
-  // 组件之间有依赖，有 install 的必须先安装
-  Object.keys(Components).forEach((key) => {
+  const validateComponentName = (key) => {
+    const caseRE = /^[A-Z]/;
+    const blackList = ['directives', 'filters', 'utils', 'mixins', 'blocks', 'vendors', 'install', 'default'];
     if (!caseRE.test(key)) {
       // 如果为大写则是组件
       if (!blackList.includes(key)) console.error('不允许组件名首字母小写', key, Components[key]);
-      return;
+      return false;
     }
 
+    return true;
+  };
+
+  const componentKeys = Object.keys(Components).filter((key) => validateComponentName(key));
+
+  // 组件之间有依赖，有 install 的必须先安装
+  componentKeys.forEach((key) => {
     const Component = Components[key];
     if (Component.install) {
       Vue.component(key, Component);
       Component.install(Vue, key);
     }
   });
-  Object.keys(Components).forEach((key) => {
-    if (!caseRE.test(key)) {
-      // 如果为大写则是组件
-      if (!blackList.includes(key)) console.error('不允许组件名首字母小写', key, Components[key]);
-      return;
-    }
 
+  componentKeys.forEach((key) => {
     const Component = Components[key];
-    Vue.component(key, Component);
     if (!Component.install) {
       Vue.component(key, Component);
     }
