@@ -1,6 +1,6 @@
 import { isPlainObject } from 'lodash';
 
-import { createService } from '../../utils';
+import { createService, initNativeRequestInterceptors } from '../../utils';
 import Global from '../../global';
 import Config from '../../config';
 
@@ -11,6 +11,11 @@ function initService(
     servicesMap?: Record<string, any>;
   } = {},
 ) {
+  // 初始化原生请求拦截器，使 axios hooks 也能作用于 fetch 和 XMLHttpRequest
+  if (window.$axiosHookManager && (window.$axiosHookManager.requestHooks || window.$axiosHookManager.responseHooks)) {
+    initNativeRequestInterceptors();
+  }
+
   const services = Object.assign({}, options.servicesMap);
   const keys = Object.keys(services);
 

@@ -166,7 +166,7 @@ module.exports = defineConfig({
 	experiments: {
 		css: true
 	},
-	stats: 'minimal',
+	stats: 'errors-only',
 	devServer: {
     port: 8810,
 		historyApiFallback: true,
@@ -181,5 +181,8 @@ module.exports = defineConfig({
         changeOrigin: true,
       },
     ],
+    client: {
+      overlay: false,
+    },
   },
 });

@@ -115,6 +115,8 @@ export function genBaseOptions(requestInfo: RequestInfo): AxiosRequestConfig {
   if (window.appInfo?.frontendName) headers['LCAP-FRONTEND'] = window.appInfo?.frontendName;
   // 用户本地时区信息，传递给后端
   headers.TimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  // 标记这是 axios 请求，用于区分原生请求
+  headers['X-Requested-With'] = 'XMLHttpRequest';
 
   let data;
   const method2 = method.toUpperCase() as Method;
@@ -170,7 +172,7 @@ const requester = function (requestInfo) {
     }
   });
 
-  // 依赖库定义的响应拦截器
+  // 依赖库定义的请求拦截器
   if (window.$axiosHookManager) {
     const requestHooks = window.$axiosHookManager.requestHooks.sort((a, b) => a?.order - b?.order);
     requestHooks.forEach((hook) => {
@@ -562,6 +564,8 @@ interface LCAPRequestOptions {
   pathSlot?: Record<string, string>;
   extraConfig: Record<string, any>;
 }
+
+export { initNativeRequestInterceptors } from './nativeInterceptors';
 
 export function request(options: LCAPRequestOptions) {
   // 注册接口
