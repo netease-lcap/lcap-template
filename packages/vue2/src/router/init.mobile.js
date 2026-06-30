@@ -8,6 +8,7 @@ export function createRouter(routes) {
     mode: window.LcapVueRouterConfig?.mode || 'history',
     base: window.LcapMicro?.routePrefix,
     routes,
+    scrollBehavior: window.LcapVueRouterConfig?.scrollBehavior,
   });
 
   /**
