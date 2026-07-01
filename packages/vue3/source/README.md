@@ -188,7 +188,7 @@
 
 ### 环境要求
 - Node.js >= 22.x
-- pnpm (推荐) 或 npm
+- pnpm 9
 
 ### 安装依赖
 ```bash
