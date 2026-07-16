@@ -94,6 +94,7 @@ const baseConfig = (type) => {
         new EsbuildPlugin({
           target: 'es2015',
           css: true,
+          legalComments: 'none',
         }),
       ],
     },
