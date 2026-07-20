@@ -36,6 +36,15 @@ export function setConfig(options = {}) {
         app.config.globalProperties.$message?.info?.(msg);
       },
     },
+    builtinFunctions: {
+      Get: <T>(arr: T[], index: number): T | undefined  => {
+        return arr[index];
+      },
+      Set: <T>(arr: T[], index: number, item: T) => {
+          arr[index] = item;
+          return arr;
+      }
+    },
     configureRequest(_options) {
       /**
        * options配置参考
