@@ -37,12 +37,12 @@ export function setConfig(options = {}) {
       },
     },
     builtinFunctions: {
-      Get: <T>(arr: T[], index: number): T | undefined  => {
+      Get: <T>(arr: T[], index: number): T | undefined => {
         return arr[index];
       },
       Set: <T>(arr: T[], index: number, item: T) => {
-          arr[index] = item;
-          return arr;
+        arr[index] = item;
+        return arr;
       }
     },
     configureRequest(_options) {
