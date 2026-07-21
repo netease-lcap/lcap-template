@@ -2,10 +2,13 @@
 name: Deploy Pages
 
 on:
-  # Runs on pushes targeting the default branch
+  # Runs on pushes targeting the default branch when docs are changed
   push:
     branches:
       - test
+    paths:
+      - 'docs/**'
+      - '.github/workflows/doc.yml'
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
