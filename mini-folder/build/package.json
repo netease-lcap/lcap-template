@@ -2,6 +2,7 @@
   "name": "mini-folder-builder",
   "version": "1.0.0",
   "description": "mini folder builder",
+  "license": "MIT",
   "scripts": {
     "build": "node ./scripts/build.js",
     "deploy": "node ./scripts/deploy.js"

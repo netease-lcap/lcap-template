@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "description": "",
+  "license": "MIT",
   "templateInfo": {
     "name": "default",
     "typescript": false,
