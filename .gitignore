@@ -37,7 +37,8 @@ lcap.deploy.json
 .swc
 .temp
 mini-folder/**/project.private.config.json
-docs/
+docs/.vitepress/cache/
+docs/.vitepress/dist/
 
 .turbo
 .omo/
