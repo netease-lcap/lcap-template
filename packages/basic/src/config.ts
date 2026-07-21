@@ -1,5 +1,5 @@
-import { encodeUrl } from "./utils";
-import Global from "./global";
+import { encodeUrl } from './utils';
+import Global from './global';
 
 type ConfigType = {
   toast: {
@@ -7,6 +7,7 @@ type ConfigType = {
     error: (message: string, stack?: string) => void;
   };
   utils: any;
+  builtinFunctions: any;
   router: {
     destination?: (url: string, target: string) => void;
     back?: () => void;
@@ -30,10 +31,11 @@ const Config: ConfigType = {
     error: (message, stack?) => void 0,
   },
   utils: {},
+  builtinFunctions: {},
   router: {
     // 默认实现
     destination: (url: string, target: string) => {
-      if (target === "_self") {
+      if (target === '_self') {
         location.href = encodeUrl(url);
       } else {
         window.open(encodeUrl(url), target);
