@@ -129,7 +129,8 @@ export function exitFullscreen() {
   return document.exitFullscreen();
 }
 
-const aesKey = ';Z#^$;8+yhO!AhGo';
+// ;Z#^$;8+yhO!AhGo
+const aesKey = window.appInfo?._unsafe_aes_key_;
 export function encryptByAES({ string: message }, key = aesKey) {
   const keyHex = CryptoJS.enc.Utf8.parse(key); //
   const messageHex = CryptoJS.enc.Utf8.parse(message);
