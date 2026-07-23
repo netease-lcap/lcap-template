@@ -1,4 +1,5 @@
 const path = require("path");
+const crypto = require('crypto');
 const { defineConfig } = require('@rspack/cli');
 const rspack = require('@rspack/core');
 const { VueLoaderPlugin } = require('vue-loader');
@@ -6,6 +7,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 const ClientLazyloadTemplate = require('./client-lazyload-template');
 const LcapPlugin = require('./rspack/plugins/lcap');
 const MissingCssFallbackPlugin = require('./rspack/plugins/missing-css-fallback');
+const MissingFileFallbackPlugin = require('./rspack/plugins/missing-file-fallback');
 
 // 会被替换成真实服务端地址，形如 http://dev.pagetest.defaulttenant.lcap.hatest.163yun.com
 const backendUrl = '';
@@ -101,6 +103,7 @@ module.exports = defineConfig({
       pattern: /\/dist-theme\/index\.css$/,
       fallbackContent: '/* CSS theme file not found, using empty fallback */'
     }),
+    new MissingFileFallbackPlugin(),
     // LcapPlugin start
 		new LcapPlugin({
       isDev,
@@ -125,8 +128,9 @@ module.exports = defineConfig({
 					test: /src[\\/]pages[\\/]/,
 					name: (module, chunks, cacheGroupKey) => {
 						const resource = module.resource;
-						const moduleName = /[\\/]pages[\\/](.*)\.vue?/.exec(resource)[1].split(/[\\/]/g).join('_');
-						return `${cacheGroupKey}_${moduleName}`;
+						let modulePath = /[\\/]pages[\\/](.*)\.vue?/.exec(resource)[1];
+						const moduleName = crypto.createHash('sha256').update(modulePath).digest('hex').slice(0, 8);
+            return `${cacheGroupKey}_${moduleName}`;
 					},
 					enforce: true,
 					priority: 5,
@@ -162,7 +166,7 @@ module.exports = defineConfig({
 	experiments: {
 		css: true
 	},
-	stats: 'minimal',
+	stats: 'errors-only',
 	devServer: {
     port: 8810,
 		historyApiFallback: true,
@@ -177,5 +181,8 @@ module.exports = defineConfig({
         changeOrigin: true,
       },
     ],
+    client: {
+      overlay: false,
+    },
   },
 });

@@ -5,179 +5,166 @@
 </template>
 
 <script>
-import "./index.less";
-import Taro from "@tarojs/taro";
-import apis from "../../apis";
-import {baseUrl,basePath} from "../../utils/config"
-import { set as setGlobalData, get as getGlobalData } from "../../global_data";
+import Taro from '@tarojs/taro';
+import qs from 'qs';
+import apis from '../../apis';
+import { baseUrl, basePath } from '../../utils/config';
+import './index.less';
 
 export default {
   data() {
     return {
-      url: "",
-      detailUrl: '',
+      url: '',
+      shareUrl: '',
     };
   },
+
   onLoad(options) {
     this.$instance = Taro.getCurrentInstance();
     this.init(options);
   },
+
   onShow() {
-    const pages = Taro.getCurrentPages();
-    const currPage = pages[pages.length - 1];
-    if (currPage.data.userinfo) {
-      const { wxHeadImg, wxNickName,wxPhone,wxScanCode,wxLocation } = currPage.data.userinfo;
-      this.originalUrl = this.url
-      if (wxNickName) {
-        if(!~this.url.indexOf("_wx_headimg")) {
-          setGlobalData("originalUrl", this.url)
-        }
-        const _url = this.getUrl(
-          getGlobalData("originalUrl"),
-          `_wx_headimg=${wxHeadImg}&_wx_nickname=${wxNickName}`
-        );
-        currPage.setData({
-          userinfo: {},
-        });
-        this.url = this.appendUrlParams(_url, this.$instance.router.params);
-      }
-      if(wxPhone){
-         if(!~this.url.indexOf("_wx_phone")) {
-          setGlobalData("originalUrl", this.url)
-        }
-         const _url = this.getUrl(
-          getGlobalData("originalUrl"),
-          `_wx_phone=${wxPhone}`
-        );
-        currPage.setData({
-          userinfo: {},
-        });
-        this.url = this.appendUrlParams(_url, this.$instance.router.params);;
-      }
-      if(wxScanCode){
-         if(!~this.url.indexOf("_wx_scan_code")) {
-          setGlobalData("originalUrl", this.url)
-        }
-         const _url = this.getUrl(
-          getGlobalData("originalUrl"),
-          `_wx_scan_code=${wxScanCode}`
-        );
-        currPage.setData({
-          userinfo: {},
-        });
-        this.url = this.appendUrlParams(_url, this.$instance.router.params);;
-      }
-      if(wxLocation){
-         if(!~this.url.indexOf("_wx_location")) {
-          setGlobalData("originalUrl", this.url)
-        }
-         const _url = this.getUrl(
-          getGlobalData("originalUrl"),
-          `_wx_location=${wxLocation}`
-        );
-        currPage.setData({
-          userinfo: {},
-        });
-        this.url = this.appendUrlParams(_url, this.$instance.router.params);;
-      }
-    }
+    this.updateUrl();
   },
-  mounted() {
-  },
+
   onShareAppMessage() {
     return {
-      path: `/pages/index/index?detailUrl=${encodeURIComponent(this.detailUrl)}`,
+      path: `/pages/index/index?detailUrl=${encodeURIComponent(this.shareUrl)}`,
     };
   },
+
   methods: {
     async init(options) {
+      const isFirst = Taro.getStorageSync('isFirst');
+
+      const { detailUrl = baseUrl + basePath.slice(1) } = options;
+      let decodeUrl = decodeURIComponent(detailUrl);
+      // 设置分享的链接
+      this.shareUrl = decodeUrl;
+
+      const [url, search] = decodeUrl.split('?');
+      let query = qs.parse(search);
+
       try {
-        const isFirst = Taro.getStorageSync("isFirst");
-        let titleList = []
         if (isFirst) {
-          const list  = await apis.getTitleConfig({}) ||[]
-          titleList = list
-          setGlobalData("titleList", list)
-        } else {
-          titleList =  getGlobalData("titleList")
+          const { code } = await Taro.login();
+          const userInfo = await apis.getOpenid({ code });
+          query._wx_openid = userInfo?.openid || '';
         }
-        const {
-          detailUrl = baseUrl+basePath.slice(1),
-        } = options;
+      } catch (error) {}
 
-        let decodeUrl = decodeURIComponent(detailUrl);
-        this.detailUrl = decodeUrl;
-        if (isFirst) {
-          const userInfo = await this.getOpenid();
-          decodeUrl = this.getUrl(decodeUrl, `_wx_openid=${userInfo?.openid}`);
-          decodeUrl = this.getUrl(decodeUrl, `_wx_is_mini=1`);
-          Taro.setStorage({
-            key: "isFirst",
-            data: false,
-          });
-        }
-        console.log(decodeUrl);
-        this.url = this.appendUrlParams(decodeUrl, this.$instance.router.params);;
+      // 标识小程序访问
+      query._wx_is_mini = 1;
 
-        /* 获取路由
-         **  examble aa aa/bb
-         */
-         this.setBarTitle(Array.isArray(titleList) ? titleList : [], decodeUrl);
-      } catch (error) {
-        console.log(error);
+      // 支持调试模式
+      const appBaseInfo = Taro.getAppBaseInfo();
+      if (appBaseInfo?.enableDebug) {
+        query.lcap_debug = true;
+      }
+
+      // 拼接路由参数
+      query = this.appendRouterParams(query, this.$instance.router.params);
+      this.url = `${url}?${qs.stringify(query)}`;
+
+      // 重置首次标识
+      if (isFirst) {
+        Taro.setStorageSync('isFirst', false);
+      }
+
+      // 设置标题配置
+      try {
+        this.setBarTitle(url);
+      } catch (error) {}
+    },
+
+    updateUrl() {
+      const pages = Taro.getCurrentPages();
+      const currPage = pages[pages.length - 1];
+
+      if (!currPage.data.userinfo) {
+        return;
+      }
+
+      const { wxHeadImg, wxNickName, wxPhone, wxScanCode, wxLocation } = currPage.data.userinfo || {};
+
+      const [url, search] = this.url.split('?');
+      let query = qs.parse(search);
+
+      if (wxNickName) {
+        query._wx_nickname = wxNickName;
+        query._wx_headimg = wxHeadImg;
+      }
+
+      if (wxPhone) {
+        query._wx_phone = wxPhone;
+      }
+
+      if (wxScanCode) {
+        query._wx_scan_code = wxScanCode;
+      }
+
+      if (wxLocation) {
+        query._wx_location = wxLocation;
+      }
+
+      if (wxNickName || wxPhone || wxScanCode || wxLocation) {
+        currPage.setData({
+          userinfo: null,
+        });
+        // 拼接路由参数
+        query = this.appendRouterParams(query, this.$instance.router.params);
+
+        this.url = `${url}?${qs.stringify(query)}`;
       }
     },
-    async setBarTitle(list=[], decodeUrl) {
+
+    appendRouterParams(query, params = {}) {
+      let newQuery = { ...query };
+      if (params) {
+        const keys = Object.keys(params);
+        keys.forEach((key) => {
+          newQuery[key] = params[key];
+        });
+      }
+
+      delete newQuery.detailUrl;
+
+      return newQuery;
+    },
+
+    async setBarTitle(url) {
+      let titleList = [];
+      try {
+        titleList = (await apis.getTitleConfig({})) || [];
+      } catch (error) {}
+
       const reg = /(http|https)\:\/\/[^/]*\/([^?]*)\??(\S*)/;
-      const defaultUrl = basePath? decodeUrl.replace(basePath, "") :decodeUrl
-      const [, , result] = reg.exec(defaultUrl)||[]
-      let titleInfo = null
+      const defaultUrl = basePath ? url.replace(basePath, '') : url;
+      const [, , result] = reg.exec(defaultUrl) || [];
+      let titleInfo = null;
       if (result) {
-        titleInfo = list?.find((item) => {
-          const idx = result.indexOf("/");
+        titleInfo = titleList?.find((item) => {
+          const idx = result.indexOf('/');
           if (~idx) {
             return item.name == result.substring(0, idx);
           }
           return item.name == result;
         });
       } else {
-        titleInfo = list.find(item=>item.isIndex)
+        titleInfo = titleList.find((item) => item.isIndex);
       }
+
       if (titleInfo) {
         Taro.setNavigationBarTitle({ title: titleInfo?.title });
-      } else {
-        // Taro.setNavigationBarTitle({ title:"未设置标题" });
       }
-    },
-    getUrl(url, str) {
-      return url + (~url.indexOf("?") ? "&" : "?") + str;
-    },
-    async getOpenid() {
-      try {
-        const { code } = await Taro.login();
-        const data = await apis.getOpenid({ code });
-        return data;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    // 追加小程序路由上的参数
-    appendUrlParams(url, params = {}) {
-      let newUrl = url;
-      if (params) {
-        const keys = Object.keys(params);
-        keys.forEach((key) => {
-          newUrl = `${newUrl}${newUrl.indexOf("?") !== -1 ? "&" : "?"}${key}=${encodeURIComponent(params[key])}`;
-        });
-      }
-      return newUrl;
     },
 
     onWebViewMessage(event) {
       console.log(`[onWebViewMessage]`, event);
       const { data = [] } = event.detail;
 
-      (data || []).forEach(item => {
+      (data || []).forEach((item) => {
         const { method, params = {} } = item || {};
         // 直接调用
         if (typeof Taro[method] === 'function') {
@@ -188,10 +175,10 @@ export default {
             },
             fail: (err) => {
               console.log(`[onWebViewMessage] 调用${method}失败`, err);
-            }
+            },
           });
         }
-      })
+      });
     },
 
     onWebViewLoad(event) {
@@ -200,7 +187,7 @@ export default {
 
     onWebViewError(event) {
       console.log(`[onWebViewError]`, event);
-    }
+    },
   },
 };
 </script>

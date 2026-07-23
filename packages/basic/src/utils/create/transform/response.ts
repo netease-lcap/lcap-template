@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
-import get from 'lodash/get';
-import JSONbig from '../../json-bigint';
+import { get } from 'lodash';
+import * as JSONbig from '../../json-bigint';
 import type { RequestInfo } from '../index';
 
 function getJsonParse() {

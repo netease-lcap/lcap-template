@@ -21,11 +21,11 @@ export default {
      */
     const vAuth = {
       async handle(el, binding) {
-        const vm = binding.instance;
+        const { instance } = binding;
         // 初始化操作，防止先出现后消失
-        if (vm && vm.$options.name === 'u-table-view-column') vm.currentHidden = false;
-        else {
-          el && (el.style.display = 'none');
+        if (instance && instance.$options.name === 'u-table-view-column') instance.currentHidden = false;
+        else if (el) {
+          el.style.display = 'none';
         }
         const data = {
           value: binding.value || '',
@@ -37,9 +37,9 @@ export default {
         const visible = await authService.has(authPath);
 
         // 表格列不起作用，特殊处理
-        if (vm && vm.$options.name === 'u-table-view-column') vm.currentHidden = !visible;
-        else {
-          el && (el.style.display = visible ? '' : 'none');
+        if (instance && instance.$options.name === 'u-table-view-column') instance.currentHidden = !visible;
+        else if (el) {
+          el.style.display = visible ? '' : 'none';
         }
       },
       beforeMount(el, binding, vnode, oldVnode) {
@@ -63,8 +63,7 @@ export default {
         _updateVisibleByAuth() {
           if (!(options.autoHide && this.to)) return;
           // 有 v-auth 了就不处理 to 的了。
-          if (this.$vnode.data.directives && this.$vnode.data.directives.some((directive) => directive.name === 'auth'))
-            return;
+          if (this.$vnode.data.directives && this.$vnode.data.directives.some((directive) => directive.name === 'auth')) return;
           if (!authService.isInit()) return;
 
           let visible = true;
@@ -77,7 +76,9 @@ export default {
             visible = visible && authService.has(fullPath);
           }
 
-          this.$el && (this.$el.style.display = visible ? '' : 'none');
+          if (this.$el) {
+            this.$el.style.display = visible ? '' : 'none';
+          }
         },
       },
     });

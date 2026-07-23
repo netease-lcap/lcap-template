@@ -39,7 +39,7 @@ import {
   isSunday,
 } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-import { isObject, isEqual, set, cloneDeep } from 'lodash';
+import { isObject, set, isEqual, cloneDeep } from 'lodash';
 import Decimal from 'decimal.js';
 import {
   isInputValidNaslDateTime,
@@ -71,7 +71,14 @@ export class Utils {
     this.helpers = optinos;
   }
 
-  private isArrayInBounds<T>(arr: T[], index: number): boolean {
+  /**
+   * 判断数组访问是否越界
+   * @param arr
+   * @param index
+   * @param boundaryChecker
+   * @returns
+   */
+  private isArrayInBounds<T>(arr: T[], index: number, boundaryChecker?: (index: number, arr: T[]) => boolean): boolean {
     if (!Array.isArray(arr)) {
       this.helpers.throwError('传入内容不是数组');
       return false;
@@ -82,7 +89,10 @@ export class Utils {
       return false;
     }
 
-    if (index < 0 || index >= arr.length) {
+    const defaultBoundaryChecker = (idx: number, array: T[]) => idx >= 0 && idx < array.length;
+    const checker = boundaryChecker ?? defaultBoundaryChecker;
+
+    if (!checker(index, arr)) {
       this.helpers.throwError(`列表访问越界，访问下标 ${index}，列表长度 ${arr.length}`);
       return false;
     }
@@ -316,7 +326,8 @@ export class Utils {
   }
 
   Insert<T>(arr: T[], index: number, item: T) {
-    if (this.isArrayInBounds(arr, index)) {
+    const boundaryChecker = (idx: number, array: T[]) => idx >= 0 && idx <= array.length;
+    if (this.isArrayInBounds(arr, index, boundaryChecker)) {
       arr.splice(index, 0, item);
     }
   }
@@ -510,10 +521,7 @@ export class Utils {
   }
 
   ListSlice<T>(arr: T[], start: number, end: number) {
-    // 由于 slice 的特性，end 要校验的是长度，而不是下标，所以要减 1
-    if (this.isArrayInBounds(arr, start) && this.isArrayInBounds(arr, end - 1)) {
-      return arr.slice(start, end);
-    }
+    return arr.slice(start, end);
   }
 
   // 不修改原 list，返回新 list
@@ -889,16 +897,16 @@ export class Utils {
   }
 
   AddDays(date = new Date(), amount = 1, converter = 'json') {
-    return toValue(addDays(safeNewDate(date), amount), converter);
+    return toValue.call(this, addDays(safeNewDate(date), amount), converter);
   }
 
   AddMonths(date = new Date(), amount = 1, converter = 'json') {
     /** 传入的值为标准的时间格式 */
-    return toValue(addMonths(safeNewDate(date), amount), converter);
+    return toValue.call(this, addMonths(safeNewDate(date), amount), converter);
   }
 
   SubDays(date = new Date(), amount = 1, converter = 'json') {
-    return toValue(subDays(safeNewDate(date), amount), converter);
+    return toValue.call(this, subDays(safeNewDate(date), amount), converter);
   }
 
   // 兼容性策略：老应用升级到 3.10，保持老行为不变
@@ -1515,7 +1523,30 @@ export class Utils {
     const pattern = reg.pattern;
     const flags = reg.flags;
 
-    return str.match(new RegExp(pattern, flags)) || [];
+    const regex = new RegExp(pattern, flags);
+
+    let matches = [];
+    let match = undefined;
+    let index = undefined;
+    let error = undefined;
+    while ((match = regex.exec(str))) {
+      if (index === regex.lastIndex) {
+        error = {
+          id: 'infinite',
+          warning: true,
+        };
+        ++regex.lastIndex;
+      }
+      index = regex.lastIndex;
+
+      matches.push(match?.[0]);
+
+      if (!regex.global) {
+        break;
+      }
+    }
+
+    return matches;
   }
 
   /**

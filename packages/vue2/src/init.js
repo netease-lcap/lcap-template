@@ -1,12 +1,11 @@
 import Vue from 'vue';
 import { createPinia, PiniaVuePlugin } from 'pinia';
 import VueCompositionAPI from '@vue/composition-api';
-import { installOptions, installFilters, installComponents, installDirectives } from '@vusion/utils';
+import { installOptions, installComponents, installDirectives } from '@/utils/install';
 
 import '@/global';
 import '@/config';
 import {
-  filters,
   directives,
   AuthPlugin,
   DataTypesPlugin,
@@ -76,7 +75,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
   if (metaData && metaData.frontendEvents) {
     for (let index = 0; index < endEventLists.length; index++) {
       const name = endEventLists[index];
-      if (metaData && name && metaData.frontendEvents[name]) {
+      if (metaData.frontendEvents[name]) {
         // 事件函数中的this指向Vue.prototype
         unsafeEval.bind(Vue.prototype)(metaData.frontendEvents[name]);
         Vue.prototype[name] = window[name];
@@ -92,7 +91,7 @@ const init = (appConfig, platformConfig, routes, metaData) => {
    * 微前端场景判断
    * 如果当前脚本不是在头部或脚本未激活，则不执行初始化
    */
-  if (window.LcapMicro?.container) {
+  if (window.LcapMicro?.container && window.ICESTARK && window.ICESTARK.root) {
     if (
       document.currentScript &&
       (!document.head.contains(document.currentScript) || document.currentScript.active === false)
@@ -109,10 +108,6 @@ const init = (appConfig, platformConfig, routes, metaData) => {
    * 安装指令
    */
   installDirectives(Vue, directives);
-  /**
-   * 安装过滤器
-   */
-  installFilters(Vue, filters);
   /**
    * 注册业务组件
    */
@@ -168,7 +163,12 @@ const init = (appConfig, platformConfig, routes, metaData) => {
    * 执行端事件---应用进入时
    */
   if (typeof window?.rendered === 'function') {
-    window.rendered();
+    window.rendered({
+      appConfig,
+      platformConfig,
+      routes,
+      metaData,
+    });
   }
 
   /**

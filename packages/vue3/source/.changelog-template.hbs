@@ -1,0 +1,29 @@
+{{> header}}
+
+{{#each releases}}
+  {{#if @first}}
+## {{#if this.version}}{{this.version}}{{else}}Unreleased{{/if}}{{#if this.title}} "{{this.title}}"{{/if}}{{#if this.date}} ({{this.date}}){{/if}}
+  {{else}}
+## {{#if this.version}}{{this.version}}{{else}}Unreleased{{/if}}{{#if this.title}} "{{this.title}}"{{/if}}{{#if this.date}} ({{this.date}}){{/if}}
+  {{/if}}
+
+  {{#each groups}}
+
+### {{this.title}}
+
+    {{#each commits}}
+- {{#if this.scope}}**{{this.scope}}**: {{/if}}{{this.subject}}{{#each this.references}} [{{this.issue}}]({{this.repository}}/issues/{{this.issue}}){{/each}}
+    {{/each}}
+  {{/each}}
+
+  {{#if this.notes.length}}
+    {{#each this.notes}}
+
+### {{this.title}}
+
+      {{#each this.body}}
+- {{this}}
+      {{/each}}
+    {{/each}}
+  {{/if}}
+{{/each}}

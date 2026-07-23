@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "description": "",
+  "license": "MIT",
   "templateInfo": {
     "name": "default",
     "typescript": false,
@@ -49,6 +50,7 @@
     "@tarojs/taro": "3.6.35",
     "@tarojs/plugin-framework-vue2": "3.6.35",
     "@tarojs/plugin-mock": "^0.0.9",
+    "qs": "6.14.0",
     "vue": "2.6.14",
     "vue-template-compiler": "2.6.14"
   },

@@ -16,9 +16,9 @@
   </head>
 
   <body>
-    <div id="app"></div>
+    <div id="app" style="width: 100%; height: 100%;"></div>
     <script>
-        var LazyLoad = (function (doc) {
+      var LazyLoad = (function (doc) {
         var env,
                 head,
                 pending = {},
@@ -213,6 +213,17 @@
             } else {
               urls && preload(urls);
             }
+          },
+          reset: function () {
+            env = undefined;
+            head = undefined;
+            pending = {};
+            pollCount = 0;
+            queue = {
+              css: [],
+              js: []
+            };
+            styleSheets = doc.styleSheets;
           }
         };
       })(this.document);

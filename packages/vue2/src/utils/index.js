@@ -24,3 +24,5 @@ export default {
   dataSourceUtils,
   createErrorLayout,
 };
+
+export * from './install';

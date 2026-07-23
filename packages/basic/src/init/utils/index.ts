@@ -36,6 +36,7 @@ function initUtils(
     New(obj) {
       return genInitFromSchema(obj);
     },
+    ...(Config.builtinFunctions ?? {}),
   });
 
   Config.globalProperties.set('$utils', utils);

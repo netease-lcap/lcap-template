@@ -1,3 +1,3 @@
 export default definePageConfig({
-  navigationBarTitleText: '获取位置信息'
-})
+  navigationBarTitleText: '获取位置信息',
+});

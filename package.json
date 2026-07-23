@@ -4,7 +4,10 @@
   "description": "低代码应用模板",
   "version": "2.2.0",
   "scripts": {
-    "doc": "pnpm --filter=@lcap/basic-template run doc",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "doc": "pnpm docs:build",
     "prepare": "husky",
     "test": "pnpm --filter \"./packages/*\" run test",
     "change:version": "node ./scripts/version",
@@ -15,7 +18,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "engines": {
     "node": ">=18",
     "pnpm": ">=8"
@@ -30,7 +33,8 @@
     "minimist": "^1.2.8",
     "prettier": "^3.3.3",
     "tar": "7.4.3",
-    "turbo": "^2.5.8"
+    "turbo": "^2.5.8",
+    "vitepress": "^1.6.4"
   },
   "lint-staged": {
     "**/*.json": [

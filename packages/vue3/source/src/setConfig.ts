@@ -1,6 +1,6 @@
 import { setConfig as setCommonConfig } from '@/common';
 
-import { utils } from './plugins/dataTypes/index';
+import { utils } from './plugins/data-types/index';
 import { destination, back, go } from './plugins/router';
 
 export function setConfig(options = {}) {
@@ -35,6 +35,15 @@ export function setConfig(options = {}) {
       showMessage(msg) {
         app.config.globalProperties.$message?.info?.(msg);
       },
+    },
+    builtinFunctions: {
+      Get: <T>(arr: T[], index: number): T | undefined => {
+        return arr[index];
+      },
+      Set: <T>(arr: T[], index: number, item: T) => {
+        arr[index] = item;
+        return arr;
+      }
     },
     configureRequest(_options) {
       /**

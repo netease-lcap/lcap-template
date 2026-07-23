@@ -20,7 +20,6 @@ yarn-error.log*
 node_modules/
 
 # Editors
-.vscode/
 .idea/
 
 packages/basic/**/*.tgz
@@ -38,6 +37,8 @@ lcap.deploy.json
 .swc
 .temp
 mini-folder/**/project.private.config.json
-docs/
+docs/.vitepress/cache/
+docs/.vitepress/dist/
 
 .turbo
+.omo/

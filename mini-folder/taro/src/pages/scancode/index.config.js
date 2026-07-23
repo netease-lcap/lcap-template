@@ -1,3 +1,3 @@
 export default definePageConfig({
-  navigationBarTitleText: '扫一扫'
-})
+  navigationBarTitleText: '扫一扫',
+});

@@ -1,3 +1,3 @@
 export default definePageConfig({
-  navigationBarTitleText: '获取头像昵称'
-})
+  navigationBarTitleText: '获取头像昵称',
+});

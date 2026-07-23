@@ -6,9 +6,14 @@ import { routes } from "./router/routes";
 import "./library";
 import i18nInfo from './language';
 import platformConfig from "./platform.config.json";
+import { fetchAnnotationData } from './data-permission';
 
-import '@/style/index.css';
+import '@/style/global.css';
 import '@/style/theme.css';
+import '@/style/index.css';
+
+// 获取数据权限注解数据
+fetchAnnotationData();
 
 window.createLcapApp = undefined;
 window.rendered = undefined;
@@ -16,6 +21,9 @@ window.preRequest = undefined;
 window.postRequest = undefined;
 window.beforeRoute = undefined;
 window.afterRoute = undefined;
+window.appVM = undefined;
+window.$axiosHookManager = undefined;
+window.$registerAxiosHook = undefined;
 
 // 写入国际化配置
 platformConfig.appConfig.i18nInfo = i18nInfo;
@@ -50,7 +58,10 @@ export async function mount(props) {
     };
   }
 
-  const { container } = props;
+  const { container, routeConfig } = props;
+  if (routeConfig) {
+    window.LcapVueRouterConfig = routeConfig;
+  }
   window.LcapMicro.container = container.querySelector("#app");
   // window.LcapMicro.appendTo = container.querySelector('#app');  // 如果开启了样式隔离，需要设置 appendTo, 弹窗等组件会挂在 container 上。
   window.LcapMicro.props = props;

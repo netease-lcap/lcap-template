@@ -1,53 +1,48 @@
 <template>
-    <view class="location-room">
-       <image class="location-image" src="../../assets/map.png"></image>
-       <text>正在获取定位...</text>
-    </view>
+  <view class="location-room">
+    <image class="location-image" src="../../assets/map.png"></image>
+    <text>正在获取定位...</text>
+  </view>
 </template>
 
 <script>
-import Taro from "@tarojs/taro"
-import './index.less'
+import Taro from '@tarojs/taro';
+import './index.less';
 
 export default {
-  data () {
+  data() {
     return {
-      location:"",
-    }
+
+    };
   },
   onLoad(options) {
-    this.init(options);
+    console.log('定位页面参数', options);
     Taro.getLocation({
       type: 'wgs84',
-      success:(r)=>{
-        this.location = r.latitude+","+r.longitude
-        setTimeout(()=>{
-          this.handleSave()
-        },1000)
+      success: (r) => {
+        const location = r.latitude + ',' + r.longitude;
+        this.handleSave(location);
       },
-      fail:(error)=>{
+      fail: (error) => {
         Taro.showToast({
           title: error,
-          icon:"none"
-        })
-      }
-    })
+          icon: 'none',
+        });
+      },
+    });
   },
   methods: {
-    init(options) {
-      console.log(options,222);
-    },
-    handleSave(e) {
-      let pages = Taro.getCurrentPages()
-      let prevPage = pages[pages.length - 2]
-      const { location } = this
+    handleSave(location) {
+      let pages = Taro.getCurrentPages();
+      let prevPage = pages[pages.length - 2];
       prevPage.setData({
-          userinfo: {wxLocation:location},
+        userinfo: { wxLocation: location },
+      }, () => {
+        Taro.navigateBack({
+          delta: 1,
         });
-      Taro.navigateBack({
-        delta: 1
       });
-    }
-  }
-}
+    },
+  },
+};
 </script>

@@ -1,13 +1,10 @@
 <template>
-  <VErrorBoundary>
-    <config-provider :locale="locale">
-      <router-view></router-view>
-    </config-provider>
-  </VErrorBoundary>
+  <config-provider :locale="locale">
+    <router-view></router-view>
+  </config-provider>
 </template>
 
-<script setup>
-import VErrorBoundary from './VErrorBoundary.vue';
+<script setup lang="ts">
 import { getUserLanguage } from './i18n';
 import { useInitDataPermission } from './hooks';
 

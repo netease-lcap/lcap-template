@@ -10,12 +10,12 @@ export default defineAppConfig({
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',
     navigationBarTitleText: 'WeChat',
-    navigationBarTextStyle: 'black'
+    navigationBarTextStyle: 'black',
   },
-  "requiredPrivateInfos": ["getLocation"],
-  "permission": {
-    "scope.userLocation": {
-      "desc": "你的位置信息将会被收集"
-    }
-  }
-})
+  requiredPrivateInfos: ['getLocation'],
+  permission: {
+    'scope.userLocation': {
+      desc: '你的位置信息将会被收集',
+    },
+  },
+});
