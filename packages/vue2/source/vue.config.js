@@ -58,6 +58,8 @@ module.exports = {
 
     config.plugins.delete('preload');
     config.plugins.delete('prefetch');
+
+    /// chainWebpack
   },
 
   // 注意：runtimeCompiler: true 会启用包含模板编译器的构建（runtime + compiler），产物体积更大；仅在需要运行时编译模板时开启
