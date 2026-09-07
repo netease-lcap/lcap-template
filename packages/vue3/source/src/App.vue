@@ -5,10 +5,19 @@
 </template>
 
 <script setup lang="ts">
+import { defineComponent, renderSlot } from 'vue';
 import { getUserLanguage } from './i18n';
 import { useInitDataPermission } from './hooks';
 
-const { ConfigProvider = 'div', transformKeys = v => v } = window.lcapStandardUI;
+const FallbackConfigProvider = defineComponent({
+  name: "FallbackConfigProvider",
+  props: {},
+  setup(props, { slots }) {
+    return () => renderSlot(slots, "default", {});
+  }
+});
+
+const { ConfigProvider = FallbackConfigProvider, transformKeys = v => v } = window.lcapStandardUI;
 
 const { appConfig } = window.appInfo;
 const { i18nInfo } = appConfig;
