@@ -1284,7 +1284,10 @@ export class Utils {
   ToString(typeKey, value, tz?) {
     // v3.3 老应用升级的场景，使用全局配置（全局配置一般默认是‘用户时区’）
     // v3.4 新应用，使用默认时区时选项，tz 为空
-    if (typeKey === 'nasl.core.DateTime' && !tz) {
+    // Date 是纯日期类型，不带时间和时区信息，未指定 tz 时同样使用应用时区：
+    // 否则 getAppTimezone(undefined) 会回落到浏览器时区，"YYYY-MM-DD" 先按 UTC 零点解析再按
+    // 浏览器时区格式化，在 UTC 以西的时区会整体退一天（如 2026-11-20 显示成 2026-11-19）
+    if (['nasl.core.DateTime', 'nasl.core.Date'].includes(typeKey) && !tz) {
       return this.helpers.toString(typeKey, value, 'global');
     } else {
       // v3.4 新应用，指定了默认值之外的时区选项，必然有时区参数 tz
