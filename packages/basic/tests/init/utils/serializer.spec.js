@@ -100,4 +100,27 @@ describe('序列化函数', () => {
       expect(utils.ToString('nasl.core.DateTime', noSummerTime1, 'Asia/Shanghai')).toBe('2016-03-13 14:59:59');
     }
   });
+
+  test('ToString Date 未指定时区时使用应用时区，不受浏览器时区影响', () => {
+    const originalAppInfo = window.appInfo;
+    const originalResolvedOptions = Intl.DateTimeFormat.prototype.resolvedOptions;
+
+    // 应用配置了固定时区
+    window.appInfo = { ...(originalAppInfo || {}), appTimeZone: 'Asia/Shanghai' };
+    // 模拟浏览器/系统时区在 UTC-5
+    Intl.DateTimeFormat.prototype.resolvedOptions = function () {
+      return { ...originalResolvedOptions.call(this), timeZone: 'America/New_York' };
+    };
+
+    try {
+      // 纯日期字符串不能因为浏览器时区退一天
+      expect(utils.ToString('nasl.core.Date', '2026-11-20')).toBe('2026-11-20');
+      expect(utils.ToString('nasl.core.Date', new Date('2026-11-20'))).toBe('2026-11-20');
+      // 显式指定时区时，仍按指定时区展示
+      expect(utils.ToString('nasl.core.Date', '2026-11-20', 'America/New_York')).toBe('2026-11-19');
+    } finally {
+      Intl.DateTimeFormat.prototype.resolvedOptions = originalResolvedOptions;
+      window.appInfo = originalAppInfo;
+    }
+  });
 });
